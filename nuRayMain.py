@@ -10,8 +10,6 @@ import os
 import io
 import inspect #for debugging
 from PyQt5 import uic
-#from PyQt5.QtCore import Qt, QObject
-#from PyQt5.QtGui import QColor, QFont
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
 from PyQt5.QtCore import QPoint
 import re
@@ -27,7 +25,7 @@ from nuRSerialConn import nuRSerial
 import globalThings
 
 
-
+#load main window ui from QtDesigner file
 nuRMainWindow, QtBaseClass = uic.loadUiType("nuRMainWindow.ui")
        
 #get directory of this python file, here other modules will look for their stuff
@@ -53,9 +51,10 @@ class MyApp(QMainWindow, nuRMainWindow):
         
         self.actionConnection_Settings.triggered.connect(self.ConnSettings)
         
-        
+        #we can have several InsatrPages and several Plotters...        
         self.InstrPageList=[]
         self.PlotterList=[]
+        #...but only one Params and one Signals Page
         self.ParamSettingsDialog=None
         self.SignalSettingsDialog=None
         self.projectFile = 'untitled Project'
@@ -65,6 +64,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.AllMySignals = cSignalTableModel(None)
         
         
+    #first rudimental reaction on Connection settings
     def ConnSettings(self):
         nuRSerial.listPorts()
         
