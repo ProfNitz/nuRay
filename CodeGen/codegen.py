@@ -43,7 +43,7 @@ class nuRCodeGenerator(object):
                     for p in params:
                         c.write(mpos*' '+'case '+str(num)+':\n')
                         c.write(mpos*' '+cls.indent+'p=(byte*)&(nuR_ptr_params_write->'+p.name+');\n')
-                        c.write(mpos*' '+cls.indent+'len='+str(G.nuRDataTypes[p.dataType]['len'])+';break;')
+                        c.write(mpos*' '+cls.indent+'len='+str(G.nuRDataTypes[p.dataType]['len'])+';break;\n')
                         num+=1
                 else:
                     c.write(line)

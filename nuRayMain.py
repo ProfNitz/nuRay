@@ -10,7 +10,7 @@ import os
 import io
 import inspect #for debugging
 from PyQt5 import uic
-from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QDialog
 from PyQt5.QtCore import QPoint
 import re
 
@@ -21,15 +21,47 @@ from gui.ParamView import ParamSettingsWindow, SignalSettingsWindow
 from gui.PlotWin import cPlotterWindow
 from paramModel import cParamTableModel, cSignalTableModel
 from CodeGen.codegen import nuRCodeGenerator
-from nuRSerialConn import nuRSerial
+from Comm.nuRSerialConn import nuRSerial
 import globalThings
 
 
 #load main window ui from QtDesigner file
 nuRMainWindow, QtBaseClass = uic.loadUiType("nuRMainWindow.ui")
+nuRConnSetDialogUi, QtBaseClass = uic.loadUiType("nuRConnSettingsDialog.ui")
        
 #get directory of this python file, here other modules will look for their stuff
 globalThings.nuRDir,_ = os.path.split(__file__)
+
+
+class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
+    def __init__(self,parent):
+        QDialog.__init__(self)
+        nuRConnSetDialogUi.__init__(self)
+        self.parent = parent
+        self.setupUi(self)
+        
+        c_long = nuRSerial.listPorts()
+        self.comboBox.addItems([' ']+c_long)
+        
+        c_short = [re.findall('^COM\d+',c)[0] for c in c_long]
+        
+        if self.parent.Serial.port in c_short:
+            idx = c_short.index(self.parent.Serial.port)
+            self.comboBox.setCurrentIndex(idx+1)#+1 because 
+        
+        self.comboBox.currentIndexChanged.connect(self.setPort)
+        
+        self.show()
+        
+        
+    def setPort(self):
+        c = self.comboBox.currentText()
+        try:
+            self.parent.Serial.port = re.findall('^COM\d+',c)[0]
+        except:
+            self.parent.Serial.port = None;
+        print(self.parent.Serial.port+' selected.')
+
 
  
 class MyApp(QMainWindow, nuRMainWindow):
@@ -37,7 +69,6 @@ class MyApp(QMainWindow, nuRMainWindow):
         QMainWindow.__init__(self)
         nuRMainWindow.__init__(self)
         self.setupUi(self)
-        self.radioButtonDisconnect.setChecked(True)
         
         self.actionOpen_Instruments.triggered.connect(self.OpenInstr)
         self.actionParameters.triggered.connect(self.ParamSettings)
@@ -51,22 +82,46 @@ class MyApp(QMainWindow, nuRMainWindow):
         
         self.actionConnection_Settings.triggered.connect(self.ConnSettings)
         
+        
+        self.radioButtonConnect.clicked.connect(self.Connect)
+        self.radioButtonDisconnect.clicked.connect(self.Disconnect)
+        self.connected = False
+        self.radioButtonDisconnect.setChecked(True)
+        
         #we can have several InsatrPages and several Plotters...        
         self.InstrPageList=[]
         self.PlotterList=[]
         #...but only one Params and one Signals Page
-        self.ParamSettingsDialog=None
-        self.SignalSettingsDialog=None
+        self.ParamSettingsDialog = None
+        self.SignalSettingsDialog = None
+        self.ConnSetDlg = None
         self.projectFile = 'untitled Project'
         self.setTitle()
         
         self.AllMyParams = cParamTableModel(None) #table model so it can be processed by QTableView
         self.AllMySignals = cSignalTableModel(None)
+        self.Serial = nuRSerial()
+        
+        
+    def Connect(self):
+        if not self.connected:
+            try:
+                self.Serial.connect()
+                if self.Serial.is_open():
+                    self.connected=True
+            except:
+                pass
+        pass
+        
+    def Disconnect(self):
+        self.connected = False
+        self.Serial.close()
+        
         
         
     #first rudimental reaction on Connection settings
     def ConnSettings(self):
-        nuRSerial.listPorts()
+        self.ConnSetDlg = nuRConnSettingsDialog(self)
         
         
     def CodeGen(self):
@@ -197,6 +252,8 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.ParamSettingsDialog.close()
         if self.SignalSettingsDialog!=None:
             self.SignalSettingsDialog.close()
+        if self.ConnSetDlg!=None:
+            self.ConnSetDlg.close()
         for i in self.PlotterList:
             if i.isVisible():
                 i.close()

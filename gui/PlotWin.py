@@ -32,6 +32,7 @@ class cPlotterWindow(QDialog):
     def __init__(self,parent):
         super().__init__(parent)
         
+        self.parent = parent
         
         self.layout = QHBoxLayout()
         self.toolsLayout=QVBoxLayout()
@@ -96,6 +97,8 @@ class cPlotterWindow(QDialog):
         self.timer.timeout.connect(self.timerHandler)
         self.timer.setSingleShot(True)
         self.timer.start()
+        
+        self.parent.Serial.write(12,125,'float32')
         
 #        for i in range(0,1000):
 #            line.DataItem.setData(y[i:9999+i])
