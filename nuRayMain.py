@@ -22,7 +22,7 @@ from gui.PlotWin import cPlotterWindow
 from paramModel import cParamTableModel, cSignalTableModel
 from CodeGen.codegen import nuRCodeGenerator
 from Comm.nuRSerialConn import nuRSerial
-import globalThings
+import globalThings as G
 
 
 #load main window ui from QtDesigner file
@@ -30,7 +30,7 @@ nuRMainWindow, QtBaseClass = uic.loadUiType("nuRMainWindow.ui")
 nuRConnSetDialogUi, QtBaseClass = uic.loadUiType("nuRConnSettingsDialog.ui")
        
 #get directory of this python file, here other modules will look for their stuff
-globalThings.nuRDir,_ = os.path.split(__file__)
+G.nuRDir,_ = os.path.split(__file__)
 
 
 class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
