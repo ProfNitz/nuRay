@@ -1,0 +1,4 @@
+dial:PID_kP
+doubleSpinBox:Switch_Filter
+fghh:PID_kD
+doubleSpinBox_2:PID_Filter_T
