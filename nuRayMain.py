@@ -70,6 +70,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         nuRMainWindow.__init__(self)
         self.setupUi(self)
         
+        # register all actions (Menu and Connect/Disconnect)
         self.actionOpen_Instruments.triggered.connect(self.OpenInstr)
         self.actionParameters.triggered.connect(self.ParamSettings)
         self.actionSignals.triggered.connect(self.SignalSettings)
@@ -88,15 +89,19 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.connected = False
         self.radioButtonDisconnect.setChecked(True)
         
-        #we can have several InsatrPages and several Plotters...        
+        # keep track of the open child windows
+        # we can have several InstrPages and several Plotters...        
         self.InstrPageList=[]
         self.PlotterList=[]
         #...but only one Params and one Signals Page
         self.ParamSettingsDialog = None
         self.SignalSettingsDialog = None
         self.ConnSetDlg = None
+        
+        
         self.projectFile = 'untitled Project'
         self.setTitle()
+        
         
         self.AllMyParams = cParamTableModel(None) #table model so it can be processed by QTableView
         self.AllMySignals = cSignalTableModel(None)
@@ -177,6 +182,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         return res
             
     def loadInstrPages(self,txt):
+        #process <Instrument Pages>-tag from project file and open them all
         myr = re.compile(r'<Instrument Pages>\n(.+)<\\Instrument Pages>',re.DOTALL)#the dot also matches newlines
         res=myr.search(txt)
         if res:
@@ -259,10 +265,14 @@ class MyApp(QMainWindow, nuRMainWindow):
                 i.close()
                 
     def loadInstrPage(self,fn,pos=QPoint(0,0)):
-        #cleanup list
+        # fn..filename
+        # pos..position on screen
+        # load an InstrumentPage (file name (fn) already known either form project file or 
+        # from call to OpenInstr, which opens a file open dialog to fetch the file name)
+        # cleanup list (copy only the ones Visible)
         self.InstrPageList[:]=[x for x in self.InstrPageList if x.isVisible()]
         
-        #check if not open already
+        #check if not open already (if so, activate, else load, list, show)
         ip = next((ip for ip in self.InstrPageList if ip.uiFile==fn),None)
         if ip:
             ip.activateWindow()
@@ -273,7 +283,9 @@ class MyApp(QMainWindow, nuRMainWindow):
         
         
     def OpenInstr(self):
-        #cleanup list before adding
+        # cleanup list before adding
+        # this is done in loadInstrPage again, but only if a file is actually opened
+        # TODO: rethink how we can keep this list uptodate
         self.InstrPageList[:]=[x for x in self.InstrPageList if x.isVisible()]
         
         
