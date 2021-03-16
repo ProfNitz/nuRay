@@ -21,6 +21,7 @@ nuRDataTypes={'float32':{'len':4,'ctype':'float','packtype':'f'},
 # look for their stuff there
 nuRDir = ''
 
+# list of supported ECU platforms and corresponding information like code_template
 nuRPlatforms = {'Arduino Serial':{'code_template':'nuRay_arduino_serial.c'}}
 
 
