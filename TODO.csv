@@ -1,7 +1,0 @@
-ID;Problem;Options for Solution
-1;change Window Titles of Parameter List and Signal List to Parameter and Signals;
-2;color picker in Signal List: current color not preselected when color picker opens;
-3;color picker in Signal List: when no colro chosen, OK returns White, Cancel returns Black;keep current color
-4;current value of Parameters not handled at all;show in list, save to file, load
-5;InstrPage Files are saved in Project File with absolute path making exchanging Projects and corresponding InstrPages difficult;change to relativ to project file, offer search dialog,...
-;;

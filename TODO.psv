@@ -1,0 +1,6 @@
+ID|Problem|Options for Solution|Status|Commit
+1|Titles of Parameter and Signal Window are 'python'|change to Parameters and Signals, respectively|open|
+2|color picker in Signal List: current color not preselected when color picker opens|preselect current color in color picker|open|
+3|color picker in Signal List: when no colro chosen, OK returns White, Cancel returns Black|keep current color|open|
+4|current value of Parameters not handled at all|show in list, save to file, load|open|
+5|InstrPage Files are saved in Project File with absolute path making exchanging Projects and corresponding InstrPages difficult|change to 'relative to project file', offer search dialog when not found,...|open|
