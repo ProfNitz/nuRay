@@ -2,3 +2,6 @@ __pycache__
 nuRay.c
 nuRay.h
 nuRay_intern.h
+/nuRDummy/nuRDummy.layout
+/nuRDummy/bin
+/nuRDummy/obj
