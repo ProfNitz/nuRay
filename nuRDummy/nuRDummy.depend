@@ -13,3 +13,17 @@
 	<stdio.h>
 	"nnserial.h"
 
+1615985590 source:c:\users\nitzsche\documents\fh\python\nuray\git\nuray2\nurdummy\main.c
+	<stdio.h>
+	<stdlib.h>
+	<windows.h>
+	"nnserial.h"
+
+1563203307 c:\users\nitzsche\documents\fh\python\nuray\git\nuray2\nurdummy\nnserial.h
+	<stdint.h>
+	<windows.h>
+
+1563203531 source:c:\users\nitzsche\documents\fh\python\nuray\git\nuray2\nurdummy\nnserial.c
+	<stdio.h>
+	"nnserial.h"
+

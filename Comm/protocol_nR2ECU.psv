@@ -1,3 +1,3 @@
-Byte 0|Byte 1+2|Byte 3 .. len-1|Byte len|Byte len+1|Byte len+2
-start|cmd|payload (1, 2, or 4 bytes)|chk (sum of cmd and payload)|length|stop
-0xfe|the meaning of payload or how the receiver should handle it|a value (uint8, uint16, or float)|0xff & (sum of bytes 1..len)|<2 bytes cmd> + <1,2,or 4 bytes payload> + <1 byte chk> = 4, 5, or 7|0xff
+Byte 0+1|Byte 2 .. len-1|Byte len|Byte len+1|Byte len+2
+cmd|payload (1, 2, or 4 bytes)|chk (sum of cmd and payload)|length|stop
+the meaning of payload or how the receiver should handle it|a value (uint8, uint16, or float)|0xff & (sum of bytes 1..len)|<2 bytes cmd> + <1,2,or 4 bytes payload> = 3, 4, or 6|0xff

@@ -10,7 +10,7 @@
 #define STARTFLAG 0xff
 
 // start cmd cmd payload chk len stop
-// len = 2 (cmd) + sizeof(payload)(1,2,4) + 1 (chk)
+// len = 2 (cmd) + sizeof(payload)(1,2,4)
 
 
 typedef struct {
@@ -20,7 +20,7 @@ typedef struct {
 uint8_t checksum(uint8_t *buf, uint8_t len){
 	uint16_t res=0;
 	uint8_t k;
-	for (k=0;k<len-1;res+=buf[k++]);/* len-1 .. calc checksum without checksum ;o) */
+	for (k=0;k<len;res+=buf[k++]);
 	return (uint8_t)(res&0xff);
 }
 
@@ -53,9 +53,9 @@ DWORD WINAPI Work(LPVOID params) {
 
 				/* check length of package */
 				/* distance start-->stop vs. len and len vs. MAX_LEN*/
-				if ((buf[(uint8_t)(idx-(3+len))]==STARTFLAG)&&(len<=MAX_PACK_LEN)){
+				if ((buf[(uint8_t)(idx-(4+len))]==STARTFLAG)&&(len<=MAX_PACK_LEN)){
 					/*copy buf to pack*/
-					for (k=idx-(2+len),p=pack,i=0;i<len;*(p++)=buf[k++],i++);
+					for (k=idx-(3+len),p=pack,i=0;i<len+1;*(p++)=buf[k++],i++);
 					/* check the checksum */
 					if (checksum(pack,len)==buf[(uint8_t)(idx-3)]){
             printf("------------------ recv: %d: ",cmd=*(uint16_t*)pack);
@@ -65,7 +65,7 @@ DWORD WINAPI Work(LPVOID params) {
 						case 14:printf("%d",*(uint8_t*)&pack[2]);break;
 						default:
 							printf("unknown data: ");
-	            for (k=2;k<len-1;printf("0x%x ",pack[k++]));
+	            for (k=2;k<len;printf("0x%x ",pack[k++]));
             }
 
             printf("\nidx: %d\n",idx);
