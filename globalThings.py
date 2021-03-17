@@ -15,7 +15,7 @@ Created on Tue Jun 25 13:10:00 2019
 #Names in mRay as keys, corresponding length in bytes, corresponding C-Type
 nuRDataTypes={'float32':{'len':4,'ctype':'float','packtype':'f'},
     'uint8':{'len':1,'ctype':'uint8_t','packtype':'B'},
-    'int16':{'len':2,'ctype':'int16_t','packtype':'H'}}
+    'int16':{'len':2,'ctype':'int16_t','packtype':'h'}}
 
 # here the main module will store its directory, so other modules can
 # look for their stuff there
