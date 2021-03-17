@@ -1,0 +1,5 @@
+- Python Environment: Anaconda (updated monthly) and Spyder (preferably) as IDE
+- Modern CSV for editing psv (pipe separated values), e.g. TODO.psv (https://www.moderncsv.com/download/)
+- Git (TortoiseGit)
+- com0com for serial port emulation
+
