@@ -1,4 +1,5 @@
-ID|error|problem|solution|status
-1|PackageNotFound: pyqtgraph package not found in Spyder|spyder Python 3.9; anaconda Python 3.8|reinstall anaconda; launch Spyder|solved
-2|PackageNotFound: serial.tools not found|package missing|pip install pyserial|solved
-3|No action|pop up window: connect <-> disconnect||open
+ID|error|problem|Operating System|solution|status
+1|PackageNotFound: pyqtgraph package not found|spyder Python 3.9; anaconda Python 3.8|MacOS|reinstall anaconda; launch Spyder|solved
+2|PackageNotFound: serial.tools not found|package missing|MacOS|pip install pyserial|solved
+3|-|missing project menu|MacOS||open
+4|-|com0com alternative for MacOS|MacOS||open
