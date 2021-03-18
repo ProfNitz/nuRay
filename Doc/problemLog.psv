@@ -5,3 +5,4 @@ ID|error|problem|Operating System|solution|status
 4|-|com0com alternative for MacOS|MacOS||open
 5|-|Open Instruments... doesn't work|Windows||open
 6|-|how to run serialTest.py|Windows||open
+7|-|conda update --all --> can't launch spyder anymore|Mac Os||open
