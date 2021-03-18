@@ -3,3 +3,5 @@ ID|error|problem|Operating System|solution|status
 2|PackageNotFound: serial.tools not found|package missing|MacOS|pip install pyserial|solved
 3|-|missing project menu|MacOS||open
 4|-|com0com alternative for MacOS|MacOS||open
+5|-|Open Instruments... doesn't work|Windows||open
+6|-|how to run serialTest.py|Windows||open
