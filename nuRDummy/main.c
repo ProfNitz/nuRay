@@ -58,6 +58,7 @@ DWORD WINAPI Work(LPVOID params) {
 					for (k=idx-(3+len),p=pack,i=0;i<len+1;*(p++)=buf[k++],i++);
 					/* check the checksum */
 					if (checksum(pack,len)==buf[(uint8_t)(idx-3)]){
+            /* we have a valid package */
             printf("------------------ recv: %d: ",cmd=*(uint16_t*)pack);
             switch (cmd){
 						case 12:printf("%g",*(float*)&pack[2]);break;
