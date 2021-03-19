@@ -1,7 +1,8 @@
-ID|Problem|Options for Solution|Status|Commit
-1|Titles of Parameter and Signal Window are 'python'|change to Parameters and Signals, respectively|open|
-2|color picker in Signal List: current color not preselected when color picker opens|preselect current color in color picker|open|
-3|color picker in Signal List: when no colro chosen, OK returns White, Cancel returns Black|keep current color|open|
-4|current value of Parameters not handled at all|show in list, save to file, load|open|
-5|InstrPage Files are saved in Project File with absolute path making exchanging Projects and corresponding InstrPages difficult|change to 'relative to project file', offer search dialog when not found,...|open|
-6|when trying to connect Param to Instrument and no Params exist, list is empty|add hint to first add some parameters to Param List|open|
+ID|Problem|Options for Solution|Status|Commit|priority
+1|Titles of Parameter and Signal Window are 'python'|change to Parameters and Signals, respectively|open||1
+2|color picker in Signal List: current color not preselected when color picker opens|preselect current color in color picker|open||3
+3|color picker in Signal List: when no colro chosen, OK returns White, Cancel returns Black|keep current color|open||3
+4|current value of Parameters not handled at all|show in list, save to file, load|open||2
+5|InstrPage Files are saved in Project File with absolute path making exchanging Projects and corresponding InstrPages difficult|change to 'relative to project file', offer search dialog when not found,...|open||2
+6|when trying to connect Param to Instrument and no Params exist, list is empty|add hint to first add some parameters to Param List|open||1
+7|text is being cut off in pop up window||open||4
