@@ -2,4 +2,12 @@
 - Modern CSV for editing psv (pipe separated values), e.g. TODO.psv (https://www.moderncsv.com/download/)
 - Git (TortoiseGit)
 - com0com for serial port emulation
+- Qt Designer (for Instrument Pages, also used by the end user to create their own Instrument Pages)
+	- 2021_03:
+		- conda would not install pyqt5 by "conda install pyqt5"
+		- "pip install pyqt5" breaks the environment
+		- solution: new environment (python=3.8), then pip install pyqt5 pyqt5-tools
+		- designer then found under Lib\site-packages\pyqt5-applications
+
+	
 
