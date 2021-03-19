@@ -1,6 +1,6 @@
 conda create -n nuREnv python=3.8
 conda activate nuREnv
-conda install spyder-kernels 1.9.4
+conda install spyder-kernels=1.9.4
 conda install pyserial
 conda install pyqtgraph (this installs pyqt5 also, but it will not list here, nor can I find out, which version)
 

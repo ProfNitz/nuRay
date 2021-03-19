@@ -4,3 +4,4 @@ ID|Problem|Options for Solution|Status|Commit
 3|color picker in Signal List: when no colro chosen, OK returns White, Cancel returns Black|keep current color|open|
 4|current value of Parameters not handled at all|show in list, save to file, load|open|
 5|InstrPage Files are saved in Project File with absolute path making exchanging Projects and corresponding InstrPages difficult|change to 'relative to project file', offer search dialog when not found,...|open|
+6|when trying to connect Param to Instrument and no Params exist, list is empty|add hint to first add some parameters to Param List|open|
