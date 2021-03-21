@@ -64,7 +64,7 @@ class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
 
 
  
-class MyApp(QMainWindow, nuRMainWindow):
+class MyApp(QMainWindow, nuRMainWindow, QDialog):
     def __init__(self):
         QMainWindow.__init__(self)
         nuRMainWindow.__init__(self)
@@ -220,6 +220,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.ParamSettingsDialog.show()
         else:
             self.ParamSettingsDialog.activateWindow()
+        self.ParamSettingsDialog.setWindowTitle("parameters")
 
     def SignalSettings(self):
         if self.SignalSettingsDialog==None or not self.SignalSettingsDialog.isVisible():
@@ -227,6 +228,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.SignalSettingsDialog.show()
         else:
             self.SignalSettingsDialog.activateWindow()
+        self.SignalSettingsDialog.setWindowTitle("signals")
         
     def closeEvent(self,ev):
         
