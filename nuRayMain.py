@@ -64,7 +64,7 @@ class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
 
 
  
-class MyApp(QMainWindow, nuRMainWindow, QDialog):
+class MyApp(QMainWindow, nuRMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         nuRMainWindow.__init__(self)
