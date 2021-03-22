@@ -1,5 +1,5 @@
 ID|Problem|Options for Solution|Status|Commit|priority
-1|Titles of Parameter and Signal Window are 'python'|change to Parameters and Signals, respectively|closed|adding 'QDialog' to attributes of class 'MyApp' --> enabling the use of the method 'SetWindowTitle' for signals window and parameters window|1
+1|Titles of Parameter and Signal Window are 'python'|change to Parameters and Signals, respectively|closed|using the method 'SetWindowTitle' for signals window and parameters window|1
 2|color picker in Signal List: current color not preselected when color picker opens|preselect current color in color picker|open||3
 3|color picker in Signal List: when no colro chosen, OK returns White, Cancel returns Black|keep current color|open||3
 4|current value of Parameters not handled at all|show in list, save to file, load|open||2
