@@ -1,6 +1,10 @@
 - Python Environment: Anaconda (updated monthly) and Spyder (preferably) as IDE
 - Modern CSV for editing psv (pipe separated values), e.g. TODO.psv (https://www.moderncsv.com/download/)
 - Git (TortoiseGit)
+	- Revision # 
+		- SHA-1 (long)
+		- short: erste 6-7 Stellen von SHA-1
+		- we use SHA as Revisionnumber (in TODO-List, e.g.)
 - com0com for serial port emulation
 - Qt Designer (for Instrument Pages, also used by the end user to create their own Instrument Pages)
 	- 2021_03:
