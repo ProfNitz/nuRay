@@ -54,7 +54,7 @@ class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
             idx = c_short.index(self.parent.Serial.port)
          
             self.comboBox.setCurrentIndex(idx+1)
-        #nina#if the index changed, connect to method setPort
+        #NoNi: connect method setPort to the event currentIndexChanged
         self.comboBox.currentIndexChanged.connect(self.setPort)
         #nina#default is hidden > show necessary
         self.show()
