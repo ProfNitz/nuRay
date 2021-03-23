@@ -38,19 +38,25 @@ class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
         QDialog.__init__(self)
         nuRConnSetDialogUi.__init__(self)
         self.parent = parent
+        #nina#uic.loadUiType("...").setupUi
         self.setupUi(self)
-        
+        #nina#Comm.nuRSerialConn > nuRSerial > listPorts()
+        #nina#listPorts() erzeugt Liste der COM-Ports
         c_long = nuRSerial.listPorts()
+        #nina#Auswahl-Liste wird geöffnet
+        #nina#default-Auswahl leer, Auswahl-Liste besteht aus c_long
         self.comboBox.addItems([' ']+c_long)
-        
+        #nina#Liste aus allen COM-Ports aus c_long bezeichnet mit COM_
         c_short = [re.findall('^COM\d+',c)[0] for c in c_long]
-        
+        #nina#als letztes ausgewählter port soll ausgewählt sein 
         if self.parent.Serial.port in c_short:
+            
             idx = c_short.index(self.parent.Serial.port)
-            self.comboBox.setCurrentIndex(idx+1)#+1 because 
-        
+         
+            self.comboBox.setCurrentIndex(idx+1)
+        #nina#if the index changed, connect to method setPort
         self.comboBox.currentIndexChanged.connect(self.setPort)
-        
+        #nina#default is hidden > show necessary
         self.show()
         
         
