@@ -42,7 +42,7 @@ class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
         self.parent = parent
         #NiNa: uic.loadUiType("...").setupUi
         self.setupUi(self)
-        #NiNa: Comm.nuRSerialConn > nuRSerial > listPorts()
+        #NiNa: Comm.nuRSerialConn -> nuRSerial -> listPorts()
         #NiNa: listPorts() erzeugt Liste der COM-Ports
         #NiNa: c_long = ['COM8 - com0com - serial port emulator CNCA2 (COM8)',
         #NiNa:           'COM9 - com0com - serial port emulator CNCB2 (COM9)']
@@ -54,12 +54,13 @@ class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
         c_short = [re.findall('^COM\d+',c)[0] for c in c_long]
         #NiNa: if currently selected port is in c_short-list 
         #NiNa: three of cases currently selected port: None, COM8, COM9
+        #NiNa: Serial = nuRSerial
         if self.parent.Serial.port in c_short:
             #NiNa: idx is set to the index in c_short-list of the currently selected port
             #NiNa: COM8 - idx 0
             #NiNa: COM9 - idx 1
             idx = c_short.index(self.parent.Serial.port)
-            #NiNa: why +1? without +1 it works fine
+            #NiNa: ??? why +1? without +1 it works fine
             self.comboBox.setCurrentIndex(idx+1)
         #NoNi: connect method setPort to the event currentIndexChanged
         self.comboBox.currentIndexChanged.connect(self.setPort)
@@ -80,14 +81,15 @@ class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
         print(str(self.parent.Serial.port)+' selected.')
 
 
- 
+#NiNa: creating class with parent classes 'QMainWindow' and 'nuRMainWindow' 
 class MyApp(QMainWindow, nuRMainWindow):
     def __init__(self):
+        #NiNa: initialize access to attritbutes of parent classes
         QMainWindow.__init__(self)
         nuRMainWindow.__init__(self)
         self.setupUi(self)
         
-        # register all actions (Menu and Connect/Disconnect)
+        #NoNi: register all actions (Menu and Connect/Disconnect)
         self.actionOpen_Instruments.triggered.connect(self.OpenInstr)
         self.actionParameters.triggered.connect(self.ParamSettings)
         self.actionSignals.triggered.connect(self.SignalSettings)
@@ -103,32 +105,37 @@ class MyApp(QMainWindow, nuRMainWindow):
         
         self.radioButtonConnect.clicked.connect(self.Connect)
         self.radioButtonDisconnect.clicked.connect(self.Disconnect)
+        #NiNa: initial status is: disconnected
+        #NiNa: ??? where is this being used
         self.connected = False
         self.radioButtonDisconnect.setChecked(True)
         
-        # keep track of the open child windows
-        # we can have several InstrPages and several Plotters...        
+        #NoNi: keep track of the open child windows
+        #NoNi: we can have several InstrPages and several Plotters...        
         self.InstrPageList=[]
         self.PlotterList=[]
-        #...but only one Params and one Signals Page
+        #NoNi: ...but only one Params and one Signals Page
         self.ParamSettingsDialog = None
         self.SignalSettingsDialog = None
         self.ConnSetDlg = None
         
-        
+        #NiNa: add projectFile name to title
         self.projectFile = 'untitled Project'
         self.setTitle()
         
         
         self.AllMyParams = cParamTableModel(None) #table model so it can be processed by QTableView
         self.AllMySignals = cSignalTableModel(None)
+        #NiNa: self.Serial = class nuRSerial() from nuRSerialConn.py
         self.Serial = nuRSerial()
         
         
     def Connect(self):
+        #NiNa: notice above, initial status: disconnected
         if not self.connected:
             try:
                 self.Serial.connect()
+                #NiNa: is_open: Returns True if the serial port has been opened
                 if self.Serial.is_open():
                     self.connected=True
             except:
@@ -141,7 +148,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         
         
         
-    #first rudimental reaction on Connection settings
+    #NoNi: first rudimental reaction on Connection settings
     def ConnSettings(self):
         self.ConnSetDlg = nuRConnSettingsDialog(self)
         
