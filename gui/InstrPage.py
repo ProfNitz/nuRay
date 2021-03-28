@@ -8,7 +8,7 @@ Created on Wed Jun  5 23:35:26 2019
 import inspect #for debugging
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QWidget, QAction, QAbstractSlider
+from PyQt5.QtWidgets import QDialog, QWidget, QAction, QAbstractSlider, QTextEdit
 from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QLabel
 from PyQt5.QtGui import QPalette, QBrush, QColor
 from PyQt5.QtCore import QObject, QRect
@@ -180,6 +180,9 @@ class nuRayInstr(QObject):
         self.pc.itemDoubleClicked.connect(self.paramSelected)
         for i in self.Page.parent.AllMyParams.itemNames():
             self.pc.addItem(QListWidgetItem(i))
+        if self.pc.count()==0:
+            self.pc = QTextEdit()
+            self.pc.setPlainText("no parameters in list")
         self.pc.show()
     def connectToParam(self,param):
         if type(self.Param)!=str:
