@@ -77,7 +77,7 @@ class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
         except:
             self.parent.Serial.port = None;
         #NiNa: print "None selected" or "COM8 selected" or "COM9" selected
-        print(self.parent.Serial.port+' selected.')
+        print(str(self.parent.Serial.port)+' selected.')
 
 
  
