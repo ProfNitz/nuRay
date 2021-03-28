@@ -182,7 +182,7 @@ class nuRayInstr(QObject):
             self.pc.addItem(QListWidgetItem(i))
         if self.pc.count()==0:
             self.pc = QTextEdit()
-            self.pc.setPlainText("no parameters in list")
+            self.pc.setPlainText("parameter list is empty; please add some parameters first.")
         self.pc.show()
     def connectToParam(self,param):
         if type(self.Param)!=str:
