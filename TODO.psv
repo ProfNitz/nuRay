@@ -4,6 +4,6 @@ ID|Problem|Options for Solution|Status|Commit|priority
 3|color picker in Signal List: when no colro chosen, OK returns White, Cancel returns Black|keep current color|open||3
 4|current value of Parameters not handled at all|show in list, save to file, load|open||2
 5|InstrPage Files are saved in Project File with absolute path making exchanging Projects and corresponding InstrPages difficult|change to 'relative to project file', offer search dialog when not found,...|open||2
-6|when trying to connect Param to Instrument and no Params exist, list is empty|add hint to first add some parameters to Param List|open||1
+6|when trying to connect Param to Instrument and no Params exist, list is empty|add hint to first add some parameters to Param List|closed|1c37806ce24874ac1902ec03513b8c9916021f12|1
 7|text is being cut off in pop up window||open||4
 8|when void(None) is selected in Connection Settings Dialog: TypeError: unsupported operand type(s) for +: 'NoneType' and 'str'|"print ""None selected"" in Console instead of error"|closed|f6e7cf62ee6a614a880d14bf83889d5e3514e466|1
