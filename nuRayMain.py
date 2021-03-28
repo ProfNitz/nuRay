@@ -25,47 +25,58 @@ from Comm.nuRSerialConn import nuRSerial
 import globalThings as G
 
 
-#load main window ui from QtDesigner file
+#NoNi: load main window ui from QtDesigner file
+#NiNa: uic.loadUiType("...") returns a tupel: reference to python class, base class
 nuRMainWindow, QtBaseClass = uic.loadUiType("nuRMainWindow.ui")
 nuRConnSetDialogUi, QtBaseClass = uic.loadUiType("nuRConnSettingsDialog.ui")
        
-#get directory of this python file, here other modules will look for their stuff
+#NoNi: get directory of this python file, here other modules will look for their stuff
 G.nuRDir,_ = os.path.split(__file__)
 
-
+#NiNa: creating class with parent classes 'QDialog' and 'nuRConnSetDialogUi'
 class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
     def __init__(self,parent):
+        #NiNa: initialize access to attributes of parent classes
         QDialog.__init__(self)
         nuRConnSetDialogUi.__init__(self)
         self.parent = parent
-        #nina#uic.loadUiType("...").setupUi
+        #NiNa: uic.loadUiType("...").setupUi
         self.setupUi(self)
-        #nina#Comm.nuRSerialConn > nuRSerial > listPorts()
-        #nina#listPorts() erzeugt Liste der COM-Ports
+        #NiNa: Comm.nuRSerialConn > nuRSerial > listPorts()
+        #NiNa: listPorts() erzeugt Liste der COM-Ports
+        #NiNa: c_long = ['COM8 - com0com - serial port emulator CNCA2 (COM8)',
+        #NiNa:           'COM9 - com0com - serial port emulator CNCB2 (COM9)']
         c_long = nuRSerial.listPorts()
-        #nina#Auswahl-Liste wird geöffnet
-        #nina#default-Auswahl leer, Auswahl-Liste besteht aus c_long
+        #NiNa: conboBox has void and c_long as options
         self.comboBox.addItems([' ']+c_long)
-        #nina#Liste aus allen COM-Ports aus c_long bezeichnet mit COM_
+        #NiNa: shortening c_long to COM_ and storing in c_short
+        #NiNa: c_short = ['COM8', 'COM9']
         c_short = [re.findall('^COM\d+',c)[0] for c in c_long]
-        #nina#als letztes ausgewählter port soll ausgewählt sein 
+        #NiNa: if currently selected port is in c_short-list 
+        #NiNa: three of cases currently selected port: None, COM8, COM9
         if self.parent.Serial.port in c_short:
-            
+            #NiNa: idx is set to the index in c_short-list of the currently selected port
+            #NiNa: COM8 - idx 0
+            #NiNa: COM9 - idx 1
             idx = c_short.index(self.parent.Serial.port)
-         
+            #NiNa: why +1? without +1 it works fine
             self.comboBox.setCurrentIndex(idx+1)
         #NoNi: connect method setPort to the event currentIndexChanged
         self.comboBox.currentIndexChanged.connect(self.setPort)
-        #nina#default is hidden > show necessary
+        #NiNa: default is hidden
         self.show()
         
-        
+    #NiNa: method setPort    
     def setPort(self):
+        #NiNa: currently selected option in ComboBox
         c = self.comboBox.currentText()
+        #NiNa: self.parent.Serial.port = currently selected option with COM_ in its name
         try:
             self.parent.Serial.port = re.findall('^COM\d+',c)[0]
+        #NiNa: currently selected option has no COM_ in its name: self.parent.Serial.port = None
         except:
             self.parent.Serial.port = None;
+        #NiNa: print "None selected" or "COM8 selected" or "COM9" selected
         print(self.parent.Serial.port+' selected.')
 
 
