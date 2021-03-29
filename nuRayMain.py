@@ -48,19 +48,18 @@ class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
         #NiNa:           'COM9 - com0com - serial port emulator CNCB2 (COM9)']
         c_long = nuRSerial.listPorts()
         #NiNa: conboBox has void and c_long as options
+        # NoNi: + concatenates lists;
+        # so we get an empty item [' '] and everthing from c_long
         self.comboBox.addItems([' ']+c_long)
         #NiNa: shortening c_long to COM_ and storing in c_short
         #NiNa: c_short = ['COM8', 'COM9']
         c_short = [re.findall('^COM\d+',c)[0] for c in c_long]
-        #NiNa: if currently selected port is in c_short-list 
-        #NiNa: three of cases currently selected port: None, COM8, COM9
-        #NiNa: Serial = nuRSerial
+        #NiNa: if currently selected port is in c_short-list, select it in comboBox 
         if self.parent.Serial.port in c_short:
-            #NiNa: idx is set to the index in c_short-list of the currently selected port
-            #NiNa: COM8 - idx 0
-            #NiNa: COM9 - idx 1
             idx = c_short.index(self.parent.Serial.port)
             #NiNa: ??? why +1? without +1 it works fine
+            # NoNi: idx is index into c_short. comboBox, however, has an extra empty
+            # item at idx = 0
             self.comboBox.setCurrentIndex(idx+1)
         #NoNi: connect method setPort to the event currentIndexChanged
         self.comboBox.currentIndexChanged.connect(self.setPort)
