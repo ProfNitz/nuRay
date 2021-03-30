@@ -176,18 +176,20 @@ class nuRayInstr(QObject):
         
     # Conetxt Menu Handler, connect Instr to a Parameter
     def InstrConnect(self):
-        self.pc = ParamSelectListWidget(self.Page)
-        self.pc.itemDoubleClicked.connect(self.paramSelected)
+        if self.Page.parent.AllMyParams.rowCount(self.Page.parent) == 0:
+            self.ListEmpty = QMessageBox()
+            self.ListEmpty.setIcon(QMessageBox.Information)
+            self.ListEmpty.setText("Please add parameters first!")
+            self.ListEmpty.setInformativeText("<parameter list is empty>")
+            self.ListEmpty.setWindowTitle("parameters")
+            self.ListEmpty.setStandardButtons(QMessageBox.Ok)
+            self.ListEmpty.show()
+        self.ParamConnList = ParamSelectListWidget(self.Page)
+        self.ParamConnList.itemDoubleClicked.connect(self.paramSelected)
         for i in self.Page.parent.AllMyParams.itemNames():
-            self.pc.addItem(QListWidgetItem(i))
-        if self.pc.count()==0:
-            self.pc = QMessageBox()
-            self.pc.setIcon(QMessageBox.Information)
-            self.pc.setText("Please add parameters first!")
-            self.pc.setInformativeText("<parameter list is empty>")
-            self.pc.setWindowTitle("parameters")
-            self.pc.setStandardButtons(QMessageBox.Ok)
-        self.pc.show()
+            self.ParamConnList.addItem(QListWidgetItem(i))
+        self.ParamConnList.show()
+        
     def connectToParam(self,param):
         if type(self.Param)!=str:
             self.Param.removeInstr(self)
