@@ -184,11 +184,12 @@ class nuRayInstr(QObject):
             self.ListEmpty.setWindowTitle("parameters")
             self.ListEmpty.setStandardButtons(QMessageBox.Ok)
             self.ListEmpty.show()
-        self.ParamConnList = ParamSelectListWidget(self.Page)
-        self.ParamConnList.itemDoubleClicked.connect(self.paramSelected)
-        for i in self.Page.parent.AllMyParams.itemNames():
-            self.ParamConnList.addItem(QListWidgetItem(i))
-        self.ParamConnList.show()
+        else:
+            self.ParamConnList = ParamSelectListWidget(self.Page)
+            self.ParamConnList.itemDoubleClicked.connect(self.paramSelected)
+            for i in self.Page.parent.AllMyParams.itemNames():
+                self.ParamConnList.addItem(QListWidgetItem(i))
+            self.ParamConnList.show()
         
     def connectToParam(self,param):
         if type(self.Param)!=str:
@@ -211,8 +212,8 @@ class nuRayInstr(QObject):
         
         
     def paramSelected(self):
-        param = self.Page.parent.AllMyParams.items[self.pc.currentRow()]
-        self.pc.close()
+        param = self.Page.parent.AllMyParams.items[self.ParamConnList.currentRow()]
+        self.ParamConnList.close()
         self.connectToParam(param)
         
         
