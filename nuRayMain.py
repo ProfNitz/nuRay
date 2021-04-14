@@ -23,6 +23,7 @@ from paramModel import cParamTableModel, cSignalTableModel
 from CodeGen.codegen import nuRCodeGenerator
 from Comm.nuRSerialConn import nuRSerial
 import globalThings as G
+from SwitchCustomWidget import ChangeSet
 
 
 #NoNi: load main window ui from QtDesigner file
@@ -108,6 +109,10 @@ class MyApp(QMainWindow, nuRMainWindow):
         #NiNa: ??? where is this being used
         self.connected = False
         self.radioButtonDisconnect.setChecked(True)
+        
+        self.ChangeSet = ChangeSet(self)
+        self.ChangeSet.show()
+        self.ChangeSet.move(20,120)
         
         #NoNi: keep track of the open child windows
         #NoNi: we can have several InstrPages and several Plotters...        
