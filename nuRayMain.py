@@ -149,6 +149,7 @@ class MyApp(QMainWindow, nuRMainWindow):
     def Disconnect(self):
         self.connected = False
         self.Serial.close()
+        print("disconnected")
         
         
         

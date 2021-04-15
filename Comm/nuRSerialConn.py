@@ -16,7 +16,7 @@ class nuRSerial(object):
         self.port = None
         
     def connect(self):
-        print('connect')
+        print('connected')
         self.s=serial.Serial(port=self.port,baudrate=115200)
         pass
 
