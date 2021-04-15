@@ -113,7 +113,8 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.ChangeSet = ChangeSet(self)
         self.ChangeSet.show()
         self.ChangeSet.move(20,120)
-        
+        self.ChangeSet.clicked.connect(self.SetIsSelected)                
+            
         #NoNi: keep track of the open child windows
         #NoNi: we can have several InstrPages and several Plotters...        
         self.InstrPageList=[]
@@ -150,9 +151,16 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.connected = False
         self.Serial.close()
         print("disconnected")
+    
+    
+    #NiNa: printing which set is selected in terminal.    
+    def SetIsSelected(self):
+        if self.ChangeSet.isChecked():
+            print("SET2 is selected.")
+        else:
+            print("SET1 is selected.")
         
-        
-        
+    
     #NoNi: first rudimental reaction on Connection settings
     def ConnSettings(self):
         self.ConnSetDlg = nuRConnSettingsDialog(self)
