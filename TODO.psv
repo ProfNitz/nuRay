@@ -1,9 +1,13 @@
-ID|Problem|Options for Solution|Status|Commit|priority
-1|Titles of Parameter and Signal Window are 'python'|change to Parameters and Signals, respectively|closed|09be25ca9daec2f301cb3d2fff9eac76142bd8c0|1
-2|color picker in Signal List: current color not preselected when color picker opens|preselect current color in color picker|open||3
-3|color picker in Signal List: when no colro chosen, OK returns White, Cancel returns Black|keep current color|open||3
-4|current value of Parameters not handled at all|show in list, save to file, load|open||2
-5|InstrPage Files are saved in Project File with absolute path making exchanging Projects and corresponding InstrPages difficult|change to 'relative to project file', offer search dialog when not found,...|open||2
-6|when trying to connect Param to Instrument and no Params exist, list is empty|add hint to first add some parameters to Param List|closed|a1ac03e37d4e30785b3b8a272ba989d2f5e7e93f|1
-7|text is being cut off in pop up window||open||4
-8|when void(None) is selected in Connection Settings Dialog: TypeError: unsupported operand type(s) for +: 'NoneType' and 'str'|"print ""None selected"" in Console instead of error"|closed|f6e7cf62ee6a614a880d14bf83889d5e3514e466|1
+ID|Problem|Options for Solution|Status|Commit|priority|
+1|Titles of Parameter and Signal Window are 'python'|change to Parameters and Signals, respectively|closed|09be25ca9daec2f301cb3d2fff9eac76142bd8c0|1|
+2|color picker in Signal List: current color not preselected when color picker opens|preselect current color in color picker|open||3|
+3|color picker in Signal List: when no color chosen, OK returns White, Cancel returns Black|keep current color|open||3|
+4|current value of Parameters not handled at all|show in list, save to file, load|open||2|
+5|InstrPage Files are saved in Project File with absolute path making exchanging Projects and corresponding InstrPages difficult|change to 'relative to project file', offer search dialog when not found,...|open||2|
+6|when trying to connect Param to Instrument and no Params exist, list is empty|add hint to first add some parameters to Param List|closed|a1ac03e37d4e30785b3b8a272ba989d2f5e7e93f|1|
+7|text is being cut off in pop up window|setting layouts for groupBox and centralwidget|closed|baa009d6acceff323dbddfe7b0db6f2953632669|4|
+8|when void(None) is selected in Connection Settings Dialog: TypeError: unsupported operand type(s) for +: 'NoneType' and 'str'|"print ""None selected"" in Console instead of error"|closed|f6e7cf62ee6a614a880d14bf83889d5e3514e466|1|
+9|no switch in QtDesigner for selecting SET1 or SET2|custom made switch changing colorlayer of push button|closed|c69ef13fbdfdd8bb15db79fe4f29a4ffda534572|1|
+10|add custom switch to the mainwindow|add widget to vertical layout grid for smooth integration|closed|48852c6df1c1c2f2f0a62474284b019c4426f00e|1|
+11|"print output ""connected"" and ""disconnected"" "|adding print to existing method|closed|93839b0fc684634a8ea7ce1df9551bf93d705b08|1|
+12|"print output ""SET1 is selected."" and ""SET2 is selected"""|adding a method|closed|488d51c532e8c4f94c95c804ed9cf3d706955b1c|1|
