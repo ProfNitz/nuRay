@@ -111,8 +111,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.radioButtonDisconnect.setChecked(True)
         
         self.ChangeSet = ChangeSet(self)
-        self.ChangeSet.show()
-        self.ChangeSet.move(20,120)
+        self.SetSelecter.addWidget(self.ChangeSet)
         self.ChangeSet.clicked.connect(self.SetIsSelected)                
             
         #NoNi: keep track of the open child windows
