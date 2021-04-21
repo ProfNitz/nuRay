@@ -7,6 +7,9 @@ conda install pyqtgraph (this installs pyqt5 also, but it will not list here, no
 python -c "import sys;print(sys.executable)"  --> copy output to spyder Preferences-->Python Interpreter
 
 
+QtDesigner is found here:
+...\anaconda3\envs\nuREnv\Library\bin\designer.exe
+
 conda list
 
 # Name                    Version                   Build  Channel
