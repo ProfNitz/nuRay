@@ -11,7 +11,13 @@
 
 // start cmd cmd payload chk len stop
 // len = 2 (cmd) + sizeof(payload)(1,2,4)
+  typedef struct {
+  float paramf[3];
+  int16_t param16[3];
+  uint8_t param8[3];
+} PSET;
 
+PSET paramset[2];
 
 typedef struct {
   HANDLE evStop;
@@ -33,6 +39,7 @@ DWORD WINAPI Work(LPVOID params) {
   uint8_t len;
   uint16_t cmd;
   uint8_t dtype;
+  int setidx;
 
 
   class_nnserial_cnstr(&Serial,"COM9");
@@ -60,11 +67,33 @@ DWORD WINAPI Work(LPVOID params) {
 					/* check the checksum */
 					if (checksum(pack,len)==buf[(uint8_t)(idx-3)]){
             /* we have a valid package */
+            if(((*(uint8_t*)&pack[0])&0x0f)==0)
+            {
+                printf("\n setidx ist null\n");
+                setidx = 0;
+            }
+            else
+            {
+                printf("\n setidx ist eins\n");
+                setidx = 1;
+            }
+            int subidx = ((*(uint8_t*)&pack[0])&0xf0)>>4;
+
             printf("------------------ recv: %d: ",dtype= (buf[(uint8_t)(idx-2)])&0xf0);
             switch (dtype){
-						case 48:printf("%g",*(float*)&pack[2]);break;
-						case 32:printf("%d",*(int16_t*)&pack[2]);break;
-						case 16:printf("%d",*(uint8_t*)&pack[2]);break;
+						case 48: /*printf("%g",*(float*)&pack[2]);break;*/
+                                 paramset[setidx].paramf[subidx] = *(float*)&pack[2];
+                                 printf("%g ", paramset[setidx].paramf[subidx]);break;
+
+
+						case 32: /*printf("%d",*(int16_t*)&pack[2]);break;*/
+                                 paramset[setidx].param16[subidx] = *(int16_t*)&pack[2];
+                                 printf("%d ", paramset[setidx].param16[subidx]);break;
+
+
+						case 16: /*printf("%d",*(uint8_t*)&pack[2]);break;*/
+						         paramset[setidx].param8[subidx] = *(uint8_t*)&pack[2];
+						         printf("%d ", paramset[setidx].param8[subidx]);break;
 						default:
 							printf("unknown data: ");
 	            for (k=2;k<len;printf("0x%x ",pack[k++]));
@@ -82,9 +111,11 @@ DWORD WINAPI Work(LPVOID params) {
 
 
 int main() {
+
   WORK_PARAMS wp;
   HANDLE my_working_thread;
   char line[100];
+
 
   wp.evStop = CreateEvent(NULL, TRUE, FALSE, NULL);
 
