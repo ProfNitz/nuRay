@@ -9,6 +9,7 @@ import serial
 import serial.tools.list_ports
 
 from Comm.nuRLL import nuRLL
+param = [0,16,32]
 
 class nuRSerial(object):
     def __init__(self):
@@ -20,8 +21,8 @@ class nuRSerial(object):
         self.s=serial.Serial(port=self.port,baudrate=115200)
         pass
 
-    def write(self,cmd,val,dt):
-        buf = nuRLL.pack(cmd,val,dt)
+    def write(self,pset,pidx,val,dt):
+        buf = nuRLL.pack((pset+param[pidx]),val,dt)
         self.s.write(buf)
         
     def is_open(self):
