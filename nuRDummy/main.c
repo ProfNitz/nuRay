@@ -32,6 +32,7 @@ DWORD WINAPI Work(LPVOID params) {
   uint8_t idx,k,i;
   uint8_t len;
   uint16_t cmd;
+  uint8_t dtype;
 
 
   class_nnserial_cnstr(&Serial,"COM9");
@@ -49,7 +50,7 @@ DWORD WINAPI Work(LPVOID params) {
 			if (buf[(uint8_t)(idx-1)]==STOPFLAG){
 				printf("\nreceived STOPFLAG: lets check if that is a valid package\n");
 				/* retrieve the len of the package from the corresponding byte (see protocoll spec) */
-				len=buf[(uint8_t)(idx-2)];
+				len=buf[(uint8_t)(idx-2)]&0x0f;
 
 				/* check length of package */
 				/* distance start-->stop vs. len and len vs. MAX_LEN*/
@@ -59,11 +60,11 @@ DWORD WINAPI Work(LPVOID params) {
 					/* check the checksum */
 					if (checksum(pack,len)==buf[(uint8_t)(idx-3)]){
             /* we have a valid package */
-            printf("------------------ recv: %d: ",cmd=*(uint16_t*)pack);
-            switch (cmd){
-						case 12:printf("%g",*(float*)&pack[2]);break;
-						case 10:printf("%d",*(int16_t*)&pack[2]);break;
-						case 14:printf("%d",*(uint8_t*)&pack[2]);break;
+            printf("------------------ recv: %d: ",dtype= (buf[(uint8_t)(idx-2)])&0xf0);
+            switch (dtype){
+						case 48:printf("%g",*(float*)&pack[2]);break;
+						case 32:printf("%d",*(int16_t*)&pack[2]);break;
+						case 16:printf("%d",*(uint8_t*)&pack[2]);break;
 						default:
 							printf("unknown data: ");
 	            for (k=2;k<len;printf("0x%x ",pack[k++]));
