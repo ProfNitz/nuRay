@@ -9,7 +9,7 @@ import serial
 import serial.tools.list_ports
 
 from Comm.nuRLL import nuRLL
-param = [0,16,32]
+from globalThings import param
 
 class nuRSerial(object):
     def __init__(self):
@@ -22,7 +22,7 @@ class nuRSerial(object):
         pass
 
     def write(self,pset,pidx,val,dt):
-        buf = nuRLL.pack((pset+param[pidx]),val,dt)
+        buf = nuRLL.pack((pset+(param[pidx]<<4)),val,dt)
         self.s.write(buf)
         
     def is_open(self):
