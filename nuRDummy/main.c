@@ -12,9 +12,9 @@
 // start cmd cmd payload chk len stop
 // len = 2 (cmd) + sizeof(payload)(1,2,4)
   typedef struct {
-  float paramf[3];
-  int16_t param16[3];
-  uint8_t param8[3];
+  float paramf[30];
+  int16_t param16[30];
+  uint8_t param8[30];
 } PSET;
 
 PSET paramset[2];
@@ -77,23 +77,27 @@ DWORD WINAPI Work(LPVOID params) {
                 printf("\n setidx ist eins\n");
                 setidx = 1;
             }
-            int subidx = ((*(uint8_t*)&pack[0])&0xf0)>>4;
+            int subidx = (*(uint16_t*)&pack[0])>>4;
 
             printf("------------------ recv: %d: ",dtype= (buf[(uint8_t)(idx-2)])&0xf0);
             switch (dtype){
 						case 48: /*printf("%g",*(float*)&pack[2]);break;*/
                                  paramset[setidx].paramf[subidx] = *(float*)&pack[2];
-                                 printf("%g ", paramset[setidx].paramf[subidx]);break;
+                                 printf("%g ", paramset[setidx].paramf[subidx]);
+                                 printf("\nparameter %d has been changed\n",subidx);break;
 
 
 						case 32: /*printf("%d",*(int16_t*)&pack[2]);break;*/
                                  paramset[setidx].param16[subidx] = *(int16_t*)&pack[2];
-                                 printf("%d ", paramset[setidx].param16[subidx]);break;
+                                 printf("%d ", paramset[setidx].param16[subidx]);
+                                 printf("\nparameter %d has been changed\n",subidx);break;
 
 
 						case 16: /*printf("%d",*(uint8_t*)&pack[2]);break;*/
 						         paramset[setidx].param8[subidx] = *(uint8_t*)&pack[2];
-						         printf("%d ", paramset[setidx].param8[subidx]);break;
+						         printf("%d ", paramset[setidx].param8[subidx]);
+						         printf("\nparameter %d has been changed\n",subidx);break;
+
 						default:
 							printf("unknown data: ");
 	            for (k=2;k<len;printf("0x%x ",pack[k++]));
