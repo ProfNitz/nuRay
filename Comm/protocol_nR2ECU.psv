@@ -1,4 +1,4 @@
 Byte 0+1|Byte 2 .. len-1|Byte len|Byte len+1|Byte len+2
 cmd|payload (1, 2, or 4 bytes)|chk (sum of cmd and payload)|4 Bit data type, 4 Bit length|stop
-the meaning of payload or how the receiver should handle it|a value (uint8, int16, or float)|0xff & (sum of bytes 1..len)|data type: 0..float, 1..int16, 2..uint8|0xff
+the meaning of payload or how the receiver should handle it, read/write, set 0/1, 2bit reserve, 12 bit ParamName|a value (uint8, int16, or float)|0xff & (sum of bytes 1..len)|data type: 0..float, 1..int16, 2..uint8|0xff
 |||length = <2 bytes cmd> + <1,2,or 4 bytes payload> = 3, 4, or 6|
