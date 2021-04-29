@@ -19,12 +19,9 @@ if __name__=='__main__':
     s.connect()
     i = 0
     while i < parametercount:
-        setidx = int(inputdata['setidx'][i])
-        pidx = int(inputdata['pidx'][i])
-        if "." in inputdata['val'][i]:
-            val = float(inputdata['val'][i])
-        else:
-            val = int(inputdata['val'][i])
+        setidx = inputdata['setidx'][i]
+        pidx = inputdata['pidx'][i]
+        val = inputdata['val'][i]
         dt = inputdata['dt'][i]
         s.write(setidx,pidx,val,dt)
         i += 1
