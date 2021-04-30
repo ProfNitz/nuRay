@@ -8,8 +8,8 @@ import json
 from Comm.nuRSerialConn import nuRSerial
 from testdatagenerator import generate
 
-def Test(parametercount):
-    generate(parametercount)
+def Test(parametercount,valrange):
+    generate(parametercount,valrange)
     with open ('testdata.json','r') as g:
         inputdata = json.load(g)
     if __name__=='__main__':
@@ -27,4 +27,4 @@ def Test(parametercount):
             i += 1
         s.close()
 
-#Test(7)
+Test(200,30000)
