@@ -12,9 +12,9 @@ import re
 
 class mRColor(QColor):
     def __init__(self,data):
-        if isinstance(data,QColor):
+        if isinstance(data,QColor):             #NiNa: data = QColor(50,50,50) 
             QColor.__init__(self,data)
-        elif isinstance(data,str):
+        elif isinstance(data,str):              #NiNa: data = "(50,50,50)"
             data=data[1:-1]#strip ( )
             rgb=data.split(',')
             QColor.__init__(self,int(rgb[0]),int(rgb[1]),int(rgb[2]))
@@ -23,12 +23,15 @@ class mRColor(QColor):
         r,g,b,_=self.getRgb()
         return '('+str(r)+','+str(g)+','+str(b)+')'
 
+#NiNa: x = mRColor("(50,50,50)")
+#NiNa: print(x)
 class mRayAbstractItem(QObject):
     def save(self):
         res = ''
         for p in self.properties:#export all relevant members
             res+=(str(self.__dict__[p])+';')
         res=res[:-1]+'\n'#replace trailing ; by \n
+        #print(res)
         return res
     def fillProps(self,txt):
         #don't set name, since ParamModel is responsible for avoiding duplicates
@@ -54,8 +57,12 @@ class mRaySignal(mRayAbstractItem):
         self.zeroAt = 0.0
         self.scale = 1.0
         self.color = mRColor(QColor(50,50,50))
-
-    
+               
+#NiNa: x = mRaySignal("SIGNAL")
+#NiNa: x.save()
+#NiNa: x.fillProps("SIGNAL;int16;-20;20;(30,40,50)")
+#NiNa: x.save()
+#NiNa: print(x)  
 
 class mRayParam(mRayAbstractItem):
 
