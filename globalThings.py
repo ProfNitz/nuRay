@@ -24,11 +24,3 @@ nuRDir = ''
 # list of supported ECU platforms and corresponding information like code_template
 nuRPlatforms = {'Arduino Serial':{'code_template':'nuRay_arduino_serial.c'}}
 
-
-i = 1
-param = [0]
-parametercount = int(input("how many parameters do you want to be generated: "))
-while i < parametercount:
-    param.append(i)
-    i += 1
-print(param)

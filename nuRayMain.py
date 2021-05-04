@@ -132,8 +132,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.AllMySignals = cSignalTableModel(None)
         #NiNa: self.Serial = class nuRSerial() from nuRSerialConn.py
         self.Serial = nuRSerial()
-        
-        
+          
     def Connect(self):
         #NiNa: notice above, initial status: disconnected
         if not self.connected:
@@ -204,8 +203,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             with io.open(self.projectFile,'w',encoding='utf8') as f:
                 f.write(self.AllMyParams.save())
                 f.write(self.AllMySignals.save())
-                f.write(self.saveInstrPages())
-                
+                f.write(self.saveInstrPages())               
                 
     def saveInstrPages(self):
         res='<Instrument Pages>\n'
@@ -213,8 +211,11 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.InstrPageList[:]=[x for x in self.InstrPageList if x.isVisible()]
         for p in self.InstrPageList:
             pos = p.pos()
-            res+=p.uiFile+';'+str(pos.x())+';'+str(pos.y())+'\n'
+            abspath = p.uiFile
+            start =  os.getcwd()           
+            res+=os.path.relpath(abspath,start) +';'+str(pos.x())+';'+str(pos.y())+'\n'
         res+='<\Instrument Pages>\n'
+        print (res)
         return res
             
     def loadInstrPages(self,txt):
@@ -225,10 +226,11 @@ class MyApp(QMainWindow, nuRMainWindow):
             pageSettings = res.group(1)
             for l in pageSettings.splitlines():
                 ps = l.split(';')
-                self.loadInstrPage(ps[0],QPoint(int(ps[1]),int(ps[2])))
-                
-        
-            
+                try:
+                    self.loadInstrPage(ps[0],QPoint(int(ps[1]),int(ps[2])))
+                except FileNotFoundError:
+                    self.OpenInstr()
+                    
     def OpenProject(self):
         file,_ = QFileDialog.getOpenFileName(self,
                                              "Open Project...",
@@ -335,6 +337,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             print(files)
             for f in files:
                 self.loadInstrPage(f)
+                
         
 if __name__ == "__main__":
     app = QApplication(sys.argv)

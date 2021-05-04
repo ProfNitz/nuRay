@@ -3,7 +3,7 @@ ID|Problem|Options for Solution|Status|Commit|priority|
 2|color picker in Signal List: current color not preselected when color picker opens|preselect current color in color picker|open||3|
 3|color picker in Signal List: when no color chosen, OK returns White, Cancel returns Black|keep current color|open||3|
 4|current value of Parameters not handled at all|show in list, save to file, load|open||2|
-5|InstrPage Files are saved in Project File with absolute path making exchanging Projects and corresponding InstrPages difficult|change to 'relative to project file', offer search dialog when not found,...|open||2|
+5|InstrPage Files are saved in Project File with absolute path making exchanging Projects and corresponding InstrPages difficult|change to 'relative to project file', offer search dialog when not found,...|closed|83030f0eacefbccc453a49882f66ff07ff1580d3|2|
 6|when trying to connect Param to Instrument and no Params exist, list is empty|add hint to first add some parameters to Param List|closed|a1ac03e37d4e30785b3b8a272ba989d2f5e7e93f|1|
 7|text is being cut off in pop up window|setting layouts for groupBox and centralwidget|closed|baa009d6acceff323dbddfe7b0db6f2953632669|4|
 8|when void(None) is selected in Connection Settings Dialog: TypeError: unsupported operand type(s) for +: 'NoneType' and 'str'|"print ""None selected"" in Console instead of error"|closed|f6e7cf62ee6a614a880d14bf83889d5e3514e466|1|
@@ -11,3 +11,6 @@ ID|Problem|Options for Solution|Status|Commit|priority|
 10|add custom switch to the mainwindow|add widget to vertical layout grid for smooth integration|closed|48852c6df1c1c2f2f0a62474284b019c4426f00e|1|
 11|"print output ""connected"" and ""disconnected"" "|adding print to existing method|closed|93839b0fc684634a8ea7ce1df9551bf93d705b08|1|
 12|"print output ""SET1 is selected."" and ""SET2 is selected"""|adding a method|closed|488d51c532e8c4f94c95c804ed9cf3d706955b1c|1|
+13|use higher 4 bits of length byte for datatype, lower 4 bits for actual length|new dictionary member, masking and shifting |closed|60b9060193c27f6c740920a1648bd4b4b4cf788c|1|
+14|chose set with lower 4 bits of first byte; and use higher 4 bits of first byte , second byte and third byte for paramname and change parameters in C|creating setidx and paramidx, creating lists in C,  masking and shifting|closed|c4e4a8ad3aac0280108e80d5e1774b8d22a17dc4|1|
+15|create fully automated testing |create json file and generate test data with a python script|closed|5c8de668f6ce5166116c5a9a29a6e24858f6860f; 9836875c2971dc1d177a1a86694d9f2d5018db3d |1|
