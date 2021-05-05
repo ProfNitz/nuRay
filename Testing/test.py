@@ -6,7 +6,7 @@ Created on Wed Apr 28 21:32:03 2021
 """
 import json
 from Comm.nuRSerialConn import nuRSerial
-from testdatagenerator import generate
+from Testing.testdatagenerator import generate
 
 def Test(parametercount,valrange):
     generate(parametercount,valrange)
