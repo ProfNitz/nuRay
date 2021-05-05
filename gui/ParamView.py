@@ -18,6 +18,7 @@ from globalThings import nuRDataTypes
 
 class cDataTypeListDelegate(QItemDelegate):
 
+    #TODO: only use visible data types (check visible property of data type)
     Items=nuRDataTypes.keys()
 
     def __init__(self,parent):

@@ -13,9 +13,11 @@ Created on Tue Jun 25 13:10:00 2019
 #this should be the only place where you make changes
 
 #Names in mRay as keys, corresponding length in bytes, corresponding C-Type
-nuRDataTypes={'float32':{'len':4,'ctype':'float','packtype':'f','code':48},
-    'uint8':{'len':1,'ctype':'uint8_t','packtype':'B','code':16},
-    'int16':{'len':2,'ctype':'int16_t','packtype':'h','code':32}}
+# code: # of the datatype in protocol
+nuRDataTypes={'float32':{'len':4,'ctype':'float','packtype':'f','code':48,'visible':1},
+    'uint8':{'len':1,'ctype':'uint8_t','packtype':'B','code':16,'visible':1},
+    'int16':{'len':2,'ctype':'int16_t','packtype':'h','code':32,'visible':1},
+    'ctrl': {'len':1,'ctype':'uint8_t','packtype':'B','code':0xf,'visible':0}}
 
 # here the main module will store its directory, so other modules can
 # look for their stuff there
