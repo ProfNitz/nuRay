@@ -24,5 +24,5 @@ class nuRLL(object):
         
         # pack again, now with chk, len, and STOPFLAG (0xff) (therefor '3B'..3 times uint8)
         return struct.pack('=H'+nuRDataTypes[data_type]['packtype']+'3B',
-                           cmd,val,chk,((nuRDataTypes[data_type]['code'])+2+nuRDataTypes[data_type]['len']),0xff)
+                           cmd,val,chk,((nuRDataTypes[data_type]['code']<<4)+2+nuRDataTypes[data_type]['len']),0xff)
     
