@@ -231,7 +231,7 @@ class MyApp(QMainWindow, nuRMainWindow):
                 except FileNotFoundError:
                     SearchInfo = QMessageBox.information(self,
                                    'No file found',
-                                   "Select the Instrument Page (.ui) to current project",
+                                   "Select the Instrument Page(s) [.ui] to selected project",
                                    QMessageBox.Ok)
                     self.OpenInstr()
                     
