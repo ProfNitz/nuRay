@@ -16,3 +16,5 @@ ID|Problem|Options for Solution|Status|Commit|priority|
 15|create fully automated testing |create json file and generate test data with a python script|closed|5c8de668f6ce5166116c5a9a29a6e24858f6860f; 9836875c2971dc1d177a1a86694d9f2d5018db3d |1|
 16|add ctrl data type|||||
 17|handle visibility of datatypes in ParamView (and everywherre else)|||||
+18|show hint when no InstrPage to selected project is found|QMessageBox before opening file explorer|closed|df2d47ca470884c3c38acbaf1820b0b03bec9fdc||
+19|preselect file when opening file explorer to select InstrPage||open|||
