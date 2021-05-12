@@ -17,9 +17,13 @@ from globalThings import nuRDataTypes
 
 
 class cDataTypeListDelegate(QItemDelegate):
-
     #TODO: only use visible data types (check visible property of data type)
-    Items=nuRDataTypes.keys()
+    visibleDataTypes = nuRDataTypes
+    for data_type in list(nuRDataTypes):
+        if nuRDataTypes[data_type]['visible']==0:
+            del visibleDataTypes[data_type]
+    Items=visibleDataTypes.keys()
+    print(Items)
 
     def __init__(self,parent):
         super().__init__(parent)
