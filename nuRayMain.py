@@ -229,9 +229,12 @@ class MyApp(QMainWindow, nuRMainWindow):
                 try:
                     self.loadInstrPage(ps[0],QPoint(int(ps[1]),int(ps[2])))
                 except FileNotFoundError:
+                    _,fn=os.path.split(ps[0])
                     SearchInfo = QMessageBox.information(self,
-                                   'No file found',
-                                   "Select the Instrument Page(s) [.ui] to selected project",
+                                   'File '+ fn +' not found',
+                                   'Project wants to open the Instrument Page:\n\n'+
+                                   fn+
+                                   '\n\nPlease help to find this file!',
                                    QMessageBox.Ok)
                     self.OpenInstr()
                     
