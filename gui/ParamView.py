@@ -17,16 +17,10 @@ from globalThings import nuRDataTypes
 
 
 class cDataTypeListDelegate(QItemDelegate):
-    #TODO: only use visible data types (check visible property of data type)
-    visibleDataTypes = nuRDataTypes
-    for data_type in list(nuRDataTypes):
-        if nuRDataTypes[data_type]['visible']==0:
-            del visibleDataTypes[data_type]
-    Items=visibleDataTypes.keys()
-    print(Items)
 
     def __init__(self,parent):
         super().__init__(parent)
+        self.Items = [x for x in nuRDataTypes.keys() if nuRDataTypes[x]['visible']]
         
     def createEditor(self, parent,option,idx):
         editor = QListWidget(parent)

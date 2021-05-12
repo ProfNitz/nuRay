@@ -14,10 +14,10 @@ Created on Tue Jun 25 13:10:00 2019
 
 #Names in mRay as keys, corresponding length in bytes, corresponding C-Type
 # code: # of the datatype in protocol
-nuRDataTypes={'float32':   {'len':4,'ctype':'float'  ,'packtype':'f','code':0x3,'visible':1},
-              'uint8':     {'len':1,'ctype':'uint8_t','packtype':'B','code':0x1,'visible':1},
-              'int16':     {'len':2,'ctype':'int16_t','packtype':'h','code':0x2,'visible':1},
-              'ctrl':      {'len':1,'ctype':'uint8_t','packtype':'B','code':0xf,'visible':0}}
+nuRDataTypes={'float32':   {'len':4,'ctype':'float'  ,'packtype':'f','code':0x3,'visible':True},
+              'uint8':     {'len':1,'ctype':'uint8_t','packtype':'B','code':0x1,'visible':True},
+              'int16':     {'len':2,'ctype':'int16_t','packtype':'h','code':0x2,'visible':True},
+              'ctrl':      {'len':1,'ctype':'uint8_t','packtype':'B','code':0xf,'visible':False}}
 
 # here the main module will store its directory, so other modules can
 # look for their stuff there
