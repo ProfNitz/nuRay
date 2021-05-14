@@ -13,8 +13,6 @@ import sys
 
 class UI(QWidget):
     arduinoNano = serial.Serial('COM10',115200)
-    LED1 = "LED1".encode('utf-8')
-    LED2 = "LED2".encode('utf-8')
     def __init__(self):
         QWidget.__init__(self)
         uic.loadUi("ArduinoTest.ui",self)
@@ -28,24 +26,28 @@ class UI(QWidget):
         self.pushButton.clicked.connect(self.led_Off)
     
     def initLED2(self):
-        self.dial.setMinimum(2)
+        self.dial.setMinimum(0)
         self.dial.setMaximum(255)
         self.dial.setNotchesVisible(True)
         self.dial.valueChanged.connect(self.spinBox.setValue)
-        self.spinBox.setMinimum(2)
+        self.dial.valueChanged.connect(self.led_ctrl)
+        self.spinBox.setMinimum(0)
         self.spinBox.setMaximum(255)
         self.spinBox.valueChanged.connect(self.dial.setValue)
         self.spinBox.valueChanged.connect(self.led_ctrl)
 
     def led_On(self):
+        self.arduinoNano.write(b'a')
         self.arduinoNano.write(bytes([1]))
         print("1 has been sent to arduino")
 
     def led_Off(self):
+        self.arduinoNano.write(b'a')
         self.arduinoNano.write(bytes([0]))
         print("0 has been sent to arduino")
         
     def led_ctrl(self):
+        self.arduinoNano.write(b'b')
         self.arduinoNano.write(bytes([self.dial.value()]))
         
     def closeEvent(self,event):

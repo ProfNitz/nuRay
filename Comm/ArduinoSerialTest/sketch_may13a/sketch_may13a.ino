@@ -1,6 +1,7 @@
-int test;
 #define LED1 5
 #define LED2 6
+const int BUF_SIZE = 2;
+char buf[BUF_SIZE];
 #include <avr/io.h>
 
 void init_pwm(void)
@@ -19,19 +20,24 @@ void setup() {
 void loop() {
   if(Serial.available()>0)
   {
-    test = Serial.read();
-    Serial.print(test);
-    if(test == 1)
-    {
-      PORTD |= _BV(LED1);
+    Serial.readBytes(buf,BUF_SIZE);
+    
+    switch(buf[0]){
+      case 'a':
+      switch(buf[1]){
+        case 0:
+        PORTD &= ~_BV(LED1);
+        break;
+        case 1:
+        PORTD |= _BV(LED1);
+        break;
+      }
+      break;
+
+      case 'b':
+      OCR0A = buf[1];
+      break;
+      }
+      
     }
-    else if(test == 0)
-    {
-      PORTD &= ~_BV(LED1);
-    }
-    else
-    {
-      OCR0A = test;
-    }
-  }
 }
