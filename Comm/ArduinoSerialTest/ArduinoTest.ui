@@ -40,7 +40,7 @@
         </sizepolicy>
        </property>
        <property name="title">
-        <string>LED1 PIND7</string>
+        <string>LED1 PIND5</string>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>

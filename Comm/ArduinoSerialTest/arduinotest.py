@@ -12,7 +12,7 @@ import sys
    
 
 class UI(QWidget):
-    arduinoNano = serial.Serial('COM10',115200)
+    arduinoNano = serial.Serial('COM11',115200)
     def __init__(self):
         QWidget.__init__(self)
         uic.loadUi("ArduinoTest.ui",self)
