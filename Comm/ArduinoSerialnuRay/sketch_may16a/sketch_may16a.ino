@@ -11,7 +11,7 @@ uint8_t buf[BUF_SIZE];
 uint8_t *p;
 uint8_t pack[MAX_PACK_LEN];
 uint8_t idx,k,i,x,sizeB;
-uint8_t len;
+uint8_t len, teststartflag;
 uint16_t cmd;
 uint8_t dtype;
 uint8_t recByte;
@@ -35,26 +35,28 @@ uint8_t checksum(uint8_t *buf, uint8_t len){
 void setup() {
   Serial.begin(115200);
   idx = 0;
-
   DDRD = _BV(LED);
-
 }
 
 void loop() {
   if(Serial.available()>0){
     while(Serial.available()>0){
-      uint8_t RecByte = Serial.read(); 
-      buf[idx]=RecByte;
-      Serial.print(buf[idx]);
-      idx++; 
-      if(buf[(uint8_t)idx]==STOPFLAG){
+      recByte = Serial.read();
+      //Serial.println(recByte);
+      buf[idx]=recByte;
+      //Serial.println(buf[idx]);  
+      if((buf[idx]) == STOPFLAG){
+        Serial.println("stopflag erkannt!");
         len = buf[(uint8_t)idx-1]&0x0f;
-        if ((buf[(uint8_t)(idx-(3+len))]==STARTFLAG)&&(len<=MAX_PACK_LEN)){
+        //Serial.println(len);
+        teststartflag = buf[(uint8_t)idx-(3+len)];
+        //Serial.println(teststartflag);
+        if ((buf[idx-(3+len)]==STARTFLAG)&&(len<=MAX_PACK_LEN)){
           for (k=idx-(2+len),p=pack,i=0;i<len+1;*(p++)=buf[k++],i++);
-          for (x=0;x<len;x++){
-            Serial.println(pack[x],HEX);
-          }
+          //Serial.println(pack[0]);
           if (checksum(pack,len)==buf[(uint8_t)(idx-2)]){
+            //Serial.println(checksum(pack,len));
+            //Serial.println(buf[(uint8_t)(idx-2)]);
              if(((*(uint8_t*)&pack[0])&0x0f)==0){ 
               setidx = 0;
              }
@@ -62,9 +64,7 @@ void loop() {
               setidx = 1;
              }
              int subidx = (*(uint16_t*)&pack[0])>>4;
-             Serial.println(subidx);
              dtype= (buf[idx-1])&0xf0;
-             Serial.print(dtype);
              switch (dtype){
               case 48:
               paramset[setidx].paramf[subidx] = *(float*)&pack[2];break;
@@ -75,9 +75,19 @@ void loop() {
               case 16: 
               paramset[setidx].param8[subidx] = *(uint8_t*)&pack[2];break;
              }
-             Serial.print(paramset[1].param8[24] == 121);
+           }
+           else{
+            Serial.println("kein gültiges paket wegen checksum!");
+            idx++;
            }
         }
+        else{
+          Serial.println("kein gültiges paket!");
+          idx++;
+        }
+      }
+      else{
+        idx++;
       }
     }
   }

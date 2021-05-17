@@ -11,6 +11,7 @@ import random
 import numpy as np
 from PyQt5.QtWidgets import QFileDialog, QWidget
 
+
 time_script_run = dtime.datetime.now().strftime('%d-%m-%Y %H-%M-%S')
 
 def GenerateData(parametercount,valrange):
@@ -89,4 +90,10 @@ def TestExistingFile():
 #TestData(300,300000)
 #GenerateAndTest(300,300000)
 #TestExistingFile()
-
+nuRSerial.listPorts()
+s = nuRSerial()
+s.port='COM7'
+s.connect()
+s.write(0,0,0,'uint8')
+s.write(1,24,121,'uint8')
+s.close()

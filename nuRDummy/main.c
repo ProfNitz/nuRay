@@ -58,6 +58,7 @@ DWORD WINAPI Work(LPVOID params) {
 				printf("\nreceived STOPFLAG: lets check if that is a valid package\n");
 				/* retrieve the len of the package from the corresponding byte (see protocoll spec) */
 				len=buf[(uint8_t)(idx-2)]&0x0f;
+				printf("\nlen ist: %d\n",len);
 
 				/* check length of package */
 				/* distance start-->stop vs. len and len vs. MAX_LEN*/
