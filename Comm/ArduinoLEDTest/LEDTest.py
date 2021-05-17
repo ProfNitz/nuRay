@@ -15,8 +15,8 @@ class UI(QWidget):
     arduinoNano = serial.Serial('COM7',115200)
     def __init__(self):
         QWidget.__init__(self)
-        uic.loadUi("ArduinoTest.ui",self)
-        self.setWindowTitle("ArduinoTest")
+        uic.loadUi("LEDTest.ui",self)
+        self.setWindowTitle("LEDTest")
         self.initLED1()
         self.initLED2()
         self.show()
