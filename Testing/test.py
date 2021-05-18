@@ -10,6 +10,7 @@ import datetime as dtime
 import random
 import numpy as np
 from PyQt5.QtWidgets import QFileDialog, QWidget
+import time
 
 
 time_script_run = dtime.datetime.now().strftime('%d-%m-%Y %H-%M-%S')
@@ -94,6 +95,7 @@ nuRSerial.listPorts()
 s = nuRSerial()
 s.port='COM7'
 s.connect()
+time.sleep(2)
 s.write(0,0,0,'uint8')
 s.write(1,24,121,'uint8')
 s.close()
