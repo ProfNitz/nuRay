@@ -68,12 +68,13 @@ class mRayParam(mRayAbstractItem):
 
     #these three memebers describe the interface to a Signal object
     #this should be the only place where you change it
-    header=['Param Nr','Name','Data Type','Min','Max']#Human readable names of members of mRayParam
-    properties=['paramnr','name','dataType','min','max']#relevant members of mRayParam (verbatim!)
-    pTypes=[str,str,float,float]
+    header=['Param Set','Param Nr','Name','Data Type','Min','Max']#Human readable names of members of mRayParam
+    properties=['paramset','paramnr','name','dataType','min','max']#relevant members of mRayParam (verbatim!)
+    pTypes=[int,int,str,str,float,float]
     def __init__(self,name):
         super().__init__()
         self.name=name
+        self.paramset = 1
         self.min=0.0
         self.max=1.0
         self.dataType='float32'

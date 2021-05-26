@@ -155,8 +155,12 @@ class MyApp(QMainWindow, nuRMainWindow):
     def SetIsSelected(self):
         if self.ChangeSet.isChecked():
             print("SET2 is selected.")
+            for x in self.AllMyParams.items:
+                x.paramset = 2
         else:
             print("SET1 is selected.")
+            for x in self.AllMyParams.items:
+                x.paramset = 1
         
     
     #NoNi: first rudimental reaction on Connection settings

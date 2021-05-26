@@ -136,7 +136,7 @@ class ParamSettingsWindow(QDialog):
         self.resize(450,210)
         self.lv = cParamTableView(self)
         self.lv.setGeometry(QRect(5,5,440,200))
-        self.lv.setItemDelegateForColumn(2,cDataTypeListDelegate(self.lv))
+        self.lv.setItemDelegateForColumn(3,cDataTypeListDelegate(self.lv))
 
         self.lv.setModel(AllParams)
         
