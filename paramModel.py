@@ -68,8 +68,8 @@ class mRayParam(mRayAbstractItem):
 
     #these three memebers describe the interface to a Signal object
     #this should be the only place where you change it
-    header=['Name','Data Type','Min','Max']#Human readable names of members of mRayParam
-    properties=['name','dataType','min','max']#relevant members of mRayParam (verbatim!)
+    header=['Param Nr','Name','Data Type','Min','Max']#Human readable names of members of mRayParam
+    properties=['paramnr','name','dataType','min','max']#relevant members of mRayParam (verbatim!)
     pTypes=[str,str,float,float]
     def __init__(self,name):
         super().__init__()
@@ -115,6 +115,7 @@ class cMRTableModel(QAbstractTableModel):
                 
         self.beginInsertRows(QModelIndex(),self.numI,self.numI)#parent is a default (empty) QModelIndex? Copied from an example
         newItem = self.itemClass(Name)
+        newItem.paramnr = self.numI
         self.items.append(newItem)
         self.numI+=1
         self.endInsertRows()
