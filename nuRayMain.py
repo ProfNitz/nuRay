@@ -252,6 +252,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             with io.open(file,'r',encoding='utf8') as f:
                 projSet=f.read()
             self.AllMyParams.load(projSet)
+            self.ParamSettings()
             self.AllMySignals.load(projSet)
             self.loadInstrPages(projSet)
             self.setTitle()            
@@ -348,7 +349,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             print(files)
             for f in files:
                 self.loadInstrPage(f)
-                
+
         
 if __name__ == "__main__":
     app = QApplication(sys.argv)

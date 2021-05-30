@@ -152,13 +152,13 @@ class nuRayInstr(QObject):
             #print('Slider: '+InstrWidget.objectName())
             InstrWidget.sliderMoved.connect(self.valueChanged)
         InstrWidget.valueChanged.connect(self.valueChanged)
-        
 
         #add context menu
         act = QAction("Connect to parameter...",InstrWidget) #parent is the instrument widget so the handler (InstrConnect) knows who triggered
         act.triggered.connect(self.InstrConnectParam)
         InstrWidget.addAction(act)
         InstrWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
+        
         
     def valueChanged(self):
         #print('sliderMoved to pos: '+str(self.instrWidget.sliderPosition())+' val: '+str(self.instrWidget.value()))
@@ -197,6 +197,10 @@ class nuRayInstr(QObject):
         self.Param.addInstr(self)
         self.label.setText(self.Param.name)
         self.label.setPalette(self.Page.paletteBlack)
+        self.instrWidget.setMinimum(self.Param.min)
+        self.instrWidget.setMaximum(self.Param.max)
+        self.instrWidget.valueChanged.connect(self.setParamVal)
+        
         
         #print(self.Param.name)
         
@@ -206,12 +210,17 @@ class nuRayInstr(QObject):
         y =me.y()+me.height()+2
         label = self.label.geometry()
         x = round(cx-label.width()*0.5)
-        self.label.setGeometry(QRect(x,y,label.width(),label.height()))
+        self.label.setGeometry(QRect(x-20,y,label.width()+40,label.height()))
+
         
     def paramSelected(self):
         param = self.Page.parent.AllMyParams.items[self.ParamConnList.currentRow()]
         self.ParamConnList.close()
         self.connectToParam(param)
+        
+    def setParamVal(self):
+        self.Param.val = self.instrWidget.value()
+
         
         
         

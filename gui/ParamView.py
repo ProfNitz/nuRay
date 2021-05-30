@@ -133,7 +133,7 @@ class ParamSettingsWindow(QDialog):
         #super(ParamSettingsWindow).__init__(self)
         #QDialog.__init__(self)
         super().__init__(parent)
-        self.resize(450,210)
+        self.resize(1450,500)
         self.lv = cParamTableView(self)
         self.lv.setGeometry(QRect(5,5,440,200))
         self.lv.setItemDelegateForColumn(3,cDataTypeListDelegate(self.lv))
