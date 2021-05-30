@@ -6,7 +6,8 @@
 #define STOPFLAG 0xff
 #define STARTFLAG 0xff
 #define BUF_SIZE 256
-#define LED 5
+#define LED1 5
+#define LED2 6
 uint8_t buf[BUF_SIZE]; 
 uint8_t *p;
 uint8_t pack[MAX_PACK_LEN];
@@ -35,7 +36,7 @@ uint8_t checksum(uint8_t *buf, uint8_t len){
 void setup() {
   Serial.begin(115200);
   idx = 0;
-  DDRD = _BV(LED);
+  DDRD = _BV(LED1) + _BV(LED2);
 }
 
 void loop() {
@@ -67,13 +68,13 @@ void loop() {
              dtype= (buf[idx-1])&0xf0;
              switch (dtype){
               case 48:
-              paramset[setidx].paramf[subidx] = *(float*)&pack[2];break;
+              paramset[setidx].paramf[subidx] = *(float*)&pack[2];idx++;break;
 
               case 32:
-              paramset[setidx].param16[subidx] = *(int16_t*)&pack[2];break;
+              paramset[setidx].param16[subidx] = *(int16_t*)&pack[2];idx++;break;
 
               case 16: 
-              paramset[setidx].param8[subidx] = *(uint8_t*)&pack[2];break;
+              paramset[setidx].param8[subidx] = *(uint8_t*)&pack[2];idx++;break;
              }
            }
            else{
@@ -92,6 +93,9 @@ void loop() {
     }
   }
   if(paramset[1].param8[24] == 121){
-    PORTD = _BV(LED);
+    PORTD = _BV(LED1);
+  }
+  if(paramset[1].paramf[12] == 123.76){
+    PORTD = _BV(LED2);
   }
 }

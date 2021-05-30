@@ -9,6 +9,9 @@ from PyQt5.QtCore import Qt, QObject
 from PyQt5.QtCore import QAbstractTableModel, QModelIndex
 from PyQt5.QtGui import QColor, QFont, QIcon, QPixmap
 import re
+import time
+
+from Comm.nuRSerialConn import nuRSerial
 
 class mRColor(QColor):
     def __init__(self,data):
@@ -88,6 +91,7 @@ class mRayParam(mRayAbstractItem):
         for i in self._instrList:
             i.disconnectFromParam()
         
+        
 
 
 class cMRTableModel(QAbstractTableModel):
@@ -125,6 +129,21 @@ class cMRTableModel(QAbstractTableModel):
         self.beginResetModel()#inform view that everthing is about to change
         self.items.sort(key = lambda x: x.name)
         self.endResetModel()
+    
+    def send(self):
+        s = nuRSerial()
+        s.port = 'COM11'
+        s.connect()
+        time.sleep(2)
+        for i in self.items:
+            if not i.dataType == 'float32':
+                i.val = int(i.val)
+            print(i.paramset)
+            print(i.paramnr)
+            print(i.val)
+            print(i.dataType)
+            s.write(i.paramset,i.paramnr,i.val,i.dataType)
+        s.close()
             
     def columnCount(self,parent):
         return len(self.itemClass.properties)

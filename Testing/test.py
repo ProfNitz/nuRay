@@ -93,9 +93,11 @@ def TestExistingFile():
 #TestExistingFile()
 nuRSerial.listPorts()
 s = nuRSerial()
-s.port='COM7'
+s.port='COM11'
 s.connect()
 time.sleep(2)
 s.write(0,0,0,'uint8')
 s.write(1,24,121,'uint8')
+#s.write(0,24,123,'uint8')
+s.write(1,12,123.76,'float32')
 s.close()

@@ -1,0 +1,9 @@
+<Parameters>
+0;0;a;uint8;0.0;1.0;0
+1;24;test1;uint8;0.0;1.0;121
+0;12;test2;float32;0.0;1.0;123.76
+<\Parameters>
+<Signals>
+<\Signals>
+<Instrument Pages>
+<\Instrument Pages>

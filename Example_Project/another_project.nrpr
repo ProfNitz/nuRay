@@ -1,8 +1,8 @@
 <Parameters>
-1;0;kD;float32;0.0;1.0
-1;1;kI;float32;0.0;1.0
-1;2;kR;float32;0.0;1.0
-1;3;kP;float32;0.0;1.0
+1;0;kD;float32;0.0;200.0;0.0
+1;1;kI;float32;0.0;400.0;0.0
+1;2;kR;float32;0.0;300.0;0.0
+1;3;kP;float32;0.0;600.0;0.0
 <\Parameters>
 <Signals>
 <\Signals>
