@@ -176,9 +176,9 @@ class cMRTableModel(QAbstractTableModel):
         if res:
             paramSettings = res.group(1)
             for l in paramSettings.splitlines():
-                name = l.split(';')[0]
+                name = l.split(';')[2]
                 if name not in [i.name for i in self.items]:#avoid duplicates
-                    self.newItem(l.split(';')[0])#name must always be first in itemClass.properties
+                    self.newItem(l.split(';')[2])#name must always be first in itemClass.properties
                     self.items[-1].fillProps(l)
         self.endResetModel()
     

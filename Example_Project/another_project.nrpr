@@ -1,0 +1,10 @@
+<Parameters>
+1;0;kD;float32;0.0;1.0
+1;1;kI;float32;0.0;1.0
+1;2;kR;float32;0.0;1.0
+<\Parameters>
+<Signals>
+<\Signals>
+<Instrument Pages>
+Example_Project\anotherPage.ui;1956;943
+<\Instrument Pages>

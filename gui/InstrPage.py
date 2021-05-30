@@ -8,12 +8,13 @@ Created on Wed Jun  5 23:35:26 2019
 import inspect #for debugging
 from PyQt5 import uic
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QDialog, QWidget, QAction, QAbstractSlider
+from PyQt5.QtWidgets import QDialog, QWidget, QAction, QAbstractSlider, QDoubleSpinBox
 from PyQt5.QtWidgets import QListWidget, QListWidgetItem, QLabel, QMessageBox
 from PyQt5.QtGui import QPalette, QBrush, QColor
 from PyQt5.QtCore import QObject, QRect
 import os
 import io
+
 
 
 #generic page filled with pyqt designer ui
@@ -37,6 +38,10 @@ class cInstrPage(QDialog):
         self.setFixedSize(self.size())        
         
         self.instrList=[]
+        self.spinBoxes=[]
+        self.nameOfSpinBoxes=[]
+        self.userDials=[]
+        self.dialCount = 0
         
         
         
@@ -63,6 +68,20 @@ class cInstrPage(QDialog):
                 #print(i.objectName() + ' : ' + i.parent().objectName())
                 nuRInstr = nuRayInstr(i,self)
                 self.instrList.append(nuRInstr)
+                #print(self.instrList)
+                if isinstance(i,QDoubleSpinBox):
+                    self.spinBoxes.append(i)
+                    self.nameOfSpinBoxes.append(i.objectName())
+                    #print(self.spinBoxes)
+                    #print(self.nameOfSpinBoxes)
+                if isinstance(i,QAbstractSlider):
+                    self.userDials.append(i)
+                    self.dialCount += 1
+                    #print(self.userDials)    
+        for x in range(self.dialCount-1):
+            self.userDials[x].valueChanged.connect(self.spinBoxes[x].setValue)
+            self.spinBoxes[x].valueChanged.connect(self.userDials[x].setValue)
+            
 
         #contextMenu
         saveAct = QAction('Save Connections',self)
@@ -132,7 +151,7 @@ class ParamSelectListWidget(QListWidget):
             self.close()
         else:
             super().keyPressEvent(event)
-        
+     
 
 class nuRayInstr(QObject):
     notConnected='<not connected>'
@@ -152,14 +171,19 @@ class nuRayInstr(QObject):
             #print('Slider: '+InstrWidget.objectName())
             InstrWidget.sliderMoved.connect(self.valueChanged)
         InstrWidget.valueChanged.connect(self.valueChanged)
-
         
 
         #add context menu
-        act = QAction("Connect to ...",InstrWidget) #parent is the instrument widget so the handler (InstrConnect) knows who triggered
-        act.triggered.connect(self.InstrConnect)
+        act = QAction("Connect to parameter...",InstrWidget) #parent is the instrument widget so the handler (InstrConnect) knows who triggered
+        act.triggered.connect(self.InstrConnectParam)
         InstrWidget.addAction(act)
         InstrWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
+        
+        if isinstance(InstrWidget,QAbstractSlider):
+            act2 = QAction("Connect to spinbox...",InstrWidget)
+            act2.triggered.connect(self.InstrConnectSpinBox)
+            InstrWidget.addAction(act2)
+            InstrWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
     
     def valueChanged(self):
         #print('sliderMoved to pos: '+str(self.instrWidget.sliderPosition())+' val: '+str(self.instrWidget.value()))
@@ -175,7 +199,7 @@ class nuRayInstr(QObject):
         self.label.setText(self.Param)
         
     # Conetxt Menu Handler, connect Instr to a Parameter
-    def InstrConnect(self):
+    def InstrConnectParam(self):
         if self.Page.parent.AllMyParams.rowCount(self.Page.parent) == 0:
             self.ListEmpty = QMessageBox()
             self.ListEmpty.setIcon(QMessageBox.Information)
@@ -215,6 +239,25 @@ class nuRayInstr(QObject):
         param = self.Page.parent.AllMyParams.items[self.ParamConnList.currentRow()]
         self.ParamConnList.close()
         self.connectToParam(param)
+        
+    
+    def InstrConnectSpinBox(self):
+        self.spinBoxSelecter = ParamSelectListWidget(self.Page)
+        for i in self.Page.nameOfSpinBoxes:
+            self.spinBoxSelecter.addItem(QListWidgetItem(i))
+            self.spinBoxSelecter.itemDoubleClicked.connect(self.spinBoxSelected)
+            self.spinBoxSelecter.show()
+        
+    def spinBoxSelected(self):
+        spinbox = self.Page.spinBoxes[self.spinBoxSelecter.currentRow()]
+        self.spinBoxSelecter.close()
+        self.connectToSpinBox(spinbox)
+        
+    def connectToSpinBox(self,spinbox):
+        self.instrWidget.valueChanged.connect(spinbox.setValue)
+        spinbox.valueChanged.connect(self.instrWidget.setValue)
+            
+                
         
         
         
