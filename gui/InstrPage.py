@@ -38,12 +38,6 @@ class cInstrPage(QDialog):
         self.setFixedSize(self.size())        
         
         self.instrList=[]
-        self.spinBoxes=[]
-        self.nameOfSpinBoxes=[]
-        self.userDials=[]
-        self.dialCount = 0
-        
-        
         
         #create palettes for labels (black and red)
         self.paletteRed = QPalette()
@@ -69,20 +63,7 @@ class cInstrPage(QDialog):
                 nuRInstr = nuRayInstr(i,self)
                 self.instrList.append(nuRInstr)
                 #print(self.instrList)
-                if isinstance(i,QDoubleSpinBox):
-                    self.spinBoxes.append(i)
-                    self.nameOfSpinBoxes.append(i.objectName())
-                    #print(self.spinBoxes)
-                    #print(self.nameOfSpinBoxes)
-                if isinstance(i,QAbstractSlider):
-                    self.userDials.append(i)
-                    self.dialCount += 1
-                    #print(self.userDials)    
-        for x in range(self.dialCount-1):
-            self.userDials[x].valueChanged.connect(self.spinBoxes[x].setValue)
-            self.spinBoxes[x].valueChanged.connect(self.userDials[x].setValue)
-            
-
+ 
         #contextMenu
         saveAct = QAction('Save Connections',self)
         saveAct.triggered.connect(self.save)
@@ -179,12 +160,6 @@ class nuRayInstr(QObject):
         InstrWidget.addAction(act)
         InstrWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
         
-        if isinstance(InstrWidget,QAbstractSlider):
-            act2 = QAction("Connect to spinbox...",InstrWidget)
-            act2.triggered.connect(self.InstrConnectSpinBox)
-            InstrWidget.addAction(act2)
-            InstrWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
-    
     def valueChanged(self):
         #print('sliderMoved to pos: '+str(self.instrWidget.sliderPosition())+' val: '+str(self.instrWidget.value()))
         #update all widgets with the same Parameter connected
@@ -233,31 +208,10 @@ class nuRayInstr(QObject):
         x = round(cx-label.width()*0.5)
         self.label.setGeometry(QRect(x,y,label.width(),label.height()))
         
-        
-        
     def paramSelected(self):
         param = self.Page.parent.AllMyParams.items[self.ParamConnList.currentRow()]
         self.ParamConnList.close()
         self.connectToParam(param)
-        
-    
-    def InstrConnectSpinBox(self):
-        self.spinBoxSelecter = ParamSelectListWidget(self.Page)
-        for i in self.Page.nameOfSpinBoxes:
-            self.spinBoxSelecter.addItem(QListWidgetItem(i))
-            self.spinBoxSelecter.itemDoubleClicked.connect(self.spinBoxSelected)
-            self.spinBoxSelecter.show()
-        
-    def spinBoxSelected(self):
-        spinbox = self.Page.spinBoxes[self.spinBoxSelecter.currentRow()]
-        self.spinBoxSelecter.close()
-        self.connectToSpinBox(spinbox)
-        
-    def connectToSpinBox(self,spinbox):
-        self.instrWidget.valueChanged.connect(spinbox.setValue)
-        spinbox.valueChanged.connect(self.instrWidget.setValue)
-            
-                
         
         
         

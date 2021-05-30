@@ -171,6 +171,7 @@ class cMRTableModel(QAbstractTableModel):
         return res
     def load(self,txt):
         self.beginResetModel()#inform view that everthing is about to change
+        self.items = []
         myr = re.compile(r'<'+self.saveTag+r'>\n(.+)<\\'+self.saveTag+r'>',re.DOTALL)#the dot also matches newlines
         res=myr.search(txt)
         if res:
