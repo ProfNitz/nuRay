@@ -127,19 +127,18 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.projectFile = 'untitled Project'
         self.setTitle()
         
-        
         self.AllMyParams = cParamTableModel(None) #table model so it can be processed by QTableView
         self.AllMySignals = cSignalTableModel(None)
         #NiNa: self.Serial = class nuRSerial() from nuRSerialConn.py
         self.Serial = nuRSerial()
+        
+    
           
     def Connect(self):        
         #NiNa: notice above, initial status: disconnected
         if not self.connected:
             try:
                 self.Serial.connect()
-                self.AllMyParams.sendparam = self.Serial
-                #NiNa: is_open: Returns True if the serial port has been opened
                 if self.Serial.is_open():
                     self.connected=True
             except:
@@ -272,6 +271,8 @@ class MyApp(QMainWindow, nuRMainWindow):
         else:
             self.ParamSettingsDialog.activateWindow()
         self.ParamSettingsDialog.setWindowTitle("parameters")
+        self.AllMyParams.sendparam = self.Serial
+
 
     def SignalSettings(self):
         if self.SignalSettingsDialog==None or not self.SignalSettingsDialog.isVisible():
@@ -330,9 +331,12 @@ class MyApp(QMainWindow, nuRMainWindow):
         if ip:
             ip.activateWindow()
         else:
-            newInstrP = cInstrPage(self,fn,pos)
-            self.InstrPageList.append(newInstrP)
-            newInstrP.show()
+            self.newInstrP = cInstrPage(self,fn,pos)
+            self.InstrPageList.append(self.newInstrP)
+            self.newInstrP.show()
+            for i in self.InstrPageList:
+                for x in i.instrList:
+                    x.livesend = self.Serial
         
         
     def OpenInstr(self):

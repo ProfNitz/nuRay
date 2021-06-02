@@ -38,7 +38,7 @@ class cInstrPage(QDialog):
         self.setFixedSize(self.size())        
         
         self.instrList=[]
-        
+                
         #create palettes for labels (black and red)
         self.paletteRed = QPalette()
         brush = QBrush(QColor(200, 120, 120))
@@ -60,8 +60,8 @@ class cInstrPage(QDialog):
         for i in instrWidgets:
             if self.objectName()==i.parent().objectName():
                 #print(i.objectName() + ' : ' + i.parent().objectName())
-                nuRInstr = nuRayInstr(i,self)
-                self.instrList.append(nuRInstr)
+                self.nuRInstr = nuRayInstr(i,self)
+                self.instrList.append(self.nuRInstr)
                 #print(self.instrList)
  
         #contextMenu
@@ -146,6 +146,8 @@ class nuRayInstr(QObject):
 
         self.Param=self.notConnected
         self.disconnectFromParam()
+        
+        self.livesend = None
 
         #add slots for user input
         if isinstance(InstrWidget,QAbstractSlider):
@@ -200,6 +202,7 @@ class nuRayInstr(QObject):
         self.instrWidget.setMinimum(self.Param.min)
         self.instrWidget.setMaximum(self.Param.max)
         self.instrWidget.valueChanged.connect(self.setParamVal)
+        self.instrWidget.valueChanged.connect(self.sendVal)
         
         
         #print(self.Param.name)
@@ -220,6 +223,12 @@ class nuRayInstr(QObject):
         
     def setParamVal(self):
         self.Param.val = self.instrWidget.value()
+
+    def sendVal(self):
+        if not self.Param.dataType == 'float32':
+            self.Param.val = int(self.Param.val)
+        print(self.Param.val)
+        self.livesend.write(self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
 
         
         
