@@ -73,7 +73,7 @@ class mRayParam(mRayAbstractItem):
     #this should be the only place where you change it
     header=['Param Nr','Name','Data Type','Min','Max','Value']#Human readable names of members of mRayParam
     properties=['paramnr','name','dataType','min','max','val']#relevant members of mRayParam (verbatim!)
-    pTypes=[int,int,str,str,float,float,float]
+    pTypes=[int,str,str,float,float,float]
     def __init__(self,name):
         super().__init__()
         self.name=name
@@ -134,10 +134,6 @@ class cMRTableModel(QAbstractTableModel):
         self.endResetModel()
     
     def send(self):
-        s = nuRSerial()
-        s.port = 'COM11'
-        s.connect()
-        time.sleep(2)
         for i in self.items:
             if not i.dataType == 'float32':
                 i.val = int(i.val)
@@ -145,8 +141,7 @@ class cMRTableModel(QAbstractTableModel):
             print(i.paramnr)
             print(i.val)
             print(i.dataType)
-            s.write(i.paramset,i.paramnr,i.val,i.dataType)
-        s.close()
+            self.sendparam.write(i.paramset,i.paramnr,i.val,i.dataType)
             
     def columnCount(self,parent):
         return len(self.itemClass.properties)

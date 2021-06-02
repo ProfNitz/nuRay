@@ -1,9 +1,10 @@
 <Parameters>
-0;0;a;uint8;0.0;1.0;0
-1;24;test1;uint8;0.0;1.0;121
-0;12;test2;float32;0.0;1.0;123.76
+0;New;float32;0.0;0.0;0.0
+1;New2;uint8;0.0;122.0;121
+2;New3;float32;0.0;124.0;123.76
 <\Parameters>
 <Signals>
 <\Signals>
 <Instrument Pages>
+Example_Project\thirdPage.ui;865;562
 <\Instrument Pages>

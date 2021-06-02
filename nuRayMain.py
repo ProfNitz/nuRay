@@ -122,7 +122,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.ParamSettingsDialog = None
         self.SignalSettingsDialog = None
         self.ConnSetDlg = None
-        
+                
         #NiNa: add projectFile name to title
         self.projectFile = 'untitled Project'
         self.setTitle()
@@ -133,11 +133,12 @@ class MyApp(QMainWindow, nuRMainWindow):
         #NiNa: self.Serial = class nuRSerial() from nuRSerialConn.py
         self.Serial = nuRSerial()
           
-    def Connect(self):
+    def Connect(self):        
         #NiNa: notice above, initial status: disconnected
         if not self.connected:
             try:
                 self.Serial.connect()
+                self.AllMyParams.sendparam = self.Serial
                 #NiNa: is_open: Returns True if the serial port has been opened
                 if self.Serial.is_open():
                     self.connected=True

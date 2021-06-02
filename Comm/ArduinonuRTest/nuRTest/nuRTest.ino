@@ -92,10 +92,10 @@ void loop() {
       }
     }
   }
-  if(paramset[1].param8[24] == 121){
+  if(paramset[1].param8[1] == 121){
     PORTD = _BV(LED1);
   }
-  if(paramset[1].paramf[12] == 123.76){
+  if(paramset[1].paramf[2] == 123.76){
     PORTD = _BV(LED2);
   }
 }
