@@ -1,7 +1,8 @@
 <Parameters>
 0;New;float32;0.0;0.0;0.0
 1;New2;uint8;0.0;122.0;121
-2;New3;float32;0.0;124.0;123.76
+2;New3;float32;0.0;124.0;10.5
+3;New4;uint8;0.0;255.0;0
 <\Parameters>
 <Signals>
 <\Signals>

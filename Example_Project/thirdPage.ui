@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>339</width>
-    <height>272</height>
+    <width>927</width>
+    <height>588</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,10 +22,10 @@
   <widget class="QDial" name="dial1">
    <property name="geometry">
     <rect>
-     <x>40</x>
-     <y>40</y>
-     <width>81</width>
-     <height>81</height>
+     <x>60</x>
+     <y>100</y>
+     <width>201</width>
+     <height>201</height>
     </rect>
    </property>
    <property name="wrapping">
@@ -38,10 +38,10 @@
   <widget class="QDoubleSpinBox" name="doubleSpinBox1">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>160</y>
-     <width>62</width>
-     <height>22</height>
+     <x>520</x>
+     <y>440</y>
+     <width>301</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="sizePolicy">
@@ -50,14 +50,17 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
+   <property name="singleStep">
+    <double>0.250000000000000</double>
+   </property>
   </widget>
   <widget class="QDial" name="dial2">
    <property name="geometry">
     <rect>
-     <x>160</x>
-     <y>40</y>
-     <width>81</width>
-     <height>81</height>
+     <x>530</x>
+     <y>110</y>
+     <width>271</width>
+     <height>211</height>
     </rect>
    </property>
    <property name="wrapping">
@@ -71,9 +74,9 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>160</y>
-     <width>62</width>
-     <height>22</height>
+     <y>440</y>
+     <width>271</width>
+     <height>31</height>
     </rect>
    </property>
    <property name="sizePolicy">

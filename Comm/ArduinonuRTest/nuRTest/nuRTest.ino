@@ -8,6 +8,7 @@
 #define BUF_SIZE 256
 #define LED1 5
 #define LED2 6
+#define LED3 7
 uint8_t buf[BUF_SIZE]; 
 uint8_t *p;
 uint8_t pack[MAX_PACK_LEN];
@@ -26,6 +27,13 @@ typedef struct {
 
 PSET paramset[2];
 
+void init_pwm(void)
+{ 
+TCCR0A = _BV(COM0A1) + _BV(WGM00) + _BV(WGM01); // S. 139f., Tab. 19-5/-9
+TCCR0B = _BV(CS00) + _BV(CS01); // Datenblatt S. 142, Tab. 19-10
+OCR0A = 0; // Tastgrad
+}
+
 uint8_t checksum(uint8_t *buf, uint8_t len){
   uint16_t res=0;
   uint8_t k;
@@ -36,7 +44,8 @@ uint8_t checksum(uint8_t *buf, uint8_t len){
 void setup() {
   Serial.begin(115200);
   idx = 0;
-  DDRD = _BV(LED1) + _BV(LED2);
+  DDRD = _BV(LED1) + _BV(LED2) + _BV(LED3);
+  init_pwm();
 }
 
 void loop() {
@@ -93,9 +102,16 @@ void loop() {
     }
   }
   if(paramset[1].param8[1] == 121){
-    PORTD = _BV(LED1);
+    PORTD |= _BV(LED1);
   }
-  if(paramset[1].paramf[2] == 123.76){
-    PORTD = _BV(LED2);
+  else{
+    PORTD &= ~_BV(LED1);
   }
+  if(paramset[1].paramf[2] == 12.25){
+    PORTD |= _BV(LED3);
+  }
+  else{
+    PORTD &= ~_BV(LED3);
+  }
+  OCR0A = paramset[1].param8[3];
 }

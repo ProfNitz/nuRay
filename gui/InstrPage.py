@@ -60,8 +60,8 @@ class cInstrPage(QDialog):
         for i in instrWidgets:
             if self.objectName()==i.parent().objectName():
                 #print(i.objectName() + ' : ' + i.parent().objectName())
-                self.nuRInstr = nuRayInstr(i,self)
-                self.instrList.append(self.nuRInstr)
+                nuRInstr = nuRayInstr(i,self)
+                self.instrList.append(nuRInstr)
                 #print(self.instrList)
  
         #contextMenu
