@@ -71,13 +71,13 @@ class mRayParam(mRayAbstractItem):
 
     #these three memebers describe the interface to a Signal object
     #this should be the only place where you change it
-    header=['Param Set','Param Nr','Name','Data Type','Min','Max','Value']#Human readable names of members of mRayParam
-    properties=['paramset','paramnr','name','dataType','min','max','val']#relevant members of mRayParam (verbatim!)
+    header=['Param Nr','Name','Data Type','Min','Max','Value']#Human readable names of members of mRayParam
+    properties=['paramnr','name','dataType','min','max','val']#relevant members of mRayParam (verbatim!)
     pTypes=[int,int,str,str,float,float,float]
     def __init__(self,name):
         super().__init__()
         self.name=name
-        self.paramset = 1
+        self.paramset = 0
         self.min=0.0
         self.max=1.0
         self.val = self.min
@@ -102,7 +102,10 @@ class cMRTableModel(QAbstractTableModel):
     def itemNames(self):
         return [x.name for x in self.items] #wow, my first list comprehension
     def flags(self,idx):
-        return Qt.ItemIsSelectable|Qt.ItemIsEditable|Qt.ItemIsEnabled
+        if idx.column() in range(1,5,1):
+            return Qt.ItemIsSelectable|Qt.ItemIsEditable|Qt.ItemIsEnabled
+        if idx.column() == 0 or idx.column() == 5:
+            return Qt.ItemIsEnabled
     def removeItem(self,row):
         self.beginRemoveRows(QModelIndex(),row,row)
         self.items[row].disconnect()

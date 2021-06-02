@@ -17,7 +17,7 @@ class ChangeSet(QtWidgets.QPushButton):
         self.setMinimumHeight(22)
 
     def paintEvent(self, event):
-        label = "SET2" if self.isChecked() else "SET1"
+        label = "SET1" if self.isChecked() else "SET0"
         bg_color = Qt.white
 
         radius = 10

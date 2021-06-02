@@ -154,13 +154,13 @@ class MyApp(QMainWindow, nuRMainWindow):
     #NiNa: printing which set is selected in terminal.    
     def SetIsSelected(self):
         if self.ChangeSet.isChecked():
-            print("SET2 is selected.")
-            for x in self.AllMyParams.items:
-                x.paramset = 2
-        else:
             print("SET1 is selected.")
             for x in self.AllMyParams.items:
                 x.paramset = 1
+        else:
+            print("SET0 is selected.")
+            for x in self.AllMyParams.items:
+                x.paramset = 0
         
     
     #NoNi: first rudimental reaction on Connection settings
