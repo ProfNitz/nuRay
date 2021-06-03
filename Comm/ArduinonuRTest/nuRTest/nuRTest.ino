@@ -51,8 +51,13 @@ void setup() {
   init_pwm();
 }
 
-void loop() {
+void sendSet() {
   Serial.write(ACTIVE);
+}
+
+
+void loop() {
+  sendSet();
   if(Serial.available()>0){
     while(Serial.available()>0){
       recByte = Serial.read();

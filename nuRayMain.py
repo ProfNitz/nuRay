@@ -132,6 +132,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.AllMySignals = cSignalTableModel(None)
         #NiNa: self.Serial = class nuRSerial() from nuRSerialConn.py
         self.Serial = nuRSerial()
+
         
              
     def Connect(self):        
@@ -141,6 +142,7 @@ class MyApp(QMainWindow, nuRMainWindow):
                 self.Serial.connect()
                 if self.Serial.is_open():
                     self.connected=True
+                    #self.SetIsSelected()
             except:
                 pass
         pass
@@ -153,16 +155,17 @@ class MyApp(QMainWindow, nuRMainWindow):
     
     #NiNa: printing which set is selected in terminal.    
     def SetIsSelected(self):
+        SetIsActive = self.Serial.readSet()
         prompt = "(active)"
         if self.ChangeSet.isChecked():
-            if self.Serial.readSet() == 1:
+            if SetIsActive == 1:
                 print("SET1 " + prompt + " is selected.")
             else:
                 print("SET1 is selected.")
             for x in self.AllMyParams.items:
                 x.paramset = 1
         else:
-            if self.Serial.readSet() == 0:
+            if SetIsActive == 0:
                 print("SET0 " + prompt + " is selected.")
             else:
                 print("SET0 is selected.")
