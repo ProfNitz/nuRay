@@ -13,6 +13,7 @@ from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QDialog
 from PyQt5.QtCore import QPoint
 import re
+import time
 
 
 #my own modules 
@@ -132,8 +133,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         #NiNa: self.Serial = class nuRSerial() from nuRSerialConn.py
         self.Serial = nuRSerial()
         
-    
-          
+             
     def Connect(self):        
         #NiNa: notice above, initial status: disconnected
         if not self.connected:
@@ -153,12 +153,19 @@ class MyApp(QMainWindow, nuRMainWindow):
     
     #NiNa: printing which set is selected in terminal.    
     def SetIsSelected(self):
+        prompt = "(active)"
         if self.ChangeSet.isChecked():
-            print("SET1 is selected.")
+            if self.Serial.readSet() == 1:
+                print("SET1 " + prompt + " is selected.")
+            else:
+                print("SET1 is selected.")
             for x in self.AllMyParams.items:
                 x.paramset = 1
         else:
-            print("SET0 is selected.")
+            if self.Serial.readSet() == 0:
+                print("SET0 " + prompt + " is selected.")
+            else:
+                print("SET0 is selected.")
             for x in self.AllMyParams.items:
                 x.paramset = 0
         

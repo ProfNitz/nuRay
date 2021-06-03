@@ -9,6 +9,9 @@
 #define LED1 5
 #define LED2 6
 #define LED3 7
+
+#define ACTIVE 1
+
 uint8_t buf[BUF_SIZE]; 
 uint8_t *p;
 uint8_t pack[MAX_PACK_LEN];
@@ -49,6 +52,7 @@ void setup() {
 }
 
 void loop() {
+  Serial.write(ACTIVE);
   if(Serial.available()>0){
     while(Serial.available()>0){
       recByte = Serial.read();
@@ -101,17 +105,17 @@ void loop() {
       }
     }
   }
-  if(paramset[1].param8[1] == 121){
+  if(paramset[ACTIVE].param8[1] == 121){
     PORTD |= _BV(LED1);
   }
   else{
     PORTD &= ~_BV(LED1);
   }
-  if(paramset[1].paramf[2] == 12.25){
+  if(paramset[ACTIVE].paramf[2] == 12.25){
     PORTD |= _BV(LED3);
   }
   else{
     PORTD &= ~_BV(LED3);
   }
-  OCR0A = paramset[1].param8[3];
+  OCR0A = paramset[ACTIVE].param8[3];
 }

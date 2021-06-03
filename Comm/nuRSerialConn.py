@@ -28,6 +28,11 @@ class nuRSerial(object):
     
     def close(self):
         self.s.close()
+        
+    def readSet(self):
+        bActiveSet = self.s.read()
+        activeSet = int.from_bytes(bActiveSet, "big")
+        return activeSet
 
     @classmethod
     def listPorts(cls):

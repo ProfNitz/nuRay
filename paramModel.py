@@ -9,7 +9,6 @@ from PyQt5.QtCore import Qt, QObject
 from PyQt5.QtCore import QAbstractTableModel, QModelIndex
 from PyQt5.QtGui import QColor, QFont, QIcon, QPixmap
 import re
-import time
 
 from Comm.nuRSerialConn import nuRSerial
 

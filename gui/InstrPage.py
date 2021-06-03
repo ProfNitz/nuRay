@@ -199,6 +199,8 @@ class nuRayInstr(QObject):
         self.Param.addInstr(self)
         self.label.setText(self.Param.name)
         self.label.setPalette(self.Page.paletteBlack)
+        self.Param.min = self.instrWidget.minimum()
+        self.Param.max = self.instrWidget.maximum()
         self.instrWidget.setMinimum(self.Param.min)
         self.instrWidget.setMaximum(self.Param.max)
         self.instrWidget.valueChanged.connect(self.setParamVal)
@@ -225,11 +227,13 @@ class nuRayInstr(QObject):
         self.Param.val = self.instrWidget.value()
 
     def sendVal(self):
-        if not self.Param.dataType == 'float32':
-            self.Param.val = int(self.Param.val)
-        print(self.Param.val)
-        self.livesend.write(self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
-
+        try:
+            if not self.Param.dataType == 'float32':
+                self.Param.val = int(self.Param.val)
+            print(self.Param.val)
+            self.livesend.write(self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
+        except AttributeError:
+            print("Please connect to port to send data!")
         
         
         
