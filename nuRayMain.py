@@ -217,23 +217,29 @@ class MyApp(QMainWindow, nuRMainWindow):
             
     def loadInstrPages(self,txt):
         #process <Instrument Pages>-tag from project file and open them all
+        #cwd = os.getcwd()
         myr = re.compile(r'<Instrument Pages>\n(.+)<\\Instrument Pages>',re.DOTALL)#the dot also matches newlines
         res=myr.search(txt)
         if res:
             pageSettings = res.group(1)
+            print(pageSettings)
             for l in pageSettings.splitlines():
                 ps = l.split(';')
                 try:
                     self.loadInstrPage(ps[0],QPoint(int(ps[1]),int(ps[2])))
                 except FileNotFoundError:
-                    _,fn=os.path.split(ps[0])
-                    SearchInfo = QMessageBox.information(self,
-                                   'File '+ fn +' not found',
-                                   'Project wants to open the Instrument Page:\n\n'+
-                                   fn+
-                                   '\n\nPlease help to find this file!',
-                                   QMessageBox.Ok)
-                    self.OpenInstr()
+                    try:
+                        psmacOs = ps[0].replace("\\","/")
+                        self.loadInstrPage(psmacOs,QPoint(int(ps[1]),int(ps[2])))
+                    except FileNotFoundError:
+                        _,fn=os.path.split(ps[0])
+                        SearchInfo = QMessageBox.information(self,
+                                                             'File '+ fn +' not found',
+                                                             'Project wants to open the Instrument Page:\n\n'+
+                                                             fn+
+                                                             '\n\nPlease help to find this file!',
+                                                             QMessageBox.Ok)
+                        self.OpenInstr()
                     
     def OpenProject(self):
         file,_ = QFileDialog.getOpenFileName(self,
