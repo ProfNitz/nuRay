@@ -28,64 +28,51 @@ from SwitchCustomWidget import ChangeSet
 
 
 #NoNi: load main window ui from QtDesigner file
-#NiNa: uic.loadUiType("...") returns a tupel: reference to python class, base class
 nuRMainWindow, QtBaseClass = uic.loadUiType("nuRMainWindow.ui")
 nuRConnSetDialogUi, QtBaseClass = uic.loadUiType("nuRConnSettingsDialog.ui")
        
 #NoNi: get directory of this python file, here other modules will look for their stuff
 G.nuRDir,_ = os.path.split(__file__)
 
-#NiNa: creating class with parent classes 'QDialog' and 'nuRConnSetDialogUi'
 class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
     def __init__(self,parent):
-        #NiNa: initialize access to attributes of parent classes
         QDialog.__init__(self)
         nuRConnSetDialogUi.__init__(self)
         self.parent = parent
-        #NiNa: uic.loadUiType("...").setupUi
         self.setupUi(self)
-        #NiNa: Comm.nuRSerialConn -> nuRSerial -> listPorts()
-        #NiNa: listPorts() erzeugt Liste der COM-Ports
-        #NiNa: c_long = ['COM8 - com0com - serial port emulator CNCA2 (COM8)',
-        #NiNa:           'COM9 - com0com - serial port emulator CNCB2 (COM9)']
         c_long = nuRSerial.listPorts()
-        #NiNa: conboBox has void and c_long as options
         # NoNi: + concatenates lists;
         # so we get an empty item [' '] and everthing from c_long
         self.comboBox.addItems([' ']+c_long)
-        #NiNa: shortening c_long to COM_ and storing in c_short
-        #NiNa: c_short = ['COM8', 'COM9']
-        c_short = [re.findall('^COM\d+',c)[0] for c in c_long]
-        #NiNa: if currently selected port is in c_short-list, select it in comboBox 
+        #c_short = [re.findall('^COM\d+',c)[0] for c in c_long]
+        c_short = []
+        for c in c_long:
+            c_split = c.split(" ")
+            c_short.append(c_split[0])
         if self.parent.Serial.port in c_short:
             idx = c_short.index(self.parent.Serial.port)
-            #NiNa: ??? why +1? without +1 it works fine
             # NoNi: idx is index into c_short. comboBox, however, has an extra empty
             # item at idx = 0
             self.comboBox.setCurrentIndex(idx+1)
         #NoNi: connect method setPort to the event currentIndexChanged
         self.comboBox.currentIndexChanged.connect(self.setPort)
-        #NiNa: default is hidden
         self.show()
-        
-    #NiNa: method setPort    
+
+    
     def setPort(self):
-        #NiNa: currently selected option in ComboBox
         c = self.comboBox.currentText()
-        #NiNa: self.parent.Serial.port = currently selected option with COM_ in its name
+        c_split = c.split(" ")
+        c_port = c_split[0]
         try:
-            self.parent.Serial.port = re.findall('^COM\d+',c)[0]
-        #NiNa: currently selected option has no COM_ in its name: self.parent.Serial.port = None
+            #self.parent.Serial.port = re.findall('^COM\d+',c)[0]
+            self.parent.Serial.port = c_port
         except:
             self.parent.Serial.port = None;
-        #NiNa: print "None selected" or "COM8 selected" or "COM9" selected
         print(str(self.parent.Serial.port)+' selected.')
 
-
-#NiNa: creating class with parent classes 'QMainWindow' and 'nuRMainWindow' 
+ 
 class MyApp(QMainWindow, nuRMainWindow):
     def __init__(self):
-        #NiNa: initialize access to attritbutes of parent classes
         QMainWindow.__init__(self)
         nuRMainWindow.__init__(self)
         self.setupUi(self)
@@ -106,8 +93,6 @@ class MyApp(QMainWindow, nuRMainWindow):
         
         self.radioButtonConnect.clicked.connect(self.Connect)
         self.radioButtonDisconnect.clicked.connect(self.Disconnect)
-        #NiNa: initial status is: disconnected
-        #NiNa: ??? where is this being used
         self.connected = False
         self.radioButtonDisconnect.setChecked(True)
         
@@ -124,19 +109,17 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.SignalSettingsDialog = None
         self.ConnSetDlg = None
                 
-        #NiNa: add projectFile name to title
+
         self.projectFile = 'untitled Project'
         self.setTitle()
         
         self.AllMyParams = cParamTableModel(None) #table model so it can be processed by QTableView
         self.AllMySignals = cSignalTableModel(None)
-        #NiNa: self.Serial = class nuRSerial() from nuRSerialConn.py
         self.Serial = nuRSerial()
 
         
              
     def Connect(self):        
-        #NiNa: notice above, initial status: disconnected
         if not self.connected:
             try:
                 self.Serial.connect()
@@ -153,7 +136,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         print("disconnected")
     
     
-    #NiNa: printing which set is selected in terminal.    
+ 
     def SetIsSelected(self):
         SetIsActive = self.Serial.readSet()
         prompt = "(active)"

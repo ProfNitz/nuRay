@@ -28,6 +28,9 @@
      <height>201</height>
     </rect>
    </property>
+   <property name="maximum">
+    <number>130</number>
+   </property>
    <property name="wrapping">
     <bool>false</bool>
    </property>
@@ -62,6 +65,9 @@
      <width>271</width>
      <height>211</height>
     </rect>
+   </property>
+   <property name="maximum">
+    <number>255</number>
    </property>
    <property name="wrapping">
     <bool>false</bool>
