@@ -41,14 +41,16 @@ class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
         self.parent = parent
         self.setupUi(self)
         c_long = nuRSerial.listPorts()
+        #print(c_long)
         # NoNi: + concatenates lists;
         # so we get an empty item [' '] and everthing from c_long
         self.comboBox.addItems([' ']+c_long)
         #c_short = [re.findall('^COM\d+',c)[0] for c in c_long]
         c_short = []
-        for c in c_long:
-            c_split = c.split(" ")
-            c_short.append(c_split[0])
+        c_short = [re.findall('^COM\d+',c)[0] for c in c_long if "COM" in c]
+        c_short = [re.findall('^/dev\S+',c)[0] for c in c_long if "/dev" in c]
+        #print(c_short)
+        #c_short = []
         if self.parent.Serial.port in c_short:
             idx = c_short.index(self.parent.Serial.port)
             # NoNi: idx is index into c_short. comboBox, however, has an extra empty
@@ -61,13 +63,16 @@ class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
     
     def setPort(self):
         c = self.comboBox.currentText()
-        c_split = c.split(" ")
-        c_port = c_split[0]
+        #c_split = c.split(" ")
+        #c_port = c_split[0]
         try:
-            #self.parent.Serial.port = re.findall('^COM\d+',c)[0]
-            self.parent.Serial.port = c_port
+            self.parent.Serial.port = re.findall('^COM\d+',c)[0] 
+            #self.parent.Serial.port = c_port
         except:
-            self.parent.Serial.port = None;
+            try:
+                self.parent.Serial.port = re.findall('^/dev\S+',c)[0]
+            except:
+                self.parent.Serial.port = None;
         print(str(self.parent.Serial.port)+' selected.')
 
  
