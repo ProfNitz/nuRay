@@ -1,21 +1,45 @@
-ID|Problem|Options for Solution|Status|Commit|priority|
-1|Titles of Parameter and Signal Window are 'python'|change to Parameters and Signals, respectively|closed|09be25ca9daec2f301cb3d2fff9eac76142bd8c0|1|
-2|color picker in Signal List: current color not preselected when color picker opens|preselect current color in color picker|open||3|
-3|color picker in Signal List: when no color chosen, OK returns White, Cancel returns Black|keep current color|open||3|
-4|current value of Parameters not handled at all|show in list, save to file, load|open||2|
-5|InstrPage Files are saved in Project File with absolute path making exchanging Projects and corresponding InstrPages difficult|change to 'relative to project file', offer search dialog when not found,...|closed|83030f0eacefbccc453a49882f66ff07ff1580d3|2|
-6|when trying to connect Param to Instrument and no Params exist, list is empty|add hint to first add some parameters to Param List|closed|a1ac03e37d4e30785b3b8a272ba989d2f5e7e93f|1|
-7|text is being cut off in pop up window|setting layouts for groupBox and centralwidget|closed|baa009d6acceff323dbddfe7b0db6f2953632669|4|
-8|when void(None) is selected in Connection Settings Dialog: TypeError: unsupported operand type(s) for +: 'NoneType' and 'str'|"print ""None selected"" in Console instead of error"|closed|f6e7cf62ee6a614a880d14bf83889d5e3514e466|1|
-9|no switch in QtDesigner for selecting SET1 or SET2|custom made switch changing colorlayer of push button|closed|c69ef13fbdfdd8bb15db79fe4f29a4ffda534572|1|
-10|add custom switch to the mainwindow|add widget to vertical layout grid for smooth integration|closed|48852c6df1c1c2f2f0a62474284b019c4426f00e|1|
-11|"print output ""connected"" and ""disconnected"" "|adding print to existing method|closed|93839b0fc684634a8ea7ce1df9551bf93d705b08|1|
-12|"print output ""SET1 is selected."" and ""SET2 is selected"""|adding a method|closed|488d51c532e8c4f94c95c804ed9cf3d706955b1c|1|
-13|use higher 4 bits of length byte for datatype, lower 4 bits for actual length|new dictionary member, masking and shifting |closed|60b9060193c27f6c740920a1648bd4b4b4cf788c|1|
-14|chose set with lower 4 bits of first byte; and use higher 4 bits of first byte , second byte and third byte for paramname and change parameters in C|creating setidx and paramidx, creating lists in C,  masking and shifting|closed|c4e4a8ad3aac0280108e80d5e1774b8d22a17dc4|1|
-15|create fully automated testing |create json file and generate test data with a python script|closed|5c8de668f6ce5166116c5a9a29a6e24858f6860f; 9836875c2971dc1d177a1a86694d9f2d5018db3d |1|
-16|add ctrl data type||||3|
-17|handle visibility of datatypes in ParamView (and everywherre else)|list comprehension|closed|4ee408090b4b3bfcca496c1e49ff4bac2ddc7757||
-18|show hint when no InstrPage to selected project is found|QMessageBox before opening file explorer|closed|df2d47ca470884c3c38acbaf1820b0b03bec9fdc||
-19|preselect file when opening file explorer to select InstrPage||closed|422ad610fa1b45bea47ad7d96d5fe766a0e2d94d||
-20|create test to turn LED on and off with micorocontroller |create sketch in arduino and send data with python|closed|7562afd3edc39c40b6944bb4fc9f6f0caf93a448||
+ID|Problem|Options for Solution|Status|Commit|priority||||||||||||||||||||||||||||||||||||||||||||||
+1|Titles of Parameter and Signal Window are 'python'|change to Parameters and Signals, respectively|closed|09be25ca9daec2f301cb3d2fff9eac76142bd8c0|1||||||||||||||||||||||||||||||||||||||||||||||
+2|color picker in Signal List: current color not preselected when color picker opens|preselect current color in color picker|open||3||||||||||||||||||||||||||||||||||||||||||||||
+3|color picker in Signal List: when no color chosen, OK returns White, Cancel returns Black|keep current color|open||3||||||||||||||||||||||||||||||||||||||||||||||
+4|current value of Parameters not handled at all|show in list, save to file, load|open||2||||||||||||||||||||||||||||||||||||||||||||||
+5|InstrPage Files are saved in Project File with absolute path making exchanging Projects and corresponding InstrPages difficult|change to 'relative to project file', offer search dialog when not found,...|closed|83030f0eacefbccc453a49882f66ff07ff1580d3|2||||||||||||||||||||||||||||||||||||||||||||||
+6|when trying to connect Param to Instrument and no Params exist, list is empty|add hint to first add some parameters to Param List|closed|a1ac03e37d4e30785b3b8a272ba989d2f5e7e93f|1||||||||||||||||||||||||||||||||||||||||||||||
+7|text is being cut off in pop up window|setting layouts for groupBox and centralwidget|closed|baa009d6acceff323dbddfe7b0db6f2953632669|4||||||||||||||||||||||||||||||||||||||||||||||
+8|when void(None) is selected in Connection Settings Dialog: TypeError: unsupported operand type(s) for +: 'NoneType' and 'str'|"print ""None selected"" in Console instead of error"|closed|f6e7cf62ee6a614a880d14bf83889d5e3514e466|1||||||||||||||||||||||||||||||||||||||||||||||
+9|no switch in QtDesigner for selecting SET1 or SET2|custom made switch changing colorlayer of push button|closed|c69ef13fbdfdd8bb15db79fe4f29a4ffda534572|1||||||||||||||||||||||||||||||||||||||||||||||
+10|add custom switch to the mainwindow|add widget to vertical layout grid for smooth integration|closed|48852c6df1c1c2f2f0a62474284b019c4426f00e|1||||||||||||||||||||||||||||||||||||||||||||||
+11|"print output ""connected"" and ""disconnected"" "|adding print to existing method|closed|93839b0fc684634a8ea7ce1df9551bf93d705b08|1||||||||||||||||||||||||||||||||||||||||||||||
+12|"print output ""SET1 is selected."" and ""SET2 is selected"""|adding a method|closed|488d51c532e8c4f94c95c804ed9cf3d706955b1c|1||||||||||||||||||||||||||||||||||||||||||||||
+13|use higher 4 bits of length byte for datatype, lower 4 bits for actual length|new dictionary member, masking and shifting |closed|60b9060193c27f6c740920a1648bd4b4b4cf788c|1||||||||||||||||||||||||||||||||||||||||||||||
+14|chose set with lower 4 bits of first byte; and use higher 4 bits of first byte , second byte and third byte for paramname and change parameters in C|creating setidx and paramidx, creating lists in C,  masking and shifting|closed|c4e4a8ad3aac0280108e80d5e1774b8d22a17dc4|1||||||||||||||||||||||||||||||||||||||||||||||
+15|create fully automated testing |create json file and generate test data with a python script|closed|5c8de668f6ce5166116c5a9a29a6e24858f6860f; 9836875c2971dc1d177a1a86694d9f2d5018db3d |1||||||||||||||||||||||||||||||||||||||||||||||
+16|add ctrl data type||||3||||||||||||||||||||||||||||||||||||||||||||||
+17|handle visibility of datatypes in ParamView (and everywherre else)|list comprehension|closed|4ee408090b4b3bfcca496c1e49ff4bac2ddc7757|1||||||||||||||||||||||||||||||||||||||||||||||
+18|show hint when no InstrPage to selected project is found|QMessageBox before opening file explorer|closed|df2d47ca470884c3c38acbaf1820b0b03bec9fdc|1||||||||||||||||||||||||||||||||||||||||||||||
+19|preselect file when opening file explorer to select InstrPage||closed|422ad610fa1b45bea47ad7d96d5fe766a0e2d94d|1||||||||||||||||||||||||||||||||||||||||||||||
+20|create test to turn LED on and off with micorocontroller |create sketch in arduino and send data with python|closed|7562afd3edc39c40b6944bb4fc9f6f0caf93a448|1||||||||||||||||||||||||||||||||||||||||||||||
+21|creating UI for the LED test|use QtDesigner for UI |closed|5e811f608af5a85cce5c839852524b807bd98f86|1||||||||||||||||||||||||||||||||||||||||||||||
+22|expanding test UI with dial for PWM LED|QtDesigner and second LED|closed|9e21d74225f69c8485179061c217fe21b2ad623a|1||||||||||||||||||||||||||||||||||||||||||||||
+23|nuRay Comm Protocol on Arduino Nano|flashing the protocol (CodeBlocks) onto Arduiono nano|closed|27a466c641b916844d8eed37289f25e376824137|1||||||||||||||||||||||||||||||||||||||||||||||
+24|first test of sending data from python to arduino|serial write to port with arduino nano |closed|e9a02704a07fe9377a89d1a735e41ed25b2ab111|1||||||||||||||||||||||||||||||||||||||||||||||
+25|handle set. param number and value|add properties, make val and number not editable|closed|53f2cc7aa5a7410600c1ba45d6f1912250af774e|1||||||||||||||||||||||||||||||||||||||||||||||
+26|send params from parameter list for debugging|option Send params|closed|3fab60e93cb845bc9e5574021e1c810f1e61cee8|1||||||||||||||||||||||||||||||||||||||||||||||
+27|livesending every value through UI |if value changed serial write to arduino|closed|f9c88bb7fd68a8ea54b0070877f929413ab73944|1||||||||||||||||||||||||||||||||||||||||||||||
+28|active set is sent permanently from arduino to python|active set handling (0 or 1)|closed|eeef0f457fb1ff58a36868800f114da65ea9ffdc|1||||||||||||||||||||||||||||||||||||||||||||||
+29|if I press connect and nothing is selected Connection settings should open||open||1||||||||||||||||||||||||||||||||||||||||||||||
+30|Choosing a port in connection settings should connect automatically if connect is already clicked||open||1||||||||||||||||||||||||||||||||||||||||||||||
+31|characteristic strings should be used for detecting serial port names form Windows, MacOs, Linux,...|COM and /dev|closed|bf1d7e959d73a9e750eac8993625ebb0210858e7|1||||||||||||||||||||||||||||||||||||||||||||||
+32|Open Project... and Save Project... ||open||1||||||||||||||||||||||||||||||||||||||||||||||
+33|add option to close project||open||1||||||||||||||||||||||||||||||||||||||||||||||
+34|status LED if connected to something||open||1||||||||||||||||||||||||||||||||||||||||||||||
+35|double spinbox value shouldn't change while typing||open||1||||||||||||||||||||||||||||||||||||||||||||||
+36|send typed value in double spin box via Enter||open||1||||||||||||||||||||||||||||||||||||||||||||||
+37|stop resetting microcontroller when connecting to python||open||1||||||||||||||||||||||||||||||||||||||||||||||
+38|create  switch to chose which set is the active one||open||1||||||||||||||||||||||||||||||||||||||||||||||
+39|create switch to activate sending data||open||1||||||||||||||||||||||||||||||||||||||||||||||
+40|show values of both sets in parameter list||open||1||||||||||||||||||||||||||||||||||||||||||||||
+41|handling active signals||open||1||||||||||||||||||||||||||||||||||||||||||||||
+42|sending signals from arduino to python||open||1||||||||||||||||||||||||||||||||||||||||||||||
+43|visualize receiving signals in plotter||open||1||||||||||||||||||||||||||||||||||||||||||||||
+44|MainWindow in foreground if clicked ||open||1||||||||||||||||||||||||||||||||||||||||||||||
