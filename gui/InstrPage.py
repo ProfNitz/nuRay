@@ -97,12 +97,16 @@ class cInstrPage(QDialog):
                     i.Param=x[1]
                     i.label.setText(i.Param)
                     i.label.setPalette(self.paletteRed)
+                    if isinstance(i.instrWidget, QDoubleSpinBox):
+                        i.instrWidget.setValue(float(x[2]))
+                    else:
+                        i.instrWidget.setValue(int(x[2]))
 
     
     def save(self):
         with io.open(self.connFileName(),'w',encoding='utf8') as f:
             for i in self.instrList:
-                f.write(i.instrWidget.objectName()+':'+str(i.Param)+'\n')
+                f.write(i.instrWidget.objectName()+':'+str(i.Param)+':'+str(i.instrWidget.value())+'\n')
         
         
     def reconnectAll(self):

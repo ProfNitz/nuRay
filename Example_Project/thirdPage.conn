@@ -1,4 +1,4 @@
-dial1:New2
-doubleSpinBox1:New3
-dial2:New4
-doubleSpinBox2:<not connected>
+dial1:New2:121
+doubleSpinBox1:New3:12.25
+dial2:New4:250
+doubleSpinBox2:<not connected>0.0:0.0
