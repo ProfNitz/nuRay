@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>614</width>
+    <width>704</width>
     <height>300</height>
    </rect>
   </property>
@@ -54,16 +54,16 @@
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
          </property>
-         <widget class="QWidget" name="verticalLayoutWidget_7">
+         <widget class="QWidget" name="horizontalLayoutWidget">
           <property name="geometry">
            <rect>
-            <x>39</x>
+            <x>10</x>
             <y>20</y>
-            <width>51</width>
+            <width>111</width>
             <height>31</height>
            </rect>
           </property>
-          <layout class="QVBoxLayout" name="ConnectionStatus"/>
+          <layout class="QHBoxLayout" name="ConnectionStatus"/>
          </widget>
         </widget>
        </item>
@@ -167,7 +167,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>614</width>
+     <width>704</width>
      <height>22</height>
     </rect>
    </property>

@@ -10,7 +10,7 @@ import os
 import io
 import inspect #for debugging
 from PyQt5 import uic
-from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QDialog, QLabel
+from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QDialog, QLabel, QAbstractButton
 from PyQt5.QtCore import QPoint,Qt
 import re
 import time
@@ -63,8 +63,8 @@ class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
     
     def setPort(self):
         c = self.comboBox.currentText()
-        #c_split = c.split(" ")
-        #c_port = c_split[0]
+        #if c == " ":
+           # self.parent.radioButtonDisconnect.click()
         try:
             self.parent.Serial.port = re.findall('^COM\d+',c)[0] 
             #self.parent.Serial.port = c_port
@@ -73,7 +73,10 @@ class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
                 self.parent.Serial.port = re.findall('^/dev\S+',c)[0]
             except:
                 self.parent.Serial.port = None;
+                self.parent.radioButtonDisconnect.click()
         print(str(self.parent.Serial.port)+' selected.')
+        self.parent.LEDLabel.setText(str(self.parent.Serial.port))
+        self.close()
 
  
 class MyApp(QMainWindow, nuRMainWindow):
@@ -94,6 +97,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.actionGenerate_Code.triggered.connect(self.CodeGen)
         
         self.actionConnection_Settings.triggered.connect(self.ConnSettings)
+        self.ConnSetDlg = None
         
         
         self.radioButtonConnect.clicked.connect(self.Connect)
@@ -115,8 +119,10 @@ class MyApp(QMainWindow, nuRMainWindow):
         
         self.statusLEDOn = statusLED(Qt.green)
         self.statusLEDOff = statusLED(Qt.red)
-        self.statusLED = statusLED(Qt.white)
-        self.ConnectionStatus.addWidget(self.statusLED)
+        self.ConnectionStatus.addWidget(self.statusLEDOff)
+        
+        self.LEDLabel = QLabel()
+        self.ConnectionStatus.addWidget(self.LEDLabel)
              
         #self.ChangeSet.clicked.connect(self.SetIsSelected)              
             
@@ -136,31 +142,40 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.AllMyParams = cParamTableModel(None) #table model so it can be processed by QTableView
         self.AllMySignals = cSignalTableModel(None)
         self.Serial = nuRSerial()
-
-        
+               
              
-    def Connect(self):        
+    def Connect(self):   
         if not self.connected:
             try:
                 self.Serial.connect()
-                
-                for i in reversed(range(self.ConnectionStatus.count())): 
-                    self.ConnectionStatus.itemAt(i).widget().setParent(None)
-                self.ConnectionStatus.addWidget(self.statusLEDOn)
-                    
+                self.Serial.write(1,1,1,'ctrl')
                 # NiNa: if-Bedingung wird nie erfüllt, was tun?
-                if self.Serial.is_open():
+                if self.Serial.is_open:
+                    for i in reversed(range(self.ConnectionStatus.count())): 
+                        if isinstance(self.ConnectionStatus.itemAt(i).widget(), QAbstractButton):
+                            self.ConnectionStatus.itemAt(i).widget().setParent(None)
+                    self.ConnectionStatus.addWidget(self.statusLEDOn)
                     self.connected=True
-                    #self.SetIsSelected()
             except:
-                pass
+                PortInfo = QMessageBox.information(self,
+                                                     'No valid port chosen.',
+                                                     'Please choose port first!',
+                                                     QMessageBox.Ok)
+                if self.ConnSetDlg == None:
+                    self.radioButtonDisconnect.click()
+                    self.ConnSettings()
+                else:
+                    self.radioButtonDisconnect.click()
+                    self.ConnSetDlg.show()
+                
         pass
         
     def Disconnect(self):
         self.connected = False       
         
         for i in reversed(range(self.ConnectionStatus.count())): 
-            self.ConnectionStatus.itemAt(i).widget().setParent(None)
+            if isinstance(self.ConnectionStatus.itemAt(i).widget(), QAbstractButton):
+                self.ConnectionStatus.itemAt(i).widget().setParent(None)
         self.ConnectionStatus.addWidget(self.statusLEDOff)
         
         self.Serial.close()
@@ -197,7 +212,11 @@ class MyApp(QMainWindow, nuRMainWindow):
     
     #NoNi: first rudimental reaction on Connection settings
     def ConnSettings(self):
-        self.ConnSetDlg = nuRConnSettingsDialog(self)
+        if self.ConnSetDlg == None:
+            self.ConnSetDlg = nuRConnSettingsDialog(self)
+        else:
+            self.ConnSetDlg.show()
+
         
         
     def CodeGen(self):
