@@ -10,7 +10,7 @@ import os
 import io
 import inspect #for debugging
 from PyQt5 import uic
-from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QDialog
+from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QDialog, QLabel
 from PyQt5.QtCore import QPoint
 import re
 import time
@@ -24,7 +24,7 @@ from paramModel import cParamTableModel, cSignalTableModel
 from CodeGen.codegen import nuRCodeGenerator
 from Comm.nuRSerialConn import nuRSerial
 import globalThings as G
-from SwitchCustomWidget import ChangeSet
+from SwitchCustomWidget import CustomSwitch
 
 
 #NoNi: load main window ui from QtDesigner file
@@ -101,9 +101,19 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.connected = False
         self.radioButtonDisconnect.setChecked(True)
         
-        self.ChangeSet = ChangeSet(self)
-        self.SetSelecter.addWidget(self.ChangeSet)
-        self.ChangeSet.clicked.connect(self.SetIsSelected)                
+        self.ReadWrite = CustomSwitch("read","write")
+        self.ActiveSet = CustomSwitch("SET0","SET1")
+        self.SelectedSet = CustomSwitch("SET0","SET1")
+        
+        self.ReadWriteSwitch.addWidget(self.ReadWrite)
+        self.ActiveSetSwitch.addWidget(self.ActiveSet)
+        self.SelectedSetSwitch.addWidget(self.SelectedSet)
+        
+        self.ReadWrite.clicked.connect(self.ReadWriteData)
+        self.ActiveSet.clicked.connect(self.ActivateSet)
+        self.SelectedSet.clicked.connect(self.SetIsSelected)
+             
+        #self.ChangeSet.clicked.connect(self.SetIsSelected)              
             
         #NoNi: keep track of the open child windows
         #NoNi: we can have several InstrPages and several Plotters...        
@@ -138,27 +148,34 @@ class MyApp(QMainWindow, nuRMainWindow):
     def Disconnect(self):
         self.connected = False
         self.Serial.close()
-        print("disconnected")
-    
-    
+        print("disconnected")   
  
     def SetIsSelected(self):
-        SetIsActive = self.Serial.readSet()
-        prompt = "(active)"
-        if self.ChangeSet.isChecked():
-            if SetIsActive == 1:
-                print("SET1 " + prompt + " is selected.")
-            else:
-                print("SET1 is selected.")
+        if self.SelectedSet.isChecked():
+            print("SET1 is selected.")
             for x in self.AllMyParams.items:
                 x.paramset = 1
         else:
-            if SetIsActive == 0:
-                print("SET0 " + prompt + " is selected.")
-            else:
-                print("SET0 is selected.")
+            print("SET0 is selected.")
             for x in self.AllMyParams.items:
                 x.paramset = 0
+                
+    def ActivateSet(self):
+        if self.ActiveSet.isChecked():
+            self.Serial.write(1,0,0,'ctrl')
+            print('SET1 is active')
+        else:
+            self.Serial.write(0,0,0,'ctrl')
+            print('SET0 is active')
+            
+    def ReadWriteData(self):
+        if self.ReadWrite.isChecked():
+            self.rw = 1
+            print('writing data...')
+        else:
+            self.rw = 0
+            print('reading data...')
+        
         
     
     #NoNi: first rudimental reaction on Connection settings
