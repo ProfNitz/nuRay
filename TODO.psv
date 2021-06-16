@@ -27,8 +27,8 @@ ID|Problem|Options for Solution|Status|Commit|priority||||||||||||||||||||||||||
 26|send params from parameter list for debugging|option Send params|closed|3fab60e93cb845bc9e5574021e1c810f1e61cee8|1||||||||||||||||||||||||||||||||||||||||||||||
 27|livesending every value through UI |if value changed serial write to arduino|closed|f9c88bb7fd68a8ea54b0070877f929413ab73944|1||||||||||||||||||||||||||||||||||||||||||||||
 28|active set is sent permanently from arduino to python|active set handling (0 or 1)|closed|eeef0f457fb1ff58a36868800f114da65ea9ffdc|1||||||||||||||||||||||||||||||||||||||||||||||
-29|if I press connect and nothing is selected Connection settings should open||open||1||||||||||||||||||||||||||||||||||||||||||||||
-30|Choosing a port in connection settings should connect automatically if connect is already clicked||open||1||||||||||||||||||||||||||||||||||||||||||||||
+29|if I press connect and NONE is selected Connection settings should open|connect to connectionsettings method|closed|b775cd396a9c02d55e63ae686848a754474cb06f|1||||||||||||||||||||||||||||||||||||||||||||||
+30|Choosing NONE anywhere should put radioButton Disconnect clicked|implement in connectionsettings class with parent attributes|closed|b775cd396a9c02d55e63ae686848a754474cb06f|1||||||||||||||||||||||||||||||||||||||||||||||
 31|characteristic strings should be used for detecting serial port names form Windows, MacOs, Linux,...|COM and /dev|closed|bf1d7e959d73a9e750eac8993625ebb0210858e7|1||||||||||||||||||||||||||||||||||||||||||||||
 32|Open Project... and Save Project... ||open||1||||||||||||||||||||||||||||||||||||||||||||||
 33|add option to close project||open||1||||||||||||||||||||||||||||||||||||||||||||||
