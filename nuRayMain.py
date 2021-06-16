@@ -11,7 +11,7 @@ import io
 import inspect #for debugging
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QDialog, QLabel
-from PyQt5.QtCore import QPoint
+from PyQt5.QtCore import QPoint,Qt
 import re
 import time
 
@@ -24,7 +24,7 @@ from paramModel import cParamTableModel, cSignalTableModel
 from CodeGen.codegen import nuRCodeGenerator
 from Comm.nuRSerialConn import nuRSerial
 import globalThings as G
-from SwitchCustomWidget import CustomSwitch
+from SwitchCustomWidget import CustomSwitch, statusLED
 
 
 #NoNi: load main window ui from QtDesigner file
@@ -112,6 +112,11 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.ReadWrite.clicked.connect(self.ReadWriteData)
         self.ActiveSet.clicked.connect(self.ActivateSet)
         self.SelectedSet.clicked.connect(self.SetIsSelected)
+        
+        self.statusLEDOn = statusLED(Qt.green)
+        self.statusLEDOff = statusLED(Qt.red)
+        self.statusLED = statusLED(Qt.white)
+        self.ConnectionStatus.addWidget(self.statusLED)
              
         #self.ChangeSet.clicked.connect(self.SetIsSelected)              
             
@@ -138,6 +143,12 @@ class MyApp(QMainWindow, nuRMainWindow):
         if not self.connected:
             try:
                 self.Serial.connect()
+                
+                for i in reversed(range(self.ConnectionStatus.count())): 
+                    self.ConnectionStatus.itemAt(i).widget().setParent(None)
+                self.ConnectionStatus.addWidget(self.statusLEDOn)
+                    
+                # NiNa: if-Bedingung wird nie erfüllt, was tun?
                 if self.Serial.is_open():
                     self.connected=True
                     #self.SetIsSelected()
@@ -146,7 +157,12 @@ class MyApp(QMainWindow, nuRMainWindow):
         pass
         
     def Disconnect(self):
-        self.connected = False
+        self.connected = False       
+        
+        for i in reversed(range(self.ConnectionStatus.count())): 
+            self.ConnectionStatus.itemAt(i).widget().setParent(None)
+        self.ConnectionStatus.addWidget(self.statusLEDOff)
+        
         self.Serial.close()
         print("disconnected")   
  
@@ -167,6 +183,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         else:
             self.Serial.write(0,0,0,'ctrl')
             print('SET0 is active')
+
             
     def ReadWriteData(self):
         if self.ReadWrite.isChecked():

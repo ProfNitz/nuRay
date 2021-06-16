@@ -6,7 +6,7 @@ Created on Wed Apr 14 15:56:39 2021
 """
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import Qt, QRect
+from PyQt5.QtCore import Qt, QRect, QPoint
 import sys
 
 class CustomSwitch(QtWidgets.QPushButton):
@@ -42,3 +42,33 @@ class CustomSwitch(QtWidgets.QPushButton):
             sw_rect.moveLeft(-width)
         painter.drawRoundedRect(sw_rect, radius, radius)
         painter.drawText(sw_rect, Qt.AlignCenter, self.label)
+        
+class statusLED(QtWidgets.QAbstractButton):
+    def __init__(self,LED, parent=None):
+        super().__init__(parent)
+        self.setMinimumWidth(30)
+        self.setMinimumHeight(30)
+        self.deviceConnection = 0
+        self.LED = LED
+    
+    def paintEvent(self,event):   
+        radius = 5 
+        center = self.rect().center()
+        painter = QtGui.QPainter(self)
+        painter.setRenderHint(QtGui.QPainter.Antialiasing)
+        painter.translate(center)
+        
+        pen = QtGui.QPen(Qt.black)
+        pen.setWidth(2)
+        painter.setPen(pen)
+    
+        painter.setBrush(QtGui.QBrush(self.LED))
+        painter.drawEllipse(QPoint(radius/2,radius/2), radius, radius)
+        
+
+
+
+        
+            
+    
+        
