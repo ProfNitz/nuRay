@@ -17,7 +17,6 @@ class nuRSerial(object):
     def connect(self):
         print('connected')
         self.s=serial.Serial(port=self.port,baudrate=115200)
-        self.s.is_open()
         pass
 
     def write(self,pset,pidx,val,dt):

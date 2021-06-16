@@ -144,15 +144,14 @@ class MyApp(QMainWindow, nuRMainWindow):
             try:
                 self.Serial.connect()
                 
-               
+                for i in reversed(range(self.ConnectionStatus.count())): 
+                    self.ConnectionStatus.itemAt(i).widget().setParent(None)
+                self.ConnectionStatus.addWidget(self.statusLEDOn)
                     
                 # NiNa: if-Bedingung wird nie erfüllt, was tun?
-                if self.Serial.is_open(): 
-                    for i in reversed(range(self.ConnectionStatus.count())): 
-                        self.ConnectionStatus.itemAt(i).widget().setParent(None)
-                    self.ConnectionStatus.addWidget(self.statusLEDOn)
+                if self.Serial.is_open():
                     self.connected=True
-                    print("connected is True")
+                    #self.SetIsSelected()
             except:
                 pass
         pass
