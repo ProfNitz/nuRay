@@ -10,8 +10,6 @@
 #define LED2 6
 #define LED3 7
 
-#define ACTIVE 1
-
 uint8_t buf[BUF_SIZE]; 
 uint8_t *p;
 uint8_t pack[MAX_PACK_LEN];
@@ -21,6 +19,7 @@ uint16_t cmd;
 uint8_t dtype;
 uint8_t recByte;
 int setidx;
+int active = 0;
 
 typedef struct {
   float paramf[30];
@@ -51,13 +50,13 @@ void setup() {
   init_pwm();
 }
 
-void sendSet() {
-  Serial.write(ACTIVE);
-}
+/*void sendSet() {
+  Serial.write(active);
+}*/
 
 
 void loop() {
-  sendSet();
+  //sendSet();
   if(Serial.available()>0){
     while(Serial.available()>0){
       recByte = Serial.read();
@@ -93,6 +92,15 @@ void loop() {
 
               case 16: 
               paramset[setidx].param8[subidx] = *(uint8_t*)&pack[2];idx++;break;
+
+              case 240:
+              if(((*(uint8_t*)&pack[0])&0x0f)==1){ 
+              active = 1;
+              }
+              if(((*(uint8_t*)&pack[0])&0x0f)==0){ 
+              active = 0;
+              }
+              break;
              }
            }
            else{
@@ -110,17 +118,17 @@ void loop() {
       }
     }
   }
-  if(paramset[ACTIVE].param8[1] == 121){
+  if(paramset[active].param8[1] == 121){
     PORTD |= _BV(LED1);
   }
   else{
     PORTD &= ~_BV(LED1);
   }
-  if(paramset[ACTIVE].paramf[2] == 12.25){
+  if(paramset[active].paramf[2] == 12.25){
     PORTD |= _BV(LED3);
   }
   else{
     PORTD &= ~_BV(LED3);
   }
-  OCR0A = paramset[ACTIVE].param8[3];
+  OCR0A = paramset[active].param8[3];
 }
