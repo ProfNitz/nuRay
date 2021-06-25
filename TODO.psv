@@ -44,11 +44,11 @@ ID|Problem|Options for Solution|Status|Commit|priority||||||||||||||||||||||||||
 43|visualize receiving signals in plotter||open||1||||||||||||||||||||||||||||||||||||||||||||||
 44|MainWindow in foreground if clicked ||open||1||||||||||||||||||||||||||||||||||||||||||||||
 45|ctrl payload with value 1 for changing active set||open||1||||||||||||||||||||||||||||||||||||||||||||||
-|making is_open() work||open||1||||||||||||||||||||||||||||||||||||||||||||||
-|when opening project and connecting: synchronize data from arduino to python||open||1||||||||||||||||||||||||||||||||||||||||||||||
-|when loading project when connected: synchronize data from arduino to python||open||1||||||||||||||||||||||||||||||||||||||||||||||
-|when loading params after initial synchronization: data from python to arduino||open||1||||||||||||||||||||||||||||||||||||||||||||||
-|setting values when disconnected should first be saved before connecting||open||1||||||||||||||||||||||||||||||||||||||||||||||
-|each manipulated SET gets an own file||open||1||||||||||||||||||||||||||||||||||||||||||||||
-|draw finite state machines ||open||1||||||||||||||||||||||||||||||||||||||||||||||
-|||||||||||||||||||||||||||||||||||||||||||||||||||
+46|making is_open() work||open||1||||||||||||||||||||||||||||||||||||||||||||||
+47|when opening project and connecting: synchronize data from arduino to python||open||1||||||||||||||||||||||||||||||||||||||||||||||
+48|when loading project when connected: synchronize data from arduino to python||open||1||||||||||||||||||||||||||||||||||||||||||||||
+49|when loading params after initial synchronization: data from python to arduino||open||1||||||||||||||||||||||||||||||||||||||||||||||
+50|setting values when disconnected should first be saved before connecting||open||1||||||||||||||||||||||||||||||||||||||||||||||
+51|each manipulated SET gets an own file||open||1||||||||||||||||||||||||||||||||||||||||||||||
+52|draw finite state machines ||open||1||||||||||||||||||||||||||||||||||||||||||||||
+53|changing color of status LED|repaint event + refresh|open||1||||||||||||||||||||||||||||||||||||||||||||||
