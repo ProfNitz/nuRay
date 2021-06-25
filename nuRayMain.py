@@ -117,9 +117,8 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.ActiveSet.clicked.connect(self.ActivateSet)
         self.SelectedSet.clicked.connect(self.SetIsSelected)
         
-        self.statusLEDOn = statusLED(Qt.green)
-        self.statusLEDOff = statusLED(Qt.red)
-        self.ConnectionStatus.addWidget(self.statusLEDOff)
+        self.statusLED = statusLED(self)
+        self.ConnectionStatus.addWidget(self.statusLED)
         
         self.LEDLabel = QLabel()
         self.ConnectionStatus.addWidget(self.LEDLabel)
@@ -146,17 +145,12 @@ class MyApp(QMainWindow, nuRMainWindow):
              
     def Connect(self):   
         if not self.connected:
-            try:
-                self.Serial.connect()
-                self.Serial.write(1,1,1,'ctrl')
-                # NiNa: if-Bedingung wird nie erfüllt, was tun?
-                if self.Serial.is_open:
-                    for i in reversed(range(self.ConnectionStatus.count())): 
-                        if isinstance(self.ConnectionStatus.itemAt(i).widget(), QAbstractButton):
-                            self.ConnectionStatus.itemAt(i).widget().setParent(None)
-                    self.ConnectionStatus.addWidget(self.statusLEDOn)
-                    self.connected=True
-            except:
+            self.Serial.connect()
+            if self.Serial.is_open():
+                self.statusLED.ledcolor = Qt.green
+                self.statusLED.repaint()
+                self.connected=True
+            else:
                 PortInfo = QMessageBox.information(self,
                                                      'No valid port chosen.',
                                                      'Please choose port first!',
@@ -172,11 +166,8 @@ class MyApp(QMainWindow, nuRMainWindow):
         
     def Disconnect(self):
         self.connected = False       
-        
-        for i in reversed(range(self.ConnectionStatus.count())): 
-            if isinstance(self.ConnectionStatus.itemAt(i).widget(), QAbstractButton):
-                self.ConnectionStatus.itemAt(i).widget().setParent(None)
-        self.ConnectionStatus.addWidget(self.statusLEDOff)
+        self.statusLED.ledcolor = Qt.red
+        self.statusLED.repaint()
         
         self.Serial.close()
         print("disconnected")   

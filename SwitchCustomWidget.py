@@ -44,12 +44,12 @@ class CustomSwitch(QtWidgets.QPushButton):
         painter.drawText(sw_rect, Qt.AlignCenter, self.label)
         
 class statusLED(QtWidgets.QAbstractButton):
-    def __init__(self,LED, parent=None):
+    def __init__(self, parent=None):
         super().__init__(parent)
         self.setMinimumWidth(30)
         self.setMinimumHeight(30)
         self.deviceConnection = 0
-        self.LED = LED
+        self.ledcolor = Qt.red
     
     def paintEvent(self,event):   
         radius = 5 
@@ -62,8 +62,10 @@ class statusLED(QtWidgets.QAbstractButton):
         pen.setWidth(2)
         painter.setPen(pen)
     
-        painter.setBrush(QtGui.QBrush(self.LED))
+        painter.setBrush(QtGui.QBrush(self.ledcolor))
         painter.drawEllipse(QPoint(radius/2,radius/2), radius, radius)
+    
+        
         
 
 

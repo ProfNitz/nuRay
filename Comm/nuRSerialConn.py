@@ -24,7 +24,7 @@ class nuRSerial(object):
         self.s.write(buf)
         
     def is_open(self):
-        return self.s.is_open()
+        return self.s.is_open
     
     def close(self):
         self.s.close()
