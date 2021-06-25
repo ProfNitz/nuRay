@@ -32,14 +32,23 @@ ID|Problem|Options for Solution|Status|Commit|priority||||||||||||||||||||||||||
 31|characteristic strings should be used for detecting serial port names form Windows, MacOs, Linux,...|COM and /dev|closed|bf1d7e959d73a9e750eac8993625ebb0210858e7|1||||||||||||||||||||||||||||||||||||||||||||||
 32|Open Project... and Save Project... ||open||1||||||||||||||||||||||||||||||||||||||||||||||
 33|add option to close project||open||1||||||||||||||||||||||||||||||||||||||||||||||
-34|status LED if connected to something||open||1||||||||||||||||||||||||||||||||||||||||||||||
+34|status LED if connected to something|two different widgets|closed|cb34ebadcf42e302f3afc1311aae44d6d7ecc14e|1||||||||||||||||||||||||||||||||||||||||||||||
 35|double spinbox value shouldn't change while typing||open||1||||||||||||||||||||||||||||||||||||||||||||||
 36|send typed value in double spin box via Enter||open||1||||||||||||||||||||||||||||||||||||||||||||||
 37|stop resetting microcontroller when connecting to python||open||1||||||||||||||||||||||||||||||||||||||||||||||
-38|create  switch to chose which set is the active one||open||1||||||||||||||||||||||||||||||||||||||||||||||
-39|create switch to activate sending data||open||1||||||||||||||||||||||||||||||||||||||||||||||
+38|create  switch to chose which set is the active one||closed|09f8eb1a66683e0df2bc18a9393fba2531155139|1||||||||||||||||||||||||||||||||||||||||||||||
+39|create switch to activate sending data||closed|09f8eb1a66683e0df2bc18a9393fba2531155139|1||||||||||||||||||||||||||||||||||||||||||||||
 40|show values of both sets in parameter list||open||1||||||||||||||||||||||||||||||||||||||||||||||
 41|handling active signals||open||1||||||||||||||||||||||||||||||||||||||||||||||
 42|sending signals from arduino to python||open||1||||||||||||||||||||||||||||||||||||||||||||||
 43|visualize receiving signals in plotter||open||1||||||||||||||||||||||||||||||||||||||||||||||
 44|MainWindow in foreground if clicked ||open||1||||||||||||||||||||||||||||||||||||||||||||||
+45|ctrl payload with value 1 for changing active set||open||1||||||||||||||||||||||||||||||||||||||||||||||
+|making is_open() work||open||1||||||||||||||||||||||||||||||||||||||||||||||
+|when opening project and connecting: synchronize data from arduino to python||open||1||||||||||||||||||||||||||||||||||||||||||||||
+|when loading project when connected: synchronize data from arduino to python||open||1||||||||||||||||||||||||||||||||||||||||||||||
+|when loading params after initial synchronization: data from python to arduino||open||1||||||||||||||||||||||||||||||||||||||||||||||
+|setting values when disconnected should first be saved before connecting||open||1||||||||||||||||||||||||||||||||||||||||||||||
+|each manipulated SET gets an own file||open||1||||||||||||||||||||||||||||||||||||||||||||||
+|draw finite state machines ||open||1||||||||||||||||||||||||||||||||||||||||||||||
+|||||||||||||||||||||||||||||||||||||||||||||||||||
