@@ -14,7 +14,7 @@ ID|Problem|Options for Solution|Status|Commit|priority||||||||||||||||||||||||||
 13|use higher 4 bits of length byte for datatype, lower 4 bits for actual length|new dictionary member, masking and shifting |closed|60b9060193c27f6c740920a1648bd4b4b4cf788c|1||||||||||||||||||||||||||||||||||||||||||||||
 14|chose set with lower 4 bits of first byte; and use higher 4 bits of first byte , second byte and third byte for paramname and change parameters in C|creating setidx and paramidx, creating lists in C,  masking and shifting|closed|c4e4a8ad3aac0280108e80d5e1774b8d22a17dc4|1||||||||||||||||||||||||||||||||||||||||||||||
 15|create fully automated testing |create json file and generate test data with a python script|closed|5c8de668f6ce5166116c5a9a29a6e24858f6860f; 9836875c2971dc1d177a1a86694d9f2d5018db3d |1||||||||||||||||||||||||||||||||||||||||||||||
-16|add ctrl data type||||3||||||||||||||||||||||||||||||||||||||||||||||
+16|add ctrl data type||closed||3||||||||||||||||||||||||||||||||||||||||||||||
 17|handle visibility of datatypes in ParamView (and everywherre else)|list comprehension|closed|4ee408090b4b3bfcca496c1e49ff4bac2ddc7757|1||||||||||||||||||||||||||||||||||||||||||||||
 18|show hint when no InstrPage to selected project is found|QMessageBox before opening file explorer|closed|df2d47ca470884c3c38acbaf1820b0b03bec9fdc|1||||||||||||||||||||||||||||||||||||||||||||||
 19|preselect file when opening file explorer to select InstrPage||closed|422ad610fa1b45bea47ad7d96d5fe766a0e2d94d|1||||||||||||||||||||||||||||||||||||||||||||||
@@ -44,11 +44,11 @@ ID|Problem|Options for Solution|Status|Commit|priority||||||||||||||||||||||||||
 43|visualize receiving signals in plotter||open||1||||||||||||||||||||||||||||||||||||||||||||||
 44|MainWindow in foreground if clicked ||open||1||||||||||||||||||||||||||||||||||||||||||||||
 45|ctrl payload with value 1 for changing active set||open||1||||||||||||||||||||||||||||||||||||||||||||||
-46|making is_open() work||open||1||||||||||||||||||||||||||||||||||||||||||||||
+46|making is_open() work||closed|ef76ca2e773d09b2c9148c4738ed685461efcb56|1||||||||||||||||||||||||||||||||||||||||||||||
 47|when opening project and connecting: synchronize data from arduino to python||open||1||||||||||||||||||||||||||||||||||||||||||||||
 48|when loading project when connected: synchronize data from arduino to python||open||1||||||||||||||||||||||||||||||||||||||||||||||
 49|when loading params after initial synchronization: data from python to arduino||open||1||||||||||||||||||||||||||||||||||||||||||||||
 50|setting values when disconnected should first be saved before connecting||open||1||||||||||||||||||||||||||||||||||||||||||||||
 51|each manipulated SET gets an own file||open||1||||||||||||||||||||||||||||||||||||||||||||||
 52|draw finite state machines ||open||1||||||||||||||||||||||||||||||||||||||||||||||
-53|changing color of status LED|repaint event + refresh|open||1||||||||||||||||||||||||||||||||||||||||||||||
+53|changing color of status LED|repaint event + refresh|closed|ef76ca2e773d09b2c9148c4738ed685461efcb56|1||||||||||||||||||||||||||||||||||||||||||||||
