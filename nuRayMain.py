@@ -105,17 +105,15 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.connected = False
         self.radioButtonDisconnect.setChecked(True)
         
-        self.ReadWrite = CustomSwitch("read","write")
         self.ActiveSet = CustomSwitch("SET0","SET1")
-        self.SelectedSet = CustomSwitch("SET0","SET1")
+        self.SyncedSet = CustomSwitch("SET0","SET1")
+        self.syncset = 0
         
-        self.ReadWriteSwitch.addWidget(self.ReadWrite)
         self.ActiveSetSwitch.addWidget(self.ActiveSet)
-        self.SelectedSetSwitch.addWidget(self.SelectedSet)
+        self.SelectedSetSwitch.addWidget(self.SyncedSet)
         
-        self.ReadWrite.clicked.connect(self.ReadWriteData)
         self.ActiveSet.clicked.connect(self.ActivateSet)
-        self.SelectedSet.clicked.connect(self.SetIsSelected)
+        self.SyncedSet.clicked.connect(self.SyncSet)
         
         self.statusLED = statusLED(self)
         self.ConnectionStatus.addWidget(self.statusLED)
@@ -123,7 +121,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.LEDLabel = QLabel()
         self.ConnectionStatus.addWidget(self.LEDLabel)
              
-        #self.ChangeSet.clicked.connect(self.SetIsSelected)              
+        #self.ChangeSet.clicked.connect(self.SyncSet)              
             
         #NoNi: keep track of the open child windows
         #NoNi: we can have several InstrPages and several Plotters...        
@@ -172,13 +170,15 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.Serial.close()
         print("disconnected")   
  
-    def SetIsSelected(self):
-        if self.SelectedSet.isChecked():
+    def SyncSet(self):
+        if self.SyncedSet.isChecked():
             print("SET1 is selected.")
+            self.syncset = 1
             for x in self.AllMyParams.items:
                 x.paramset = 1
         else:
             print("SET0 is selected.")
+            self.syncset = 0
             for x in self.AllMyParams.items:
                 x.paramset = 0
                 
@@ -188,18 +188,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             print('SET1 is active')
         else:
             self.Serial.write(0,0,0,'ctrl')
-            print('SET0 is active')
-
-            
-    def ReadWriteData(self):
-        if self.ReadWrite.isChecked():
-            self.rw = 1
-            print('writing data...')
-        else:
-            self.rw = 0
-            print('reading data...')
-        
-        
+            print('SET0 is active') 
     
     #NoNi: first rudimental reaction on Connection settings
     def ConnSettings(self):
@@ -249,7 +238,8 @@ class MyApp(QMainWindow, nuRMainWindow):
             with io.open(self.projectFile,'w',encoding='utf8') as f:
                 f.write(self.AllMyParams.save())
                 f.write(self.AllMySignals.save())
-                f.write(self.saveInstrPages())               
+                f.write(self.saveInstrPages())
+                f.write(self.saveSyncedSet())
                 
     def saveInstrPages(self):
         res='<Instrument Pages>\n'
@@ -262,6 +252,12 @@ class MyApp(QMainWindow, nuRMainWindow):
             res+=os.path.relpath(abspath,start) +';'+str(pos.x())+';'+str(pos.y())+'\n'
         res+='<\Instrument Pages>\n'
         print (res)
+        return res
+    
+    def saveSyncedSet(self):
+        res='<SyncedSet>\n'
+        res+=str(self.syncset)
+        res+='<\SyncedSet>\n'
         return res
             
     def loadInstrPages(self,txt):
@@ -290,6 +286,16 @@ class MyApp(QMainWindow, nuRMainWindow):
                                                              QMessageBox.Ok)
                         self.OpenInstr()
                     
+    def loadSyncedSet(self,txt):
+        myr = re.compile(r'<SyncedSet>\n(.+)<\\SyncedSet>',re.DOTALL)
+        res=myr.search(txt)
+        if res:
+            print(res.group(1))
+            if int(res.group(1)) == self.syncset:
+                pass
+            else:
+                self.SyncedSet.click()
+    
     def OpenProject(self):
         file,_ = QFileDialog.getOpenFileName(self,
                                              "Open Project...",
@@ -303,6 +309,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.ParamSettings()
             self.AllMySignals.load(projSet)
             self.loadInstrPages(projSet)
+            self.loadSyncedSet(projSet)
             self.setTitle()            
         
     def OpenPlotter(self):

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>704</width>
+    <width>543</width>
     <height>370</height>
    </rect>
   </property>
@@ -37,7 +37,7 @@
         <layout class="QVBoxLayout" name="verticalLayout_5"/>
        </item>
        <item row="0" column="1">
-        <layout class="QVBoxLayout" name="verticalLayout"/>
+        <layout class="QVBoxLayout" name="syncDirection"/>
        </item>
        <item row="1" column="0">
         <widget class="QRadioButton" name="radioButtonDisconnect">
@@ -85,28 +85,6 @@
          <enum>QLayout::SetDefaultConstraint</enum>
         </property>
         <item>
-         <widget class="QGroupBox" name="ReadWrite">
-          <property name="title">
-           <string>read/write</string>
-          </property>
-          <widget class="QWidget" name="verticalLayoutWidget_3">
-           <property name="geometry">
-            <rect>
-             <x>10</x>
-             <y>10</y>
-             <width>160</width>
-             <height>80</height>
-            </rect>
-           </property>
-           <layout class="QVBoxLayout" name="ReadWriteSwitch">
-            <property name="sizeConstraint">
-             <enum>QLayout::SetDefaultConstraint</enum>
-            </property>
-           </layout>
-          </widget>
-         </widget>
-        </item>
-        <item>
          <widget class="QGroupBox" name="ActiveSet">
           <property name="title">
            <string>active set</string>
@@ -129,20 +107,20 @@
          </widget>
         </item>
         <item>
-         <widget class="QGroupBox" name="SelectedSet">
+         <widget class="QGroupBox" name="SyncedSet">
           <property name="title">
-           <string>selected set</string>
+           <string>synced set</string>
           </property>
           <widget class="QWidget" name="verticalLayoutWidget">
            <property name="geometry">
             <rect>
              <x>10</x>
              <y>10</y>
-             <width>216</width>
+             <width>161</width>
              <height>80</height>
             </rect>
            </property>
-           <layout class="QVBoxLayout" name="SelectedSetSwitch">
+           <layout class="QVBoxLayout" name="SyncedSetSwitch">
             <property name="sizeConstraint">
              <enum>QLayout::SetDefaultConstraint</enum>
             </property>
@@ -161,7 +139,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>704</width>
+     <width>543</width>
      <height>22</height>
     </rect>
    </property>
