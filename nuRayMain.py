@@ -10,7 +10,7 @@ import os
 import io
 import inspect #for debugging
 from PyQt5 import uic
-from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QDialog, QLabel, QAbstractButton
+from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QDialog, QLabel, QAbstractButton, QPushButton
 from PyQt5.QtCore import QPoint,Qt
 import re
 import time
@@ -105,15 +105,26 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.connected = False
         self.radioButtonDisconnect.setChecked(True)
         
+        self.nyu = chr(0x03b7)
+        self.myu = chr(0x03bc)
+        self.rArrow = chr(0x2192)
+        self.lArrow = chr(0x2190)
         self.ActiveSet = CustomSwitch("SET0","SET1")
         self.SyncedSet = CustomSwitch("SET0","SET1")
+        self.nuRayText.addWidget(QLabel(self.nyu+"Ray"))
+        self.muConText.addWidget(QLabel(self.myu+"Con"))
+        self.SyncDir = QPushButton(self.lArrow)
+        self.nuRayIsMaster = False
+        self.muConIsMaster = True
         self.syncset = 0
         
         self.ActiveSetSwitch.addWidget(self.ActiveSet)
-        self.SelectedSetSwitch.addWidget(self.SyncedSet)
+        self.SyncedSetSwitch.addWidget(self.SyncedSet)
+        self.syncDirection.addWidget(self.SyncDir)
         
         self.ActiveSet.clicked.connect(self.ActivateSet)
         self.SyncedSet.clicked.connect(self.SyncSet)
+        self.SyncDir.clicked.connect(self.changeSyncDir)
         
         self.statusLED = statusLED(self)
         self.ConnectionStatus.addWidget(self.statusLED)
@@ -189,6 +200,16 @@ class MyApp(QMainWindow, nuRMainWindow):
         else:
             self.Serial.write(0,0,0,'ctrl')
             print('SET0 is active') 
+            
+    def changeSyncDir(self):
+        if self.SyncDir.text() == self.rArrow:
+            self.SyncDir.setText(self.lArrow)
+            self.nuRayIsMaster = False
+            self.muConIsMaster = True
+        else:
+            self.SyncDir.setText(self.rArrow)
+            self.nuRayIsMaster = True
+            self.muConIsMaster = False
     
     #NoNi: first rudimental reaction on Connection settings
     def ConnSettings(self):
