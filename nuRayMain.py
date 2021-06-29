@@ -159,6 +159,10 @@ class MyApp(QMainWindow, nuRMainWindow):
                 self.statusLED.ledcolor = Qt.green
                 self.statusLED.repaint()
                 self.connected=True
+                #while (self.muConIsMaster == True):
+                   # for x in self.AllMyParams.items:
+                       # self.Serial.write(0,x.paramset,x.paramnr,x.val,x.dtype)
+                    
             else:
                 PortInfo = QMessageBox.information(self,
                                                      'No valid port chosen.',
@@ -169,8 +173,7 @@ class MyApp(QMainWindow, nuRMainWindow):
                     self.ConnSettings()
                 else:
                     self.radioButtonDisconnect.click()
-                    self.ConnSetDlg.show()
-                
+                    self.ConnSetDlg.show()             
         pass
         
     def Disconnect(self):

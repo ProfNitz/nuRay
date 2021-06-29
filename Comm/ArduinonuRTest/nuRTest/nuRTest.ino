@@ -75,11 +75,11 @@ void loop() {
           if (checksum(pack,len)==buf[(uint8_t)(idx-2)]){
             //Serial.println(checksum(pack,len));
             //Serial.println(buf[(uint8_t)(idx-2)]);
-             if(((*(uint8_t*)&pack[0])&0x0f)==0){ 
-              setidx = 0;
+             if((((*(uint8_t*)&pack[0])&_BV(2))>>2)==1){ 
+              setidx = 1;
              }
              else {
-              setidx = 1;
+              setidx = 0;
              }
              int subidx = (*(uint16_t*)&pack[0])>>4;
              dtype= (buf[idx-1])&0xf0;
@@ -94,10 +94,10 @@ void loop() {
               paramset[setidx].param8[subidx] = *(uint8_t*)&pack[2];idx++;break;
 
               case 240:
-              if(((*(uint8_t*)&pack[0])&0x0f)==1){ 
+              if((((*(uint8_t*)&pack[0])&_BV(2))>>2)==1){ 
               active = 1;
               }
-              if(((*(uint8_t*)&pack[0])&0x0f)==0){ 
+              else{ 
               active = 0;
               }
               break;

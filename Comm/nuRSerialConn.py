@@ -8,6 +8,7 @@ Created on Wed Jul  3 17:17:10 2019
 import serial
 import serial.tools.list_ports
 from Comm.nuRLL import nuRLL
+import time
 
 class nuRSerial(object):
     def __init__(self):
@@ -15,12 +16,23 @@ class nuRSerial(object):
         self.port = None
         
     def connect(self):
-        print('connected')
-        self.s=serial.Serial(port=self.port,baudrate=115200)
+        self.s = serial.Serial()
+        self.s.port = self.port
+        self.s.baudrate = 115200
+        #self.s.timeout = 1
+        self.s.setDTR(False)
+        try:
+            self.s.open()
+        except:
+            self.s.port = None
+        #print('connected')
+        #self.s=serial.Serial(port=self.port,baudrate=115200,rtscts = True, dsrdtr = True, xonxoff = True)
         pass
+    
 
     def write(self,pset,pidx,val,dt):
-        buf = nuRLL.pack((pset+(pidx<<4)),val,dt)
+        buf = nuRLL.pack(((pset<<2)+(pidx<<4)),val,dt)
+        print(buf)
         self.s.write(buf)
         
     def is_open(self):
@@ -28,11 +40,6 @@ class nuRSerial(object):
     
     def close(self):
         self.s.close()
-        
-    def readSet(self):
-        bActiveSet = self.s.read()
-        activeSet = int.from_bytes(bActiveSet, "big")
-        return activeSet
 
     @classmethod
     def listPorts(cls):
