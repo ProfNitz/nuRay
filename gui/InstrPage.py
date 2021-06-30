@@ -14,6 +14,7 @@ from PyQt5.QtGui import QPalette, QBrush, QColor
 from PyQt5.QtCore import QObject, QRect
 import os
 import io
+import time
 
 
 
@@ -152,6 +153,7 @@ class nuRayInstr(QObject):
         self.disconnectFromParam()
         
         self.livesend = None
+        self.writeNtoM = False
 
         #add slots for user input
         if isinstance(InstrWidget,QAbstractSlider):
@@ -164,7 +166,7 @@ class nuRayInstr(QObject):
         act.triggered.connect(self.InstrConnectParam)
         InstrWidget.addAction(act)
         InstrWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
-        
+            
         
     def valueChanged(self):
         #print('sliderMoved to pos: '+str(self.instrWidget.sliderPosition())+' val: '+str(self.instrWidget.value()))
@@ -207,8 +209,12 @@ class nuRayInstr(QObject):
         self.Param.max = self.instrWidget.maximum()
         self.instrWidget.setMinimum(self.Param.min)
         self.instrWidget.setMaximum(self.Param.max)
-        self.instrWidget.valueChanged.connect(self.setParamVal)
-        self.instrWidget.valueChanged.connect(self.sendVal)
+        #self.instrWidget.readWriteData()
+        #if self.writeNtoM == True:
+        #    self.instrWidget.valueChanged.connect(self.setParamVal)
+        #    self.instrWidget.valueChanged.connect(self.sendVal)
+        #else:
+           # pass
         
         
         #print(self.Param.name)
@@ -235,9 +241,29 @@ class nuRayInstr(QObject):
             if not self.Param.dataType == 'float32':
                 self.Param.val = int(self.Param.val)
             print(self.Param.val)
-            self.livesend.write(self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
+            self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
         except AttributeError:
             print("Please connect to port to send data!")
-        
+    
+    #def readVal(self):
+        #if not self.Param.dataType == 'float32':
+            #self.Param.val = int(self.Param.val)
+        #self.livesend.write(0,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
+        #x = self.livesend.read()
+        #print(x)
+        #self.instrWidget.setValue(self.Param.val)
+       
+    def readWriteData(self):
+        if self.writeNtoM == True:
+            #print("WRITE TO ARDUINO IS TRUE")
+            self.instrWidget.valueChanged.connect(self.setParamVal)
+            self.instrWidget.valueChanged.connect(self.sendVal)
+        else:
+            if not self.Param.dataType == 'float32':
+                self.Param.val = int(self.Param.val)
+            self.livesend.write(0,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
+            x = self.livesend.read()
+            print(x)
+             
         
         

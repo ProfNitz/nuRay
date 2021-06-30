@@ -29,11 +29,13 @@ class nuRSerial(object):
         #self.s=serial.Serial(port=self.port,baudrate=115200,rtscts = True, dsrdtr = True, xonxoff = True)
         pass
     
-
-    def write(self,pset,pidx,val,dt):
-        buf = nuRLL.pack(((pset<<2)+(pidx<<4)),val,dt)
+    def write(self,rw,pset,pidx,val,dt):
+        buf = nuRLL.pack(((rw<<3)+(pset<<2)+(pidx<<4)),val,dt)
         print(buf)
         self.s.write(buf)
+    
+    def read(self):
+        self.s.read(4)
         
     def is_open(self):
         return self.s.is_open

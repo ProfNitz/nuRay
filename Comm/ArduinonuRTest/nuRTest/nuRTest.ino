@@ -85,14 +85,36 @@ void loop() {
              dtype= (buf[idx-1])&0xf0;
              switch (dtype){
               case 48:
-              paramset[setidx].paramf[subidx] = *(float*)&pack[2];idx++;break;
-
+              if((((*(uint8_t*)&pack[0])&_BV(3))>>3)==1)
+              { 
+                paramset[setidx].paramf[subidx] = *(float*)&pack[2];idx++;
+              }
+              if((((*(uint8_t*)&pack[0])&_BV(3))>>3)==0)
+              {
+                byte *b = (byte*)&paramset[setidx].paramf[subidx];
+                Serial.write(b,4);
+              }
+              break;
               case 32:
-              paramset[setidx].param16[subidx] = *(int16_t*)&pack[2];idx++;break;
-
+              if((((*(uint8_t*)&pack[0])&_BV(3))>>3)==1)
+              { 
+                paramset[setidx].param16[subidx] = *(int16_t*)&pack[2];idx++;
+              }
+              if((((*(uint8_t*)&pack[0])&_BV(3))>>3)==0)
+              {
+                Serial.write(int16_t(paramset[setidx].param16[subidx]));
+              }
+              break;
               case 16: 
-              paramset[setidx].param8[subidx] = *(uint8_t*)&pack[2];idx++;break;
-
+              if((((*(uint8_t*)&pack[0])&_BV(3))>>3)==1)
+              { 
+                paramset[setidx].param8[subidx] = *(uint8_t*)&pack[2];idx++;
+              }
+              if((((*(uint8_t*)&pack[0])&_BV(3))>>3)==0)
+              {
+                Serial.write(uint8_t(paramset[setidx].param8[subidx]));
+              }
+              break;
               case 240:
               if((((*(uint8_t*)&pack[0])&_BV(2))>>2)==1){ 
               active = 1;

@@ -117,6 +117,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.nuRayIsMaster = False
         self.muConIsMaster = True
         self.syncset = 0
+                    
         
         self.ActiveSetSwitch.addWidget(self.ActiveSet)
         self.SyncedSetSwitch.addWidget(self.SyncedSet)
@@ -158,11 +159,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             if self.Serial.is_open():
                 self.statusLED.ledcolor = Qt.green
                 self.statusLED.repaint()
-                self.connected=True
-                #while (self.muConIsMaster == True):
-                   # for x in self.AllMyParams.items:
-                       # self.Serial.write(0,x.paramset,x.paramnr,x.val,x.dtype)
-                    
+                self.connected=True                   
             else:
                 PortInfo = QMessageBox.information(self,
                                                      'No valid port chosen.',
@@ -198,10 +195,10 @@ class MyApp(QMainWindow, nuRMainWindow):
                 
     def ActivateSet(self):
         if self.ActiveSet.isChecked():
-            self.Serial.write(1,0,0,'ctrl')
+            self.Serial.write(1,1,0,0,'ctrl')
             print('SET1 is active')
         else:
-            self.Serial.write(0,0,0,'ctrl')
+            self.Serial.write(1,0,0,0,'ctrl')
             print('SET0 is active') 
             
     def changeSyncDir(self):
@@ -213,7 +210,18 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.SyncDir.setText(self.rArrow)
             self.nuRayIsMaster = True
             self.muConIsMaster = False
-    
+        self.InstrReadWrite()
+
+    def InstrReadWrite(self):
+        for i in self.InstrPageList:
+                for x in i.instrList:
+                    if type(x.Param) != str:
+                        if self.nuRayIsMaster == True:
+                            x.writeNtoM = True
+                        else:
+                            x.writeNtoM = False
+                        x.readWriteData()
+        
     #NoNi: first rudimental reaction on Connection settings
     def ConnSettings(self):
         if self.ConnSetDlg == None:
@@ -411,12 +419,12 @@ class MyApp(QMainWindow, nuRMainWindow):
             ip.activateWindow()
         else:
             self.newInstrP = cInstrPage(self,fn,pos)
-            self.InstrPageList.append(self.newInstrP)
-            self.newInstrP.show()
+            self.InstrPageList.append(self.newInstrP)       
             for i in self.InstrPageList:
                 for x in i.instrList:
                     x.livesend = self.Serial
-        
+            self.InstrReadWrite()
+            self.newInstrP.show()
         
     def OpenInstr(self):
         # cleanup list before adding
