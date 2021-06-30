@@ -159,7 +159,8 @@ class MyApp(QMainWindow, nuRMainWindow):
             if self.Serial.is_open():
                 self.statusLED.ledcolor = Qt.green
                 self.statusLED.repaint()
-                self.connected=True                   
+                self.connected=True
+                self.InstrReadWrite()                   
             else:
                 PortInfo = QMessageBox.information(self,
                                                      'No valid port chosen.',
@@ -423,8 +424,9 @@ class MyApp(QMainWindow, nuRMainWindow):
             for i in self.InstrPageList:
                 for x in i.instrList:
                     x.livesend = self.Serial
-            self.InstrReadWrite()
             self.newInstrP.show()
+            if self.connected:
+                self.InstrReadWrite()
         
     def OpenInstr(self):
         # cleanup list before adding

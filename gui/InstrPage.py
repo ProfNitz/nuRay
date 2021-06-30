@@ -255,15 +255,15 @@ class nuRayInstr(QObject):
        
     def readWriteData(self):
         if self.writeNtoM == True:
-            #print("WRITE TO ARDUINO IS TRUE")
-            self.instrWidget.valueChanged.connect(self.setParamVal)
-            self.instrWidget.valueChanged.connect(self.sendVal)
+                print("WRITE TO ARDUINO IS TRUE")
+                self.instrWidget.valueChanged.connect(self.setParamVal)
+                self.instrWidget.valueChanged.connect(self.sendVal)
         else:
             if not self.Param.dataType == 'float32':
                 self.Param.val = int(self.Param.val)
-            self.livesend.write(0,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
-            x = self.livesend.read()
-            print(x)
+                self.livesend.write(0,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
+                x = self.livesend.read()
+                print(x)
              
         
         
