@@ -1,13 +1,13 @@
 <Parameters>
 0;New;float32;0.0;0.0;0.0
-1;New2;uint8;0;130;121.0
+1;New2;uint8;0;255;121
 2;New3;float32;0.0;99.99;12.25
 3;New4;uint8;0;255;250.0
 <\Parameters>
 <Signals>
 <\Signals>
 <Instrument Pages>
-Example_Project\thirdPage.ui;865;562
+Example_Project\thirdPage.ui;801;830
 <\Instrument Pages>
 <SyncedSet>
 1<\SyncedSet>
