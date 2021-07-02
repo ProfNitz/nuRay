@@ -35,7 +35,10 @@ class nuRSerial(object):
         self.s.write(buf)
     
     def read(self):
-        self.s.read(4)
+        return self.s.read()
+    
+    def readline(self):
+        return self.s.readline()
         
     def is_open(self):
         return self.s.is_open

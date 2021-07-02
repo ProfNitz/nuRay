@@ -64,7 +64,7 @@ void loop() {
       buf[idx]=recByte;
       //Serial.println(buf[idx]);  
       if((buf[idx]) == STOPFLAG){
-        Serial.println("stopflag erkannt!");
+        //Serial.println("stopflag erkannt!");
         len = buf[(uint8_t)idx-1]&0x0f;
         //Serial.println(len);
         teststartflag = buf[(uint8_t)idx-(3+len)];
@@ -89,10 +89,13 @@ void loop() {
               { 
                 paramset[setidx].paramf[subidx] = *(float*)&pack[2];idx++;
               }
-              if((((*(uint8_t*)&pack[0])&_BV(3))>>3)==0)
+              if(((*(uint8_t*)&pack[0])&_BV(3))==0)
               {
-                byte *b = (byte*)&paramset[setidx].paramf[subidx];
-                Serial.write(b,4);
+                //byte *b = (float*)&paramset[setidx].paramf[subidx];
+                //Serial.write(b,4);
+                //PORTD |= _BV(LED3);
+                Serial.print(paramset[setidx].paramf[subidx],2);
+                Serial.print("\n");
               }
               break;
               case 32:
@@ -100,9 +103,12 @@ void loop() {
               { 
                 paramset[setidx].param16[subidx] = *(int16_t*)&pack[2];idx++;
               }
-              if((((*(uint8_t*)&pack[0])&_BV(3))>>3)==0)
+              if(((*(uint8_t*)&pack[0])&_BV(3))==0)
               {
-                Serial.write(int16_t(paramset[setidx].param16[subidx]));
+                Serial.print(paramset[setidx].param16[subidx]);
+                Serial.print("\n");
+                //PORTD |= _BV(LED3);
+
               }
               break;
               case 16: 
@@ -110,9 +116,11 @@ void loop() {
               { 
                 paramset[setidx].param8[subidx] = *(uint8_t*)&pack[2];idx++;
               }
-              if((((*(uint8_t*)&pack[0])&_BV(3))>>3)==0)
+              if(((*(uint8_t*)&pack[0])&_BV(3))==0)
               {
-                Serial.write(uint8_t(paramset[setidx].param8[subidx]));
+                Serial.print(paramset[setidx].param8[subidx]);
+                Serial.print("\n");
+                //PORTD |= _BV(LED3);
               }
               break;
               case 240:
@@ -126,12 +134,12 @@ void loop() {
              }
            }
            else{
-            Serial.println("kein gültiges paket wegen checksum!");
+            //Serial.println("kein gültiges paket wegen checksum!");
             idx++;
            }
         }
         else{
-          Serial.println("kein gültiges paket!");
+          //Serial.println("kein gültiges paket!");
           idx++;
         }
       }

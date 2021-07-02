@@ -237,14 +237,16 @@ class nuRayInstr(QObject):
         self.Param.val = self.instrWidget.value()
 
     def sendVal(self):
-        try:
-            if not self.Param.dataType == 'float32':
-                self.Param.val = int(self.Param.val)
-            print(self.Param.val)
-            self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
-        except AttributeError:
-            print("Please connect to port to send data!")
-    
+        if self.writeNtoM == True:
+            print("schreiben geht los")
+            try:
+                if not self.Param.dataType == 'float32':
+                    self.Param.val = int(self.Param.val)
+                print(self.Param.val)
+                self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
+            except AttributeError:
+                print("Please connect to port to send data!")
+                
     #def readVal(self):
         #if not self.Param.dataType == 'float32':
             #self.Param.val = int(self.Param.val)
@@ -255,15 +257,32 @@ class nuRayInstr(QObject):
        
     def readWriteData(self):
         if self.writeNtoM == True:
-                print("WRITE TO ARDUINO IS TRUE")
-                self.instrWidget.valueChanged.connect(self.setParamVal)
-                self.instrWidget.valueChanged.connect(self.sendVal)
-        else:
+            print("SCHREIBEN")
+            #self.instrWidget.setEnabled(True)
+            #if not self.Param.dataType == 'float32':
+            #    self.Param.val = int(self.Param.val)
+            self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
+            self.instrWidget.valueChanged.connect(self.setParamVal)
+            self.instrWidget.valueChanged.connect(self.sendVal)
+        if self.writeNtoM == False:
+            print("LESEN")
+            self.livesend.write(1,1,5,1,'uint8')
             if not self.Param.dataType == 'float32':
                 self.Param.val = int(self.Param.val)
-            self.livesend.write(0,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
-            x = self.livesend.read()
-            print(x)
+            self.livesend.write(0,self.Param.paramset,self.Param.paramnr,0,self.Param.dataType)
+            #time.sleep(2)
+            self.x = self.livesend.readline()
+            self.y = self.x.decode("utf-8")
+            print(self.x)
+            if self.Param.dataType == 'float32':
+                self.z = float(self.y[:-1])
+            else:
+                self.z = int(self.y[:-1])
+            print(self.z)
+            self.instrWidget.setValue(self.z)
+            #self.instrWidget.setDisabled(True)
+            #y = int.from_bytes(x, "big")
+            #print(y)
              
         
         

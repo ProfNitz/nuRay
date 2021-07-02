@@ -11,7 +11,7 @@ import io
 import inspect #for debugging
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QDialog, QLabel, QAbstractButton, QPushButton
-from PyQt5.QtCore import QPoint,Qt
+from PyQt5.QtCore import QPoint,Qt,QTimer
 import re
 import time
 
@@ -117,8 +117,8 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.nuRayIsMaster = False
         self.muConIsMaster = True
         self.syncset = 0
-                    
-        
+        self.ActiveSet.setDisabled(True)
+                            
         self.ActiveSetSwitch.addWidget(self.ActiveSet)
         self.SyncedSetSwitch.addWidget(self.SyncedSet)
         self.syncDirection.addWidget(self.SyncDir)
@@ -193,6 +193,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.syncset = 0
             for x in self.AllMyParams.items:
                 x.paramset = 0
+        self.InstrReadWrite()
                 
     def ActivateSet(self):
         if self.ActiveSet.isChecked():
@@ -207,21 +208,30 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.SyncDir.setText(self.lArrow)
             self.nuRayIsMaster = False
             self.muConIsMaster = True
+            self.ActiveSet.setDisabled(True)
         else:
+            self.ActiveSet.setEnabled(True)
             self.SyncDir.setText(self.rArrow)
             self.nuRayIsMaster = True
             self.muConIsMaster = False
         self.InstrReadWrite()
+        #self.sleep2sec()
+    
+    #def sleep2sec(self):
+        #self.SyncDir.setEnabled(False)
+        #QTimer.singleShot(2000, lambda: self.SyncDir.setDisabled(False))
 
     def InstrReadWrite(self):
+        self.SyncDir.setEnabled(False)
         for i in self.InstrPageList:
-                for x in i.instrList:
-                    if type(x.Param) != str:
-                        if self.nuRayIsMaster == True:
-                            x.writeNtoM = True
-                        else:
-                            x.writeNtoM = False
-                        x.readWriteData()
+            for x in i.instrList:
+                if type(x.Param) != str:
+                    if self.nuRayIsMaster == True and self.muConIsMaster == False:
+                        x.writeNtoM = True
+                    if self.nuRayIsMaster == False and self.muConIsMaster == True:
+                        x.writeNtoM = False
+                    x.readWriteData()
+        self.SyncDir.setDisabled(False)
         
     #NoNi: first rudimental reaction on Connection settings
     def ConnSettings(self):
