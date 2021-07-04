@@ -160,8 +160,9 @@ class MyApp(QMainWindow, nuRMainWindow):
                 self.statusLED.ledcolor = Qt.green
                 self.statusLED.repaint()
                 self.connected=True
-                self.ReadActiveSet()
-                #self.InstrReadWrite()                   
+                self.Serial.write(1,1,29,255,'uint8')         
+                #self.InstrReadWrite() 
+                self.ReadActiveSet()                  
             else:
                 PortInfo = QMessageBox.information(self,
                                                      'No valid port chosen.',
@@ -238,7 +239,8 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.SyncDir.setDisabled(False)
         
     def ReadActiveSet(self):
-        self.Serial.write(1,1,5,1,'uint8')
+        #self.Serial.write(1,1,5,1,'uint8')
+        #self.Serial.flushInput()
         self.Serial.write(0,1,0,0,'ctrl')
         #time.sleep(0.5)
         #if self.Serial.in_waiting() == 1:
@@ -249,6 +251,8 @@ class MyApp(QMainWindow, nuRMainWindow):
         print("Auf Arduino ist grad SET " + str(self.readActive) + " aktiv.")
         if self.readActive == 1 and not self.ActiveSet.isChecked() or self.readActive == 0 and self.ActiveSet.isChecked():
             self.ActiveSet.click()
+        #self.Serial.flushInput()
+        self.InstrReadWrite()
             
         
         
@@ -454,9 +458,8 @@ class MyApp(QMainWindow, nuRMainWindow):
             for i in self.InstrPageList:
                 for x in i.instrList:
                     x.livesend = self.Serial
+            self.radioButtonDisconnect.click()
             self.newInstrP.show()
-            if self.connected:
-                self.InstrReadWrite()
         
     def OpenInstr(self):
         # cleanup list before adding

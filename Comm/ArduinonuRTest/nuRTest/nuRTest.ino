@@ -44,7 +44,7 @@ uint8_t checksum(uint8_t *buf, uint8_t len){
 }
 
 void setup() {
-  Serial.begin(9600);
+  Serial.begin(115200);
   idx = 0;
   DDRD = _BV(LED1) + _BV(LED2) + _BV(LED3);
   init_pwm();
@@ -120,7 +120,6 @@ void loop() {
                 Serial.print(paramset[setidx].param16[subidx]);
                 Serial.print("\n");
                 idx++;
-                //PORTD |= _BV(LED3);
 
               }
               break;
@@ -154,19 +153,19 @@ void loop() {
                 }
                 if(((*(uint8_t*)&pack[0])&_BV(3))==0)
                 {
-                  Serial.print(active); idx++;
+                  Serial.print(active);idx++;
                 }
               }
               break;
              }
            }
            else{
-            //Serial.println("kein gültiges paket wegen checksum!");
+            //Serial.println("akein gültiges paket wegen checksum!");
             idx++;
            }
         }
         else{
-          //Serial.println("kein gültiges paket!");
+          //Serial.println("bkein gültiges paket!");
           idx++;
         }
       }
