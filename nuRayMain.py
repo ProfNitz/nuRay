@@ -177,12 +177,12 @@ class MyApp(QMainWindow, nuRMainWindow):
         pass
         
     def Disconnect(self):
-        self.connected = False       
         self.statusLED.ledcolor = Qt.red
         self.statusLED.repaint()
-        
-        self.Serial.close()
+        if self.connected:
+            self.Serial.close()
         print("disconnected")   
+        self.connected = False
  
     def SyncSet(self):
         if self.SyncedSet.isChecked():
@@ -244,9 +244,9 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.Serial.write(0,1,0,0,'ctrl')
         #time.sleep(0.5)
         #if self.Serial.in_waiting() == 1:
-        self.readActiveB = self.Serial.read()
+        self.readActiveB = self.Serial.read(1)
         print(self.readActiveB)
-        self.readActive = int(self.readActiveB.decode("utf-8"))
+        self.readActive = int.from_bytes(self.readActiveB,"big")
         #self.readActive = int(self.readActiveB[:-1])
         print("Auf Arduino ist grad SET " + str(self.readActive) + " aktiv.")
         if self.readActive == 1 and not self.ActiveSet.isChecked() or self.readActive == 0 and self.ActiveSet.isChecked():

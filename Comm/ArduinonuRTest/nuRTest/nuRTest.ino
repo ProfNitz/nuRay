@@ -94,11 +94,12 @@ void loop() {
               }
               if(((*(uint8_t*)&pack[0])&_BV(3))==0)
               {
-                //byte *b = (float*)&paramset[setidx].paramf[subidx];
-                //Serial.write(b,4);
+                byte *b = (byte*)&paramset[setidx].paramf[subidx];
+                Serial.write(b,4);
                 //PORTD |= _BV(LED3);
-                Serial.print(paramset[setidx].paramf[subidx],2);
-                Serial.print("\n");
+                //Serial.print(paramset[setidx].paramf[subidx],2);
+                //Serial.print("\n");
+                //Serial.write(paramset[setidx].paramf[subidx],4);
                 idx++;
               }
               break;
@@ -117,8 +118,11 @@ void loop() {
               }
               if(((*(uint8_t*)&pack[0])&_BV(3))==0)
               {
-                Serial.print(paramset[setidx].param16[subidx]);
-                Serial.print("\n");
+                //Serial.print(paramset[setidx].param16[subidx]);
+                //Serial.print("\n");
+                //Serial.write(paramset[setidx].param16[subidx],2);
+                byte *b = (byte*)&paramset[setidx].param16[subidx];
+                Serial.write(b,2);
                 idx++;
 
               }
@@ -138,8 +142,8 @@ void loop() {
               }
               if(((*(uint8_t*)&pack[0])&_BV(3))==0)
               {
-                Serial.print(paramset[setidx].param8[subidx]);
-                Serial.print("\n");
+                byte *b = (byte*)&paramset[setidx].param8[subidx];
+                Serial.write(b,1);
                 idx++;
                 //PORTD |= _BV(LED3);
               }
@@ -153,7 +157,8 @@ void loop() {
                 }
                 if(((*(uint8_t*)&pack[0])&_BV(3))==0)
                 {
-                  Serial.print(active);idx++;
+                  Serial.write(active);
+                  idx++;
                 }
               }
               break;

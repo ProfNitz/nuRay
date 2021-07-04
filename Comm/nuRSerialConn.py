@@ -35,8 +35,8 @@ class nuRSerial(object):
         print(buf)
         self.s.write(buf)
     
-    def read(self):
-        return self.s.read()
+    def read(self,bytestoread):
+        return self.s.read(bytestoread)
     
     def readline(self):
         return self.s.readline()

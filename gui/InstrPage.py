@@ -15,6 +15,7 @@ from PyQt5.QtCore import QObject, QRect
 import os
 import io
 import time
+import struct
 
 
 
@@ -269,22 +270,29 @@ class nuRayInstr(QObject):
             self.instrWidget.valueChanged.connect(self.sendVal)
             
         if self.writeNtoM == False:
-            self.livesend.flushInput()
+            #self.livesend.flushInput()
             print("LESEN")
             if not self.Param.dataType == 'float32':
                 self.Param.val = int(self.Param.val)
             #self.livesend.write(1,1,29,255,'uint8')
             self.livesend.write(0,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
-            self.x = self.livesend.readline()
-            self.y = self.x.decode("utf-8")
-            print(self.x)
+            
+            if self.Param.dataType == 'uint8':
+                self.x = self.livesend.read(1)
+            if self.Param.dataType == 'int16':
+                self.x = self.livesend.read(2)
             if self.Param.dataType == 'float32':
-                self.z = float(self.y[:-1])
+                self.x = self.livesend.read(4)
+                
+            if self.Param.dataType == 'float32':
+                [self.y] = struct.unpack('<f', self.x)
             else:
-                self.z = int(self.y[:-1])
-            print(self.z)
-            self.instrWidget.setValue(self.z)
-            self.Param.val = self.z
+                self.y = int.from_bytes(self.x, "big")
+                
+            print(self.x)
+            print(self.y)
+            self.instrWidget.setValue(self.y)
+            self.Param.val = self.y
             self.instrWidget.valueChanged.connect(self.setParamVal)
             #self.instrWidget.setDisabled(True)
             #y = int.from_bytes(x, "big")
