@@ -117,7 +117,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.nuRayIsMaster = False
         self.muConIsMaster = True
         self.syncset = 0
-        self.ActiveSet.setDisabled(True)
+        #self.ActiveSet.setDisabled(True)
                             
         self.ActiveSetSwitch.addWidget(self.ActiveSet)
         self.SyncedSetSwitch.addWidget(self.SyncedSet)
@@ -160,7 +160,8 @@ class MyApp(QMainWindow, nuRMainWindow):
                 self.statusLED.ledcolor = Qt.green
                 self.statusLED.repaint()
                 self.connected=True
-                self.InstrReadWrite()                   
+                self.ReadActiveSet()
+                #self.InstrReadWrite()                   
             else:
                 PortInfo = QMessageBox.information(self,
                                                      'No valid port chosen.',
@@ -196,24 +197,27 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.InstrReadWrite()
                 
     def ActivateSet(self):
-        if self.ActiveSet.isChecked():
-            self.Serial.write(1,1,0,0,'ctrl')
-            print('SET1 is active')
-        else:
-            self.Serial.write(1,0,0,0,'ctrl')
-            print('SET0 is active') 
+        if self.nuRayIsMaster:
+            if self.ActiveSet.isChecked():
+                self.Serial.write(1,1,0,1,'ctrl')
+                print('SET1 is active')
+            else:
+                self.Serial.write(1,1,0,0,'ctrl')
+                print('SET0 is active') 
             
     def changeSyncDir(self):
         if self.SyncDir.text() == self.rArrow:
             self.SyncDir.setText(self.lArrow)
             self.nuRayIsMaster = False
             self.muConIsMaster = True
-            self.ActiveSet.setDisabled(True)
+            #self.ActiveSet.setDisabled(True)
         else:
-            self.ActiveSet.setEnabled(True)
+            #self.ActiveSet.setEnabled(True)
             self.SyncDir.setText(self.rArrow)
             self.nuRayIsMaster = True
             self.muConIsMaster = False
+        if self.connected:
+            self.ActivateSet()
         self.InstrReadWrite()
         #self.sleep2sec()
     
@@ -232,6 +236,22 @@ class MyApp(QMainWindow, nuRMainWindow):
                         x.writeNtoM = False
                     x.readWriteData()
         self.SyncDir.setDisabled(False)
+        
+    def ReadActiveSet(self):
+        self.Serial.write(1,1,5,1,'uint8')
+        self.Serial.write(0,1,0,0,'ctrl')
+        #time.sleep(0.5)
+        #if self.Serial.in_waiting() == 1:
+        self.readActiveB = self.Serial.read()
+        print(self.readActiveB)
+        self.readActive = int(self.readActiveB.decode("utf-8"))
+        #self.readActive = int(self.readActiveB[:-1])
+        print("Auf Arduino ist grad SET " + str(self.readActive) + " aktiv.")
+        if self.readActive == 1 and not self.ActiveSet.isChecked() or self.readActive == 0 and self.ActiveSet.isChecked():
+            self.ActiveSet.click()
+            
+        
+        
         
     #NoNi: first rudimental reaction on Connection settings
     def ConnSettings(self):
@@ -282,7 +302,7 @@ class MyApp(QMainWindow, nuRMainWindow):
                 f.write(self.AllMyParams.save())
                 f.write(self.AllMySignals.save())
                 f.write(self.saveInstrPages())
-                f.write(self.saveSyncedSet())
+                #f.write(self.saveSyncedSet())
                 
     def saveInstrPages(self):
         res='<Instrument Pages>\n'
@@ -352,7 +372,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.ParamSettings()
             self.AllMySignals.load(projSet)
             self.loadInstrPages(projSet)
-            self.loadSyncedSet(projSet)
+            #self.loadSyncedSet(projSet)
             self.setTitle()            
         
     def OpenPlotter(self):

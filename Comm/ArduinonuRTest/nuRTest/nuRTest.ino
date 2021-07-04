@@ -19,7 +19,7 @@ uint16_t cmd;
 uint8_t dtype;
 uint8_t recByte;
 int setidx;
-int active = 0;
+int active = 1;
 
 typedef struct {
   float paramf[30];
@@ -44,7 +44,7 @@ uint8_t checksum(uint8_t *buf, uint8_t len){
 }
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(9600);
   idx = 0;
   DDRD = _BV(LED1) + _BV(LED2) + _BV(LED3);
   init_pwm();
@@ -75,16 +75,19 @@ void loop() {
           if (checksum(pack,len)==buf[(uint8_t)(idx-2)]){
             //Serial.println(checksum(pack,len));
             //Serial.println(buf[(uint8_t)(idx-2)]);
-             if((((*(uint8_t*)&pack[0])&_BV(2))>>2)==1){ 
-              setidx = 1;
-             }
-             else {
-              setidx = 0;
-             }
+
              int subidx = (*(uint16_t*)&pack[0])>>4;
              dtype= (buf[idx-1])&0xf0;
              switch (dtype){
               case 48:
+              if((((*(uint8_t*)&pack[0])&_BV(2))>>2)==1)
+              { 
+                setidx = 1;
+              }
+              else 
+              {
+              setidx = 0;
+              }
               if((((*(uint8_t*)&pack[0])&_BV(3))>>3)==1)
               { 
                 paramset[setidx].paramf[subidx] = *(float*)&pack[2];idx++;
@@ -96,9 +99,18 @@ void loop() {
                 //PORTD |= _BV(LED3);
                 Serial.print(paramset[setidx].paramf[subidx],2);
                 Serial.print("\n");
+                idx++;
               }
               break;
               case 32:
+              if((((*(uint8_t*)&pack[0])&_BV(2))>>2)==1)
+              { 
+                setidx = 1;
+              }
+              else 
+              {
+              setidx = 0;
+              }
               if((((*(uint8_t*)&pack[0])&_BV(3))>>3)==1)
               { 
                 paramset[setidx].param16[subidx] = *(int16_t*)&pack[2];idx++;
@@ -107,11 +119,20 @@ void loop() {
               {
                 Serial.print(paramset[setidx].param16[subidx]);
                 Serial.print("\n");
+                idx++;
                 //PORTD |= _BV(LED3);
 
               }
               break;
-              case 16: 
+              case 16:
+              if((((*(uint8_t*)&pack[0])&_BV(2))>>2)==1)
+              { 
+                setidx = 1;
+              }
+              else 
+              {
+              setidx = 0;
+              } 
               if((((*(uint8_t*)&pack[0])&_BV(3))>>3)==1)
               { 
                 paramset[setidx].param8[subidx] = *(uint8_t*)&pack[2];idx++;
@@ -120,15 +141,21 @@ void loop() {
               {
                 Serial.print(paramset[setidx].param8[subidx]);
                 Serial.print("\n");
+                idx++;
                 //PORTD |= _BV(LED3);
               }
               break;
               case 240:
-              if((((*(uint8_t*)&pack[0])&_BV(2))>>2)==1){ 
-              active = 1;
-              }
-              else{ 
-              active = 0;
+              if((((*(uint8_t*)&pack[0])&_BV(2))>>2)==1)
+              {
+                if((((*(uint8_t*)&pack[0])&_BV(3))>>3)==1)
+                { 
+                  active = *(uint8_t*)&pack[2]; idx++;
+                }
+                if(((*(uint8_t*)&pack[0])&_BV(3))==0)
+                {
+                  Serial.print(active); idx++;
+                }
               }
               break;
              }

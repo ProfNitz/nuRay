@@ -18,7 +18,8 @@ class nuRSerial(object):
     def connect(self):
         self.s = serial.Serial()
         self.s.port = self.port
-        self.s.baudrate = 115200
+        self.s.baudrate = 9600
+        self.s.timeout = 2
         #self.s.timeout = 1
         self.s.setDTR(False)
         try:
@@ -42,6 +43,9 @@ class nuRSerial(object):
         
     def is_open(self):
         return self.s.is_open
+    
+    def in_waiting(self):
+        return self.s.in_waiting
     
     def close(self):
         self.s.close()

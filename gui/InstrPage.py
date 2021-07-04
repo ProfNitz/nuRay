@@ -243,6 +243,7 @@ class nuRayInstr(QObject):
                 if not self.Param.dataType == 'float32':
                     self.Param.val = int(self.Param.val)
                 print(self.Param.val)
+                self.livesend.write(1,1,5,1,'uint8')
                 self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
             except AttributeError:
                 print("Please connect to port to send data!")
@@ -270,7 +271,7 @@ class nuRayInstr(QObject):
             if not self.Param.dataType == 'float32':
                 self.Param.val = int(self.Param.val)
             self.livesend.write(0,self.Param.paramset,self.Param.paramnr,0,self.Param.dataType)
-            #time.sleep(2)
+            #time.sleep(0.5)
             self.x = self.livesend.readline()
             self.y = self.x.decode("utf-8")
             print(self.x)
@@ -280,6 +281,8 @@ class nuRayInstr(QObject):
                 self.z = int(self.y[:-1])
             print(self.z)
             self.instrWidget.setValue(self.z)
+            self.Param.val = self.z
+            self.instrWidget.valueChanged.connect(self.setParamVal)
             #self.instrWidget.setDisabled(True)
             #y = int.from_bytes(x, "big")
             #print(y)
