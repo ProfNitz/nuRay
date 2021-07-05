@@ -195,7 +195,8 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.syncset = 0
             for x in self.AllMyParams.items:
                 x.paramset = 0
-        self.InstrReadWrite()
+        if self.connected:
+            self.InstrReadWrite()
                 
     def ActivateSet(self):
         if self.nuRayIsMaster:
@@ -219,7 +220,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.muConIsMaster = False
         if self.connected:
             self.ActivateSet()
-        self.InstrReadWrite()
+            self.InstrReadWrite()
         #self.sleep2sec()
     
     #def sleep2sec(self):
@@ -235,7 +236,8 @@ class MyApp(QMainWindow, nuRMainWindow):
                         x.writeNtoM = True
                     if self.nuRayIsMaster == False and self.muConIsMaster == True:
                         x.writeNtoM = False
-                    x.readWriteData()
+                    if self.connected:
+                        x.readWriteData()
         self.SyncDir.setDisabled(False)
         
     def ReadActiveSet(self):

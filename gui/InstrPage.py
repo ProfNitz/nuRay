@@ -244,10 +244,13 @@ class nuRayInstr(QObject):
                 if not self.Param.dataType == 'float32':
                     self.Param.val = int(self.Param.val)
                 print(self.Param.val)
-                #self.livesend.write(1,1,5,1,'uint8')
+                #self.livesend.write(1,1,5,1,'uint8') 
                 self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
             except AttributeError:
                 print("Please connect to port to send data!")
+    
+    #def editingFinished(self):
+        #self.sendVal()
                 
     #def readVal(self):
         #if not self.Param.dataType == 'float32':
@@ -267,7 +270,11 @@ class nuRayInstr(QObject):
             #self.livesend.flushInput()
             self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
             self.instrWidget.valueChanged.connect(self.setParamVal)
-            self.instrWidget.valueChanged.connect(self.sendVal)
+            if isinstance(self.instrWidget,QDoubleSpinBox):
+                self.instrWidget.setKeyboardTracking(False)
+                self.instrWidget.valueChanged.connect(self.sendVal)
+            else:
+                self.instrWidget.valueChanged.connect(self.sendVal)
             
         if self.writeNtoM == False:
             #self.livesend.flushInput()
