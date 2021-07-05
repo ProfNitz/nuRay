@@ -13,7 +13,7 @@
 uint8_t buf[BUF_SIZE]; 
 uint8_t *p;
 uint8_t pack[MAX_PACK_LEN];
-uint8_t idx,k,i,x,sizeB;
+uint8_t idx,k,i,x,sizeB,newidx,sum;
 uint8_t len, teststartflag;
 uint16_t cmd;
 uint8_t dtype;
@@ -53,31 +53,37 @@ void setup() {
 /*void sendSet() {
   Serial.write(active);
 }*/
-
-
+int negidx (int oldidx,int back)
+{
+  sum = (oldidx-back);
+  return sum;
+}
 void loop() {
   //sendSet();
   if(Serial.available()>0){
     while(Serial.available()>0){
       recByte = Serial.read();
+      idx = idx%BUF_SIZE;
       //Serial.println(recByte);
       buf[idx]=recByte;
       //Serial.println(buf[idx]);  
       if((buf[idx]) == STOPFLAG){
         //Serial.println("stopflag erkannt!");
         len = buf[(uint8_t)idx-1]&0x0f;
-        //Serial.println(len);
-        teststartflag = buf[(uint8_t)idx-(3+len)];
+        //Serial.write(len);
+        teststartflag = buf[(uint8_t)negidx(idx,(3+len))];
         //Serial.println(teststartflag);
-        if ((buf[idx-(3+len)]==STARTFLAG)&&(len<=MAX_PACK_LEN)){
-          for (k=idx-(2+len),p=pack,i=0;i<len+1;*(p++)=buf[k++],i++);
+        if ((buf[negidx(idx,(3+len))]==STARTFLAG)&&(len<=MAX_PACK_LEN)){
+          //Serial.write(len);
+          for (k=negidx(idx,(2+len)),p=pack,i=0;i<len+1;*(p++)=buf[k++],i++);
           //Serial.println(pack[0]);
-          if (checksum(pack,len)==buf[(uint8_t)(idx-2)]){
+          if (checksum(pack,len)==buf[(uint8_t)negidx(idx,2)]){
+            //Serial.write(len);
             //Serial.println(checksum(pack,len));
             //Serial.println(buf[(uint8_t)(idx-2)]);
 
              int subidx = (*(uint16_t*)&pack[0])>>4;
-             dtype= (buf[idx-1])&0xf0;
+             dtype= (buf[negidx(idx,1)])&0xf0;
              switch (dtype){
               case 48:
               if((((*(uint8_t*)&pack[0])&_BV(2))>>2)==1)
