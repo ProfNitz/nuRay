@@ -96,6 +96,8 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.actionOpen.triggered.connect(self.OpenProject)
         self.actionGenerate_Code.triggered.connect(self.CodeGen)
         
+        self.actionClose_Project.triggered.connect(self.closeEverything)
+        
         self.actionConnection_Settings.triggered.connect(self.ConnSettings)
         self.ConnSetDlg = None
         
@@ -146,6 +148,7 @@ class MyApp(QMainWindow, nuRMainWindow):
                 
 
         self.projectFile = 'untitled Project'
+        self.paramFile = 'untitled Parameters'
         self.setTitle()
         
         self.AllMyParams = cParamTableModel(None) #table model so it can be processed by QTableView
@@ -195,8 +198,8 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.syncset = 0
             for x in self.AllMyParams.items:
                 x.paramset = 0
-        if self.connected:
-            self.InstrReadWrite()
+        self.SyncInstr()
+        self.InstrReadWrite()
                 
     def ActivateSet(self):
         if self.nuRayIsMaster:
@@ -226,6 +229,23 @@ class MyApp(QMainWindow, nuRMainWindow):
     #def sleep2sec(self):
         #self.SyncDir.setEnabled(False)
         #QTimer.singleShot(2000, lambda: self.SyncDir.setDisabled(False))
+
+    def SyncInstr(self):
+        for i in self.InstrPageList:
+            for x in i.instrList:
+                if type(x.Param) != str:
+                    if self.syncset == 0:
+                        if not x.Param.dataType == 'float32':
+                            x.Param.valset0 = int(x.Param.valset0)
+                        x.instrWidget.setValue(x.Param.valset0)
+                    if self.syncset == 1:
+                        if not x.Param.dataType == 'float32':
+                            x.Param.valset1 = int(x.Param.valset1)
+                        x.instrWidget.setValue(x.Param.valset1)
+                        
+                    
+        
+
 
     def InstrReadWrite(self):
         self.SyncDir.setEnabled(False)
@@ -284,6 +304,11 @@ class MyApp(QMainWindow, nuRMainWindow):
         d,f=os.path.split(self.projectFile)
         n,e=os.path.splitext(f)
         return n
+    
+    def paramName(self):
+        d,f=os.path.split(self.projectFile)
+        n,e=os.path.splitext(f)
+        return n
         
     def setTitle(self):
             self.setWindowTitle('nuRay - '+self.projectName())
@@ -291,7 +316,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         
     def SaveProjectAs(self):
         file,_ = QFileDialog.getSaveFileName(self,
-                                             "Save Project As...",
+                                             "Save Project As",
                                              "",
                                              "nuRay Project (*.nrpr);;All Files (*)")
         if file:
@@ -309,6 +334,21 @@ class MyApp(QMainWindow, nuRMainWindow):
                 f.write(self.AllMySignals.save())
                 f.write(self.saveInstrPages())
                 #f.write(self.saveSyncedSet())
+                
+    def SaveParamsAs(self):
+        file,_ = QFileDialog.getSaveFileName(self,
+                                             "Save Params As",
+                                             "",
+                                             "nuRay Params (*.nrpr);;All Files(*)")
+        if file:
+            print(file)
+            self.paramfile = file
+            self.setTitle()
+            self.SaveParams()
+            
+    #def SaveParams(self):
+      #  if self.paramfile == 'untitled Project'
+            
                 
     def saveInstrPages(self):
         res='<Instrument Pages>\n'
@@ -441,6 +481,9 @@ class MyApp(QMainWindow, nuRMainWindow):
         for i in self.PlotterList:
             if i.isVisible():
                 i.close()
+    
+    def closeEverything(self):
+        self.close()
                 
     def loadInstrPage(self,fn,pos=QPoint(0,0)):
         # fn..filename

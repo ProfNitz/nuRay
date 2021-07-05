@@ -99,16 +99,12 @@ class cInstrPage(QDialog):
                     i.Param=x[1]
                     i.label.setText(i.Param)
                     i.label.setPalette(self.paletteRed)
-                    if isinstance(i.instrWidget, QDoubleSpinBox):
-                        i.instrWidget.setValue(float(x[2]))
-                    else:
-                        i.instrWidget.setValue(int(x[2]))
 
     
     def save(self):
         with io.open(self.connFileName(),'w',encoding='utf8') as f:
             for i in self.instrList:
-                f.write(i.instrWidget.objectName()+':'+str(i.Param)+':'+str(i.instrWidget.value())+'\n')
+                f.write(i.instrWidget.objectName()+':'+str(i.Param)+'\n')
         
         
     def reconnectAll(self):
@@ -212,7 +208,13 @@ class nuRayInstr(QObject):
         self.instrWidget.setMaximum(self.Param.max)
         #self.instrWidget.readWriteData()
         #if self.writeNtoM == True:
-        #    self.instrWidget.valueChanged.connect(self.setParamVal)
+        self.Param.val = self.instrWidget.value()
+        if self.Param.paramset == 0:
+            self.Param.valset0 = self.Param.val
+        if self.Param.paramset == 1:
+            self.Param.valset1 = self.Param.val
+        self.instrWidget.valueChanged.connect(self.setParamVal)
+        #self.Page.parent.activateWindow()
         #    self.instrWidget.valueChanged.connect(self.sendVal)
         #else:
            # pass
@@ -236,6 +238,11 @@ class nuRayInstr(QObject):
         
     def setParamVal(self):
         self.Param.val = self.instrWidget.value()
+        if self.Param.paramset == 0:
+            self.Param.valset0 = self.Param.val
+        if self.Param.paramset == 1:
+            self.Param.valset1 = self.Param.val
+        #self.Page.parent.activateWindow()
 
     def sendVal(self):
         if self.writeNtoM == True:
@@ -244,21 +251,10 @@ class nuRayInstr(QObject):
                 if not self.Param.dataType == 'float32':
                     self.Param.val = int(self.Param.val)
                 print(self.Param.val)
-                #self.livesend.write(1,1,5,1,'uint8') 
                 self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
             except AttributeError:
                 print("Please connect to port to send data!")
     
-    #def editingFinished(self):
-        #self.sendVal()
-                
-    #def readVal(self):
-        #if not self.Param.dataType == 'float32':
-            #self.Param.val = int(self.Param.val)
-        #self.livesend.write(0,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
-        #x = self.livesend.read()
-        #print(x)
-        #self.instrWidget.setValue(self.Param.val)
        
     def readWriteData(self):
         #self.livesend.write(15,15,5,255,'ctrl')
@@ -266,9 +262,12 @@ class nuRayInstr(QObject):
             print("SCHREIBEN")
             #self.instrWidget.setEnabled(True)
             #if not self.Param.dataType == 'float32':
-            #    self.Param.val = int(self.Param.val)
+            #   self.Param.val = int(self.Param.val)
             #self.livesend.flushInput()
-            self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
+            if self.Param.paramset == 0:
+                self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.valset0,self.Param.dataType)
+            if self.Param.paramset == 1:
+                self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.valset1,self.Param.dataType)
             self.instrWidget.valueChanged.connect(self.setParamVal)
             if isinstance(self.instrWidget,QDoubleSpinBox):
                 self.instrWidget.setKeyboardTracking(False)
@@ -279,8 +278,8 @@ class nuRayInstr(QObject):
         if self.writeNtoM == False:
             #self.livesend.flushInput()
             print("LESEN")
-            if not self.Param.dataType == 'float32':
-                self.Param.val = int(self.Param.val)
+            #if not self.Param.dataType == 'float32':
+            #    self.Param.val = int(self.Param.val)
             #self.livesend.write(1,1,29,255,'uint8')
             self.livesend.write(0,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
             
@@ -300,6 +299,10 @@ class nuRayInstr(QObject):
             print(self.y)
             self.instrWidget.setValue(self.y)
             self.Param.val = self.y
+            if self.Param.paramset == 0:
+                self.Param.valset0 = self.Param.val
+            if self.Param.paramset == 1:
+                self.Param.valset1 = self.Param.val
             self.instrWidget.valueChanged.connect(self.setParamVal)
             #self.instrWidget.setDisabled(True)
             #y = int.from_bytes(x, "big")

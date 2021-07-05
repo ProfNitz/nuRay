@@ -70,15 +70,17 @@ class mRayParam(mRayAbstractItem):
 
     #these three memebers describe the interface to a Signal object
     #this should be the only place where you change it
-    header=['Param Nr','Name','Data Type','Min','Max','Value']#Human readable names of members of mRayParam
-    properties=['paramnr','name','dataType','min','max','val']#relevant members of mRayParam (verbatim!)
-    pTypes=[int,str,str,float,float,float]
+    header=['Param Nr','Name','Data Type','Min','Max','Value_Set0','Value_Set1']#Human readable names of members of mRayParam
+    properties=['paramnr','name','dataType','min','max','valset0','valset1']#relevant members of mRayParam (verbatim!)
+    pTypes=[int,str,str,float,float,float,float]
     def __init__(self,name):
         super().__init__()
         self.name=name
         self.paramset = 0
         self.min=0.0
         self.max=1.0
+        self.valset0 = self.min
+        self.valset1 = self.min
         self.val = self.min
         self.dataType='float32'
         self._instrList=[]
@@ -103,7 +105,7 @@ class cMRTableModel(QAbstractTableModel):
     def flags(self,idx):
         if idx.column() in range(1,5,1):
             return Qt.ItemIsSelectable|Qt.ItemIsEditable|Qt.ItemIsEnabled
-        if idx.column() == 0 or idx.column() == 5:
+        if idx.column() == 0 or idx.column() == 5 or idx.column() == 6:
             return Qt.ItemIsEnabled
     def removeItem(self,row):
         self.beginRemoveRows(QModelIndex(),row,row)
