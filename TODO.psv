@@ -30,15 +30,15 @@ ID|Problem|Options for Solution|Status|Commit|priority||||||||||||||||||||||||||
 29|if I press connect and NONE is selected Connection settings should open|connect to connectionsettings method|closed|b775cd396a9c02d55e63ae686848a754474cb06f|1||||||||||||||||||||||||||||||||||||||||||||||
 30|Choosing NONE anywhere should put radioButton Disconnect clicked|implement in connectionsettings class with parent attributes|closed|b775cd396a9c02d55e63ae686848a754474cb06f|1||||||||||||||||||||||||||||||||||||||||||||||
 31|characteristic strings should be used for detecting serial port names form Windows, MacOs, Linux,...|COM and /dev|closed|bf1d7e959d73a9e750eac8993625ebb0210858e7|1||||||||||||||||||||||||||||||||||||||||||||||
-32|Open Project... and Save Project... ||open||1||||||||||||||||||||||||||||||||||||||||||||||
-33|add option to close project||open||1||||||||||||||||||||||||||||||||||||||||||||||
+32|Open Project... and Save Project... ||closed|288c31e6ffcc9771d554cc32d1c91f1129e0cff6|1||||||||||||||||||||||||||||||||||||||||||||||
+33|add option to close project||closed|288c31e6ffcc9771d554cc32d1c91f1129e0cff6|1||||||||||||||||||||||||||||||||||||||||||||||
 34|status LED if connected to something|two different widgets|closed|cb34ebadcf42e302f3afc1311aae44d6d7ecc14e|1||||||||||||||||||||||||||||||||||||||||||||||
 35|double spinbox value shouldn't change while typing||closed|54f895e50a45bc3d88aed46f484e8df2074bb909|1||||||||||||||||||||||||||||||||||||||||||||||
 36|send typed value in double spin box via Enter||closed|54f895e50a45bc3d88aed46f484e8df2074bb909|1||||||||||||||||||||||||||||||||||||||||||||||
 37|stop resetting microcontroller when connecting to python|dtr value|closed|9521c1e69f259982ac96b501cce0549f265c3781|1||||||||||||||||||||||||||||||||||||||||||||||
 38|create  switch to chose which set is the active one||closed|09f8eb1a66683e0df2bc18a9393fba2531155139|1||||||||||||||||||||||||||||||||||||||||||||||
 39|create switch to activate sending data||closed|09f8eb1a66683e0df2bc18a9393fba2531155139|1||||||||||||||||||||||||||||||||||||||||||||||
-40|show values of both sets in parameter list||open||1||||||||||||||||||||||||||||||||||||||||||||||
+40|show values of both sets in parameter list||closed|288c31e6ffcc9771d554cc32d1c91f1129e0cff6|1||||||||||||||||||||||||||||||||||||||||||||||
 41|handling active signals||open||1||||||||||||||||||||||||||||||||||||||||||||||
 42|sending signals from arduino to python||open||1||||||||||||||||||||||||||||||||||||||||||||||
 43|visualize receiving signals in plotter||open||1||||||||||||||||||||||||||||||||||||||||||||||
@@ -52,3 +52,4 @@ ID|Problem|Options for Solution|Status|Commit|priority||||||||||||||||||||||||||
 51|each manipulated SET gets an own file||open||1||||||||||||||||||||||||||||||||||||||||||||||
 52|draw finite state machines ||open||1||||||||||||||||||||||||||||||||||||||||||||||
 53|changing color of status LED|repaint event + refresh|closed|ef76ca2e773d09b2c9148c4738ed685461efcb56|1||||||||||||||||||||||||||||||||||||||||||||||
+54|converting datatype to int16 when float is connected to a QDial, converting int16 and uint8 to float QDoubleSpinBox||open||1||||||||||||||||||||||||||||||||||||||||||||||
