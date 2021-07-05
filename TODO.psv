@@ -33,8 +33,8 @@ ID|Problem|Options for Solution|Status|Commit|priority||||||||||||||||||||||||||
 32|Open Project... and Save Project... ||open||1||||||||||||||||||||||||||||||||||||||||||||||
 33|add option to close project||open||1||||||||||||||||||||||||||||||||||||||||||||||
 34|status LED if connected to something|two different widgets|closed|cb34ebadcf42e302f3afc1311aae44d6d7ecc14e|1||||||||||||||||||||||||||||||||||||||||||||||
-35|double spinbox value shouldn't change while typing||open||1||||||||||||||||||||||||||||||||||||||||||||||
-36|send typed value in double spin box via Enter||open||1||||||||||||||||||||||||||||||||||||||||||||||
+35|double spinbox value shouldn't change while typing||closed|54f895e50a45bc3d88aed46f484e8df2074bb909|1||||||||||||||||||||||||||||||||||||||||||||||
+36|send typed value in double spin box via Enter||closed|54f895e50a45bc3d88aed46f484e8df2074bb909|1||||||||||||||||||||||||||||||||||||||||||||||
 37|stop resetting microcontroller when connecting to python|dtr value|closed|9521c1e69f259982ac96b501cce0549f265c3781|1||||||||||||||||||||||||||||||||||||||||||||||
 38|create  switch to chose which set is the active one||closed|09f8eb1a66683e0df2bc18a9393fba2531155139|1||||||||||||||||||||||||||||||||||||||||||||||
 39|create switch to activate sending data||closed|09f8eb1a66683e0df2bc18a9393fba2531155139|1||||||||||||||||||||||||||||||||||||||||||||||
