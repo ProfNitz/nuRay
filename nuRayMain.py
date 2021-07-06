@@ -96,6 +96,9 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.actionOpen.triggered.connect(self.OpenProject)
         self.actionGenerate_Code.triggered.connect(self.CodeGen)
         
+        self.actionSave_Parameters.triggered.connect(self.SaveParams)
+        self.actionLoad_Parameters.triggered.connect(self.LoadParams)
+        
         self.actionClose_Project.triggered.connect(self.closeEverything)
         
         self.actionConnection_Settings.triggered.connect(self.ConnSettings)
@@ -148,7 +151,7 @@ class MyApp(QMainWindow, nuRMainWindow):
                 
 
         self.projectFile = 'untitled Project'
-        self.paramFile = 'untitled Parameters'
+        self.paramFile = 'untitled Params'
         self.setTitle()
         
         self.AllMyParams = cParamTableModel(None) #table model so it can be processed by QTableView
@@ -342,15 +345,19 @@ class MyApp(QMainWindow, nuRMainWindow):
         file,_ = QFileDialog.getSaveFileName(self,
                                              "Save Params As",
                                              "",
-                                             "nuRay Params (*.nrpr);;All Files(*)")
+                                             "nuRay Params (*.nrpa);;All Files(*)")
         if file:
             print(file)
-            self.paramfile = file
-            self.setTitle()
+            self.paramFile = file
+            #self.setTitle()
             self.SaveParams()
             
-    #def SaveParams(self):
-      #  if self.paramfile == 'untitled Project'
+    def SaveParams(self):
+        if self.paramFile == 'untitled Params':
+            self.SaveParamsAs()
+        else:
+            with io.open(self.paramFile,'w',encoding = 'utf8') as f:
+                f.write(self.AllMyParams.saveP())
             
                 
     def saveInstrPages(self):
@@ -366,11 +373,11 @@ class MyApp(QMainWindow, nuRMainWindow):
         print (res)
         return res
     
-    def saveSyncedSet(self):
-        res='<SyncedSet>\n'
-        res+=str(self.syncset)
-        res+='<\SyncedSet>\n'
-        return res
+    #def saveSyncedSet(self):
+    #    res='<SyncedSet>\n'
+    #    res+=str(self.syncset)
+    #    res+='<\SyncedSet>\n'
+    #    return res
             
     def loadInstrPages(self,txt):
         #process <Instrument Pages>-tag from project file and open them all
@@ -398,19 +405,19 @@ class MyApp(QMainWindow, nuRMainWindow):
                                                              QMessageBox.Ok)
                         self.OpenInstr()
                     
-    def loadSyncedSet(self,txt):
-        myr = re.compile(r'<SyncedSet>\n(.+)<\\SyncedSet>',re.DOTALL)
-        res=myr.search(txt)
-        if res:
-            print(res.group(1))
-            if int(res.group(1)) == self.syncset:
-                pass
-            else:
-                self.SyncedSet.click()
+    #def loadSyncedSet(self,txt):
+    #    myr = re.compile(r'<SyncedSet>\n(.+)<\\SyncedSet>',re.DOTALL)
+    #    res=myr.search(txt)
+    #    if res:
+    #        print(res.group(1))
+    #        if int(res.group(1)) == self.syncset:
+    #            pass
+    #        else:
+    #            self.SyncedSet.click()
     
     def OpenProject(self):
         file,_ = QFileDialog.getOpenFileName(self,
-                                             "Open Project...",
+                                             "Open Project",
                                              "",
                                              "nuRay Project (*.nrpr);;All Files (*)")
         if file:
@@ -424,6 +431,18 @@ class MyApp(QMainWindow, nuRMainWindow):
             #self.loadSyncedSet(projSet)
             self.setTitle()            
         
+    def LoadParams(self):
+        file,_ = QFileDialog.getOpenFileNames(self,
+                                              "Load Parameters",
+                                              "",
+                                              "nuRay Params (*.nrpa);;All Files (*)")
+        if file:
+            self.paramFile = file[0]
+            print(self.paramFile)
+            with io.open(self.paramFile,'r',encoding='utf8') as f:
+                paramSet = f.read()
+            self.AllMyParams.loadP(paramSet)
+            
     def OpenPlotter(self):
         newPlotter=cPlotterWindow(self)
         newPlotter.show()

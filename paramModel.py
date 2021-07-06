@@ -33,15 +33,42 @@ class mRayAbstractItem(QObject):
         for p in self.properties:#export all relevant members
             res+=(str(self.__dict__[p])+';')
         res=res[:-1]+'\n'#replace trailing ; by \n
-        #print(res)
         return res
+    
+    def savePS0(self):
+        res = ''
+        for p in self.properties:
+            #print("hey bin in PS0")
+            print(p)
+            if not p == 'valset1':
+                res+=(str(self.__dict__[p])+';')
+        res=res[:-1]+'\n'
+        return res
+    
+    def savePS1(self):
+        res = ''
+        for p in self.properties:
+            #print("hey bin in PS1")
+            print(p)
+            if not p == 'valset0':
+                res+=(str(self.__dict__[p])+';')
+        res=res[:-1]+'\n'      
+        return res
+        
     def fillProps(self,txt):
         #don't set name, since ParamModel is responsible for avoiding duplicates
         ps = txt.split(';')
         for p in range(1,len(ps)):
+            #if not self.properties[p] == 'Name':
             self.__dict__[self.properties[p]]=self.pTypes[p](ps[p])
     def __str__(self):
         return self.name
+    
+    def fillPropsPS0(self,txt):
+        ps = txt.split(';')
+        for p in range(1,len(ps)):
+            self.__dict__[self.properties[p]]=self.pTypes[p](ps[p])
+        
 
 class mRaySignal(mRayAbstractItem):
     
@@ -103,9 +130,10 @@ class cMRTableModel(QAbstractTableModel):
     def itemNames(self):
         return [x.name for x in self.items] #wow, my first list comprehension
     def flags(self,idx):
-        if idx.column() in range(1,5,1):
+        if idx.column() in range(0,5,1):
             return Qt.ItemIsSelectable|Qt.ItemIsEditable|Qt.ItemIsEnabled
-        if idx.column() == 0 or idx.column() == 5 or idx.column() == 6:
+        #if idx.column()==0
+        if idx.column() == 5 or idx.column() == 6:
             return Qt.ItemIsEnabled
     def removeItem(self,row):
         self.beginRemoveRows(QModelIndex(),row,row)
@@ -179,8 +207,21 @@ class cMRTableModel(QAbstractTableModel):
             return None
     def setData(self,idx,val,role=Qt.EditRole):
         if role == Qt.EditRole:
-            self.items[idx.row()].__dict__[self.itemClass.properties[idx.column()]]=val
-        return True
+            if idx.column() == 0:
+                self.paramnumbers = [p.paramnr for p in self.items]
+                if val in self.paramnumbers:
+                    self.bool = False
+                else: 
+                    self.items[idx.row()].__dict__[self.itemClass.properties[idx.column()]]=val
+                    self.bool = True
+            if idx.column() == 1:
+                self.paramnames = [p.name for p in self.items]
+                if val in self.paramnames:
+                    self.bool = False
+                else:
+                    self.items[idx.row()].__dict__[self.itemClass.properties[idx.column()]]=val
+                    self.bool = True
+        return self.bool
 
     def save(self):
         res = '<'+self.saveTag+'>\n'
@@ -188,9 +229,20 @@ class cMRTableModel(QAbstractTableModel):
             res+=p.save()
         res += '<\\'+self.saveTag+'>\n'
         return res
+    
+    def saveP(self):
+        res = '<'+self.saveTag+'>\n'
+        for p in self.items:
+            if p.paramset == 0:
+                res+=p.savePS0()
+            if p.paramset == 1:
+                res+=p.savePS1()                
+        res += '<\\'+self.saveTag+'>\n'
+        return res
+    
     def load(self,txt):
-        self.beginResetModel()#inform view that everthing is about to change
-        self.items = []
+        #self.beginResetModel()#inform view that everthing is about to change
+        #self.items = []
         myr = re.compile(r'<'+self.saveTag+r'>\n(.+)<\\'+self.saveTag+r'>',re.DOTALL)#the dot also matches newlines
         res=myr.search(txt)
         if res:
@@ -200,9 +252,22 @@ class cMRTableModel(QAbstractTableModel):
                 if name not in [i.name for i in self.items]:#avoid duplicates
                     self.newItem(l.split(';')[2])#name must always be first in itemClass.properties
                     self.items[-1].fillProps(l)
-        self.endResetModel()
+                #else:
+                    
+                            
+        #self.endResetModel()
     
-        
+     #def loadp(self,txt):
+         #self.beginResetModel
+      #   myr = re.compile(r'<'+self.saveTag+r'>\n(.+)<\\'+self.saveTag+r'>',re.DOTALL)
+       #  res=myr.search(txt)
+        # if res:
+         #    paramSettings = res.group(1)
+          #   for l in paramSettings.splitlines():
+           #      name = l.split(';')[2]
+            #     if name not in [i.name for i in self.items]:
+             #        self.newItem(l.split(';')[2])
+                     #self.items
 
 class cParamTableModel(cMRTableModel):
     def __init__(self,parent):
