@@ -164,8 +164,8 @@ class MyApp(QMainWindow, nuRMainWindow):
                 self.statusLED.repaint()
                 self.connected=True
                 self.Serial.write(1,1,29,255,'uint8')         
-                #self.InstrReadWrite() 
-                self.ReadActiveSet()                  
+                self.InstrReadWrite() 
+                self.ActivateSet()                  
             else:
                 PortInfo = QMessageBox.information(self,
                                                      'No valid port chosen.',
@@ -209,6 +209,9 @@ class MyApp(QMainWindow, nuRMainWindow):
             else:
                 self.Serial.write(1,1,0,0,'ctrl')
                 print('SET0 is active') 
+        if self.muConIsMaster:
+            self.ReadActiveSet()
+    
             
     def changeSyncDir(self):
         if self.SyncDir.text() == self.rArrow:

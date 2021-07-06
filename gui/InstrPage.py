@@ -163,7 +163,6 @@ class nuRayInstr(QObject):
         act.triggered.connect(self.InstrConnectParam)
         InstrWidget.addAction(act)
         InstrWidget.setContextMenuPolicy(Qt.ActionsContextMenu)
-            
         
     def valueChanged(self):
         #print('sliderMoved to pos: '+str(self.instrWidget.sliderPosition())+' val: '+str(self.instrWidget.value()))
@@ -206,21 +205,18 @@ class nuRayInstr(QObject):
         self.Param.max = self.instrWidget.maximum()
         self.instrWidget.setMinimum(self.Param.min)
         self.instrWidget.setMaximum(self.Param.max)
-        #self.instrWidget.readWriteData()
-        #if self.writeNtoM == True:
-        self.Param.val = self.instrWidget.value()
+        if isinstance(self.instrWidget,QAbstractSlider) and self.Param.dataType == 'float32':
+            self.Param.dataType = 'uint8'
+        if isinstance(self.instrWidget,QDoubleSpinBox) and not self.Param.dataType == 'float32':
+            self.Param.dataType = 'float32'     
+        #self.Param.val = self.instrWidget.value()
         if self.Param.paramset == 0:
-            self.Param.valset0 = self.Param.val
+            self.instrWidget.setValue(self.Param.valset0)
         if self.Param.paramset == 1:
-            self.Param.valset1 = self.Param.val
-        self.instrWidget.valueChanged.connect(self.setParamVal)
-        #self.Page.parent.activateWindow()
-        #    self.instrWidget.valueChanged.connect(self.sendVal)
-        #else:
-           # pass
-        
-        
-        #print(self.Param.name)
+            self.instrWidget.setValue(self.Param.valset1)
+        self.instrWidget.valueChanged.connect(self.setParamVal) 
+        self.Page.parent.ParamSettingsDialog.activateWindow()
+        self.Page.activateWindow()
         
     def centerLabel(self):
         me = self.instrWidget.geometry()
@@ -242,7 +238,6 @@ class nuRayInstr(QObject):
             self.Param.valset0 = self.Param.val
         if self.Param.paramset == 1:
             self.Param.valset1 = self.Param.val
-        #self.Page.parent.activateWindow()
 
     def sendVal(self):
         if self.writeNtoM == True:
@@ -251,19 +246,13 @@ class nuRayInstr(QObject):
                 if not self.Param.dataType == 'float32':
                     self.Param.val = int(self.Param.val)
                 print(self.Param.val)
-                self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
+                self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)  
             except AttributeError:
                 print("Please connect to port to send data!")
-    
-       
+      
     def readWriteData(self):
-        #self.livesend.write(15,15,5,255,'ctrl')
         if self.writeNtoM == True:
             print("SCHREIBEN")
-            #self.instrWidget.setEnabled(True)
-            #if not self.Param.dataType == 'float32':
-            #   self.Param.val = int(self.Param.val)
-            #self.livesend.flushInput()
             if self.Param.paramset == 0:
                 self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.valset0,self.Param.dataType)
             if self.Param.paramset == 1:
@@ -276,11 +265,7 @@ class nuRayInstr(QObject):
                 self.instrWidget.valueChanged.connect(self.sendVal)
             
         if self.writeNtoM == False:
-            #self.livesend.flushInput()
             print("LESEN")
-            #if not self.Param.dataType == 'float32':
-            #    self.Param.val = int(self.Param.val)
-            #self.livesend.write(1,1,29,255,'uint8')
             self.livesend.write(0,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
             
             if self.Param.dataType == 'uint8':
@@ -304,9 +289,7 @@ class nuRayInstr(QObject):
             if self.Param.paramset == 1:
                 self.Param.valset1 = self.Param.val
             self.instrWidget.valueChanged.connect(self.setParamVal)
-            #self.instrWidget.setDisabled(True)
-            #y = int.from_bytes(x, "big")
-            #print(y)
+
              
         
         

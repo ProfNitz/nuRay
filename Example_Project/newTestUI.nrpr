@@ -1,0 +1,11 @@
+<Parameters>
+0;New;float32;0.0;1.0;0.0;0.0
+1;New2;uint8;0;130;60;121
+2;New3;float32;0.0;99.99;6.75;12.25
+3;New4;uint8;0;255;97;255
+<\Parameters>
+<Signals>
+<\Signals>
+<Instrument Pages>
+Example_Project\thirdPage.ui;0;0
+<\Instrument Pages>
