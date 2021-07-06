@@ -52,4 +52,4 @@ ID|Problem|Options for Solution|Status|Commit|priority||||||||||||||||||||||||||
 51|each manipulated SET gets an own file||open||1||||||||||||||||||||||||||||||||||||||||||||||
 52|draw finite state machines ||open||1||||||||||||||||||||||||||||||||||||||||||||||
 53|changing color of status LED|repaint event + refresh|closed|ef76ca2e773d09b2c9148c4738ed685461efcb56|1||||||||||||||||||||||||||||||||||||||||||||||
-54|converting datatype to int16 when float is connected to a QDial, converting int16 and uint8 to float QDoubleSpinBox||open||1||||||||||||||||||||||||||||||||||||||||||||||
+54|converting datatype to int16 when float is connected to a QDial, converting int16 and uint8 to float QDoubleSpinBox||closed|7cfdeea1cd68143030181517bb28385ae4c63900|1||||||||||||||||||||||||||||||||||||||||||||||
