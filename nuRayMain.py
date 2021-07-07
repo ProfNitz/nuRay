@@ -24,7 +24,7 @@ from paramModel import cParamTableModel, cSignalTableModel
 from CodeGen.codegen import nuRCodeGenerator
 from Comm.nuRSerialConn import nuRSerial
 import globalThings as G
-from SwitchCustomWidget import CustomSwitch, statusLED
+from gui.SwitchCustomWidget import CustomSwitch, statusLED
 
 
 #NoNi: load main window ui from QtDesigner file
