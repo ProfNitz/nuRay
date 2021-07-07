@@ -266,6 +266,9 @@ class nuRayInstr(QObject):
             
         if self.writeNtoM == False:
             print("LESEN")
+            if not self.Param.dataType == 'float32':
+                self.Param.val = int(self.Param.val)
+                
             self.livesend.write(0,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)
             
             if self.Param.dataType == 'uint8':

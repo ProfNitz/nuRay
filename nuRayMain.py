@@ -212,7 +212,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             else:
                 self.Serial.write(1,1,0,0,'ctrl')
                 print('SET0 is active') 
-        if self.muConIsMaster:
+        if self.muConIsMaster and self.connected:
             self.ReadActiveSet()
     
             
