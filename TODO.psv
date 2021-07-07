@@ -49,7 +49,9 @@ ID|Problem|Options for Solution|Status|Commit|priority||||||||||||||||||||||||||
 48|Disconnect when connected  and project is opened||closed|15aa26117962e63c1ca7ce355d65d0121b5b49ce|1||||||||||||||||||||||||||||||||||||||||||||||
 49|Find bug fix for reading data more than 6 to 12 times properly||closed|bbbd612ba03d4465d701cc3cefd6dfef6a7b6452|1||||||||||||||||||||||||||||||||||||||||||||||
 50|setting values when disconnected should first be saved before connecting if reading is selected||open||1||||||||||||||||||||||||||||||||||||||||||||||
-51|each manipulated SET gets an own file||open||1||||||||||||||||||||||||||||||||||||||||||||||
+51|each manipulated SET gets an own file||closed|8010c7f6b947ef7506378fe8a86df89b862365d9|1||||||||||||||||||||||||||||||||||||||||||||||
 52|draw finite state machines ||open||1||||||||||||||||||||||||||||||||||||||||||||||
 53|changing color of status LED|repaint event + refresh|closed|ef76ca2e773d09b2c9148c4738ed685461efcb56|1||||||||||||||||||||||||||||||||||||||||||||||
 54|converting datatype to int16 when float is connected to a QDial, converting int16 and uint8 to float QDoubleSpinBox||closed|7cfdeea1cd68143030181517bb28385ae4c63900|1||||||||||||||||||||||||||||||||||||||||||||||
+55|loading saved single set parameters avoiding duplicates ||closed|94c8fed8c09e480632e7137af74244d2d408d9fc|1||||||||||||||||||||||||||||||||||||||||||||||
+56|if parameterlist already created and project is opened load data to existing names if duplicates come up else new items||closed|94c8fed8c09e480632e7137af74244d2d408d9fc|1||||||||||||||||||||||||||||||||||||||||||||||
