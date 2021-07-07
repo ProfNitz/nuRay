@@ -58,18 +58,25 @@ class mRayAbstractItem(QObject):
     def fillProps(self,txt):
         #don't set name, since ParamModel is responsible for avoiding duplicates
         ps = txt.split(';')
-        for p in range(1,len(ps)):
-            #if not self.properties[p] == 'Name':
+        print(ps)
+        for p in range(2,len(ps)):
             self.__dict__[self.properties[p]]=self.pTypes[p](ps[p])
+
+        
+    def fillPropsPS0(self,txt):
+        ps = txt.split(';')
+        for p in range(2,len(ps)):
+            self.__dict__[self.properties[p]]=self.pTypes[p](ps[p])
+            
+    def fillPropsPS1(self,txt):
+        ps = txt.split(';')
+        for p in range(2,len(ps)-1):
+            self.__dict__[self.properties[p]]=self.pTypes[p](ps[p]) 
+            self.__dict__[self.properties[-1]]=self.pTypes[-1](ps[-1])
+            
     def __str__(self):
         return self.name
     
-    def fillPropsPS0(self,txt):
-        ps = txt.split(';')
-        for p in range(1,len(ps)):
-            self.__dict__[self.properties[p]]=self.pTypes[p](ps[p])
-        
-
 class mRaySignal(mRayAbstractItem):
     
     #these three memebers describe the interface to a Signal object
@@ -248,13 +255,42 @@ class cMRTableModel(QAbstractTableModel):
         if res:
             paramSettings = res.group(1)
             for l in paramSettings.splitlines():
-                name = l.split(';')[2]
-                if name not in [i.name for i in self.items]:#avoid duplicates
-                    self.newItem(l.split(';')[2])#name must always be first in itemClass.properties
-                    self.items[-1].fillProps(l)
-                #else:
-                    
-                            
+                name = l.split(';')[1]
+                print(name)
+                print([i.name for i in self.items])
+                if name in [i.name for i in self.items]:#avoid duplicates
+                    #self.newItem(l.split(';')[1])#name must always be first in itemClass.properties
+                    self.items[[i.name for i in self.items].index(name)].fillProps(l)
+                else:
+                    self.newItem(l.split(';')[1])#name must always be first in itemClass.properties
+                    self.items[-1].fillProps(l)                                              
+        #self.endResetModel()
+        
+        
+    def loadP(self,txt):
+        #self.beginResetModel()#inform view that everthing is about to change
+        #self.items = []
+        myr = re.compile(r'<'+self.saveTag+r'>\n(.+)<\\'+self.saveTag+r'>',re.DOTALL)#the dot also matches newlines
+        res=myr.search(txt)
+        if res:
+            paramSettings = res.group(1)
+            for l in paramSettings.splitlines():
+                name = l.split(';')[1]
+                print(name)
+                print([i.name for i in self.items])
+                if name in [i.name for i in self.items]:#avoid duplicates
+                    #self.newItem(l.split(';')[1])#name must always be first in itemClass.properties
+                    if 0 in [i.paramset for i in self.items]:
+                        self.items[[i.name for i in self.items].index(name)].fillPropsPS0(l)
+                    if 1 in [i.paramset for i in self.items]:
+                        self.items[[i.name for i in self.items].index(name)].fillPropsPS1(l)
+                else:
+                    self.newItem(l.split(';')[1])#name must always be first in itemClass.properties
+                    if 0 in [i.paramset for i in self.items]:
+                        self.items[-1].fillPropsPS0(l)
+                    if 1 in [i.paramset for i in self.items]:
+                        self.items[-1].fillPropsPS1(l)   
+                                         
         #self.endResetModel()
     
      #def loadp(self,txt):
