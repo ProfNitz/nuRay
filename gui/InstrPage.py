@@ -254,8 +254,12 @@ class nuRayInstr(QObject):
         if self.writeNtoM == True:
             print("SCHREIBEN")
             if self.Param.paramset == 0:
+                if not self.Param.dataType == 'float32':
+                    self.Param.valset0 = int(self.Param.val)
                 self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.valset0,self.Param.dataType)
             if self.Param.paramset == 1:
+                if not self.Param.dataType == 'float32':
+                    self.Param.valset1 = int(self.Param.val)
                 self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.valset1,self.Param.dataType)
             self.instrWidget.valueChanged.connect(self.setParamVal)
             if isinstance(self.instrWidget,QDoubleSpinBox):

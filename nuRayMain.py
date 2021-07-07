@@ -441,6 +441,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             print(self.paramFile)
             with io.open(self.paramFile,'r',encoding='utf8') as f:
                 paramSet = f.read()
+            self.radioButtonDisconnect.click()
             self.AllMyParams.loadP(paramSet)
             
     def OpenPlotter(self):
