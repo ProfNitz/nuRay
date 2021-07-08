@@ -14,6 +14,7 @@ from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox,
 from PyQt5.QtCore import QPoint,Qt,QTimer
 import re
 import time
+import struct
 
 
 #my own modules 
@@ -110,27 +111,20 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.connected = False
         self.radioButtonDisconnect.setChecked(True)
         
-        self.nyu = chr(0x03b7)
-        self.myu = chr(0x03bc)
-        self.rArrow = chr(0x2192)
-        self.lArrow = chr(0x2190)
         self.ActiveSet = CustomSwitch("SET0","SET1")
         self.SyncedSet = CustomSwitch("SET0","SET1")
-        self.nuRayText.addWidget(QLabel(self.nyu+"Ray"))
-        self.muConText.addWidget(QLabel(self.myu+"Con"))
-        self.SyncDir = QPushButton(self.lArrow)
         self.nuRayIsMaster = False
         self.muConIsMaster = True
         self.syncset = 0
-        #self.ActiveSet.setDisabled(True)
+        self.ActiveSet.setDisabled(True)
                             
         self.ActiveSetSwitch.addWidget(self.ActiveSet)
         self.SyncedSetSwitch.addWidget(self.SyncedSet)
-        self.syncDirection.addWidget(self.SyncDir)
+        #self.syncDirection.addWidget(self.SyncDir)
         
         self.ActiveSet.clicked.connect(self.ActivateSet)
         self.SyncedSet.clicked.connect(self.SyncSet)
-        self.SyncDir.clicked.connect(self.changeSyncDir)
+        #self.SyncDir.clicked.connect(self.changeSyncDir)
         
         self.statusLED = statusLED(self)
         self.ConnectionStatus.addWidget(self.statusLED)
@@ -163,12 +157,15 @@ class MyApp(QMainWindow, nuRMainWindow):
         if not self.connected:
             self.Serial.connect()
             if self.Serial.is_open():
+                self.ActiveSet.setDisabled(False)
                 self.statusLED.ledcolor = Qt.green
                 self.statusLED.repaint()
                 self.connected=True
                 self.Serial.write(1,1,29,255,'uint8')         
-                self.InstrReadWrite() 
-                self.ActivateSet()                  
+                self.ReadActiveSet() 
+                self.ReadDataFromMuCon() 
+                self.SyncInstr()
+                self.WriteDataToMuCon()                
             else:
                 PortInfo = QMessageBox.information(self,
                                                      'No valid port chosen.',
@@ -183,6 +180,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         pass
         
     def Disconnect(self):
+        self.ActiveSet.setDisabled(True)
         self.statusLED.ledcolor = Qt.red
         self.statusLED.repaint()
         if self.connected:
@@ -202,39 +200,16 @@ class MyApp(QMainWindow, nuRMainWindow):
             for x in self.AllMyParams.items:
                 x.paramset = 0
         self.SyncInstr()
-        self.InstrReadWrite()
+
                 
     def ActivateSet(self):
-        if self.nuRayIsMaster:
             if self.ActiveSet.isChecked():
                 self.Serial.write(1,1,0,1,'ctrl')
                 print('SET1 is active')
             else:
                 self.Serial.write(1,1,0,0,'ctrl')
                 print('SET0 is active') 
-        if self.muConIsMaster and self.connected:
-            self.ReadActiveSet()
-    
-            
-    def changeSyncDir(self):
-        if self.SyncDir.text() == self.rArrow:
-            self.SyncDir.setText(self.lArrow)
-            self.nuRayIsMaster = False
-            self.muConIsMaster = True
-            #self.ActiveSet.setDisabled(True)
-        else:
-            #self.ActiveSet.setEnabled(True)
-            self.SyncDir.setText(self.rArrow)
-            self.nuRayIsMaster = True
-            self.muConIsMaster = False
-        if self.connected:
-            self.ActivateSet()
-            self.InstrReadWrite()
-        #self.sleep2sec()
-    
-    #def sleep2sec(self):
-        #self.SyncDir.setEnabled(False)
-        #QTimer.singleShot(2000, lambda: self.SyncDir.setDisabled(False))
+
 
     def SyncInstr(self):
         for i in self.InstrPageList:
@@ -248,42 +223,40 @@ class MyApp(QMainWindow, nuRMainWindow):
                         if not x.Param.dataType == 'float32':
                             x.Param.valset1 = int(x.Param.valset1)
                         x.instrWidget.setValue(x.Param.valset1)
-                        
-                    
-        
 
-
-    def InstrReadWrite(self):
-        self.SyncDir.setEnabled(False)
+    def WriteDataToMuCon(self):
         for i in self.InstrPageList:
             for x in i.instrList:
                 if type(x.Param) != str:
-                    if self.nuRayIsMaster == True and self.muConIsMaster == False:
-                        x.writeNtoM = True
-                    if self.nuRayIsMaster == False and self.muConIsMaster == True:
-                        x.writeNtoM = False
-                    if self.connected:
-                        x.readWriteData()
-        self.SyncDir.setDisabled(False)
-        
-    def ReadActiveSet(self):
-        #self.Serial.write(1,1,5,1,'uint8')
-        #self.Serial.flushInput()
+                    x.WriteData()
+       
+    def ReadActiveSet(self):     
         self.Serial.write(0,1,0,0,'ctrl')
-        #time.sleep(0.5)
-        #if self.Serial.in_waiting() == 1:
         self.readActiveB = self.Serial.read(1)
-        print(self.readActiveB)
         self.readActive = int.from_bytes(self.readActiveB,"big")
-        #self.readActive = int(self.readActiveB[:-1])
         print("Auf Arduino ist grad SET " + str(self.readActive) + " aktiv.")
         if self.readActive == 1 and not self.ActiveSet.isChecked() or self.readActive == 0 and self.ActiveSet.isChecked():
             self.ActiveSet.click()
-        #self.Serial.flushInput()
-        self.InstrReadWrite()
-            
         
-        
+    def ReadDataFromMuCon(self):          
+        for x in self.AllMyParams.items:
+            k = 0
+            while k < 2:
+                self.Serial.write(0,k,x.paramnr,0,x.dataType)
+                if x.dataType == 'float32':
+                    y = self.Serial.read(4)
+                    [z] = struct.unpack('<f', y)
+                if x.dataType == 'int16':
+                    y = self.Serial.read(2)
+                    z = int.from_bytes(y, "big")
+                if x.dataType == 'uint8':
+                    y = self.Serial.read(1)
+                    z = int.from_bytes(y, "big")
+                if k == 0:
+                    x.valset0 = z
+                if k == 1:
+                    x.valset1 = z
+                k += 1
         
     #NoNi: first rudimental reaction on Connection settings
     def ConnSettings(self):
@@ -344,7 +317,7 @@ class MyApp(QMainWindow, nuRMainWindow):
     def SaveParamsAs(self):
         file,_ = QFileDialog.getSaveFileName(self,
                                              "Save Params As",
-                                             "",
+                                             "("+str(self.syncset)+')',
                                              "nuRay Params (*.nrpa);;All Files(*)")
         if file:
             print(file)
@@ -372,12 +345,6 @@ class MyApp(QMainWindow, nuRMainWindow):
         res+='<\Instrument Pages>\n'
         print (res)
         return res
-    
-    #def saveSyncedSet(self):
-    #    res='<SyncedSet>\n'
-    #    res+=str(self.syncset)
-    #    res+='<\SyncedSet>\n'
-    #    return res
             
     def loadInstrPages(self,txt):
         #process <Instrument Pages>-tag from project file and open them all
@@ -404,17 +371,7 @@ class MyApp(QMainWindow, nuRMainWindow):
                                                              '\n\nPlease help to find this file!',
                                                              QMessageBox.Ok)
                         self.OpenInstr()
-                    
-    #def loadSyncedSet(self,txt):
-    #    myr = re.compile(r'<SyncedSet>\n(.+)<\\SyncedSet>',re.DOTALL)
-    #    res=myr.search(txt)
-    #    if res:
-    #        print(res.group(1))
-    #        if int(res.group(1)) == self.syncset:
-    #            pass
-    #        else:
-    #            self.SyncedSet.click()
-    
+                            
     def OpenProject(self):
         file,_ = QFileDialog.getOpenFileName(self,
                                              "Open Project",
@@ -441,8 +398,9 @@ class MyApp(QMainWindow, nuRMainWindow):
             print(self.paramFile)
             with io.open(self.paramFile,'r',encoding='utf8') as f:
                 paramSet = f.read()
-            self.radioButtonDisconnect.click()
+            #self.radioButtonDisconnect.click()
             self.AllMyParams.loadP(paramSet)
+            self.SyncInstr()
             
     def OpenPlotter(self):
         newPlotter=cPlotterWindow(self)

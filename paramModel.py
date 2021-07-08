@@ -267,7 +267,7 @@ class cMRTableModel(QAbstractTableModel):
         #self.endResetModel()
         
         
-    def loadP(self,txt):
+    def loadPfromFile(self,txt):
         #self.beginResetModel()#inform view that everthing is about to change
         #self.items = []
         myr = re.compile(r'<'+self.saveTag+r'>\n(.+)<\\'+self.saveTag+r'>',re.DOTALL)#the dot also matches newlines
@@ -289,7 +289,25 @@ class cMRTableModel(QAbstractTableModel):
                     if 0 in [i.paramset for i in self.items]:
                         self.items[-1].fillPropsPS0(l)
                     if 1 in [i.paramset for i in self.items]:
-                        self.items[-1].fillPropsPS1(l)   
+                        self.items[-1].fillPropsPS1(l)
+                        
+    def loadP(self,txt):
+        #self.beginResetModel()#inform view that everthing is about to change
+        #self.items = []
+        myr = re.compile(r'<'+self.saveTag+r'>\n(.+)<\\'+self.saveTag+r'>',re.DOTALL)#the dot also matches newlines
+        res=myr.search(txt)
+        if res:
+            paramSettings = res.group(1)
+            for l in paramSettings.splitlines():
+                name = l.split(';')[1]
+                print(name)
+                print([i.name for i in self.items])
+                if name in [i.name for i in self.items]:#avoid duplicates
+                    #self.newItem(l.split(';')[1])#name must always be first in itemClass.properties
+                    if 0 in [i.paramset for i in self.items]:
+                        self.items[[i.name for i in self.items].index(name)].fillPropsPS0(l)
+                    if 1 in [i.paramset for i in self.items]:
+                        self.items[[i.name for i in self.items].index(name)].fillPropsPS1(l)
                                          
         #self.endResetModel()
     
