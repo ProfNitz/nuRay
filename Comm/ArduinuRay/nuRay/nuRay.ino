@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <EEPROM.h>
 
 #define MAX_PAYLOAD_LEN 4
 #define MAX_PACK_LEN (MAX_PAYLOAD_LEN+3)
@@ -9,6 +10,9 @@
 #define LED1 5
 #define LED2 6
 #define LED3 7
+#define PARAM_COUNTF 30
+#define PARAM_COUNT16 30
+#define PARAM_COUNT8 30
 
 uint8_t buf[BUF_SIZE]; 
 uint8_t *p;
@@ -20,11 +24,13 @@ uint8_t dtype;
 uint8_t recByte;
 int setidx;
 int active = 1;
+int EEPROMidx = 0;
+
 
 typedef struct {
-  float paramf[30];
-  int16_t param16[30];
-  uint8_t param8[30];
+  float paramf[PARAM_COUNTF];
+  int16_t param16[PARAM_COUNT16];
+  uint8_t param8[PARAM_COUNT8];
 } PSET;
 
 PSET paramset[2];
@@ -48,6 +54,40 @@ void setup() {
   idx = 0;
   DDRD = _BV(LED1) + _BV(LED2) + _BV(LED3);
   init_pwm();
+  EEPROMidx = 0;
+
+  for(int i=0;i<PARAM_COUNTF;i++)
+  {
+    EEPROM.get(EEPROMidx,paramset[0].paramf[i]);
+    EEPROMidx += sizeof(float);
+  }
+  for(int i=0;i<PARAM_COUNTF;i++)
+  {
+    EEPROM.get(EEPROMidx,paramset[1].paramf[i]);
+    EEPROMidx += sizeof(float);
+  }
+  
+  for(int i=0;i<PARAM_COUNT16;i++)
+  {
+    EEPROM.get(EEPROMidx,paramset[0].param16[i]);
+    EEPROMidx += sizeof(int16_t);
+  }
+    for(int i=0;i<PARAM_COUNT16;i++)
+  {
+    EEPROM.get(EEPROMidx,paramset[1].param16[i]);
+    EEPROMidx += sizeof(int16_t);
+  }
+  for(int i=0;i<PARAM_COUNT8;i++)
+  {
+    EEPROM.get(EEPROMidx,paramset[0].param8[i]);
+    EEPROMidx += sizeof(uint8_t);
+  }
+  for(int i=0;i<PARAM_COUNT8;i++)
+  {
+    EEPROM.get(EEPROMidx,paramset[1].param8[i]);
+    EEPROMidx += sizeof(uint8_t);
+  }
+  EEPROMidx = 0;
 }
 
 /*void sendSet() {
@@ -185,6 +225,42 @@ void loop() {
       }
     }
   }
+  EEPROMidx = 0;
+  for(int i=0;i<PARAM_COUNTF;i++)
+  {
+    EEPROM.put(EEPROMidx,paramset[0].paramf[i]);
+    EEPROMidx += sizeof(float);
+  }
+  for(int i=0;i<PARAM_COUNTF;i++)
+  {
+    EEPROM.put(EEPROMidx,paramset[1].paramf[i]);
+    EEPROMidx += sizeof(float);
+  }
+  
+  for(int i=0;i<PARAM_COUNT16;i++)
+  {
+    EEPROM.put(EEPROMidx,paramset[0].param16[i]);
+    EEPROMidx += sizeof(int16_t);
+  }
+    for(int i=0;i<PARAM_COUNT16;i++)
+  {
+    EEPROM.put(EEPROMidx,paramset[1].param16[i]);
+    EEPROMidx += sizeof(int16_t);
+  }
+  for(int i=0;i<PARAM_COUNT8;i++)
+  {
+    EEPROM.put(EEPROMidx,paramset[0].param8[i]);
+    EEPROMidx += sizeof(uint8_t);
+  }
+  for(int i=0;i<PARAM_COUNT8;i++)
+  {
+    EEPROM.put(EEPROMidx,paramset[1].param8[i]);
+    EEPROMidx += sizeof(uint8_t);
+  }
+
+
+
+
   if(paramset[active].param8[1] == 121){
     PORTD |= _BV(LED1);
   }

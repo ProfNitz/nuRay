@@ -285,8 +285,9 @@ class nuRayInstr(QObject):
                 self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)  
             except AttributeError:
                 print("Please connect to port to send data!")
-      
+                
     def WriteData(self):
+        try:
             print("SCHREIBEN")
             self.instrWidget.valueChanged.connect(self.setParamVal)
             if isinstance(self.instrWidget,QDoubleSpinBox):
@@ -294,6 +295,8 @@ class nuRayInstr(QObject):
                 self.instrWidget.valueChanged.connect(self.sendVal)
             else:
                 self.instrWidget.valueChanged.connect(self.sendVal)
+        except:
+            self.parent.radioButtonDisconnect.click()
 
              
         

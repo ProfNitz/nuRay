@@ -152,6 +152,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.AllMySignals = cSignalTableModel(None)
         self.Serial = nuRSerial()
         
+        
         #self.AllMyParams.dataChanged.emit(index_1,index_2,[Qt.DisplayRole])
                
              
@@ -205,12 +206,15 @@ class MyApp(QMainWindow, nuRMainWindow):
 
                 
     def ActivateSet(self):
+        try:
             if self.ActiveSet.isChecked():
                 self.Serial.write(1,1,0,1,'ctrl')
                 print('SET1 is active')
             else:
                 self.Serial.write(1,1,0,0,'ctrl')
                 print('SET0 is active') 
+        except:
+            self.radioButtonDisconnect.click()
 
 
     def SyncInstr(self):
@@ -227,10 +231,13 @@ class MyApp(QMainWindow, nuRMainWindow):
                         x.instrWidget.setValue(x.Param.valset1)
 
     def WriteDataToMuCon(self):
+     try:
         for i in self.InstrPageList:
             for x in i.instrList:
                 if type(x.Param) != str:
                     x.WriteData()
+     except:
+         self.radioButtonDisconnect.click()
        
     def ReadActiveSet(self):     
         self.Serial.write(0,1,0,0,'ctrl')

@@ -1,11 +1,11 @@
 <Parameters>
-0;kD;uint8;0.0;130.0;0.0;0.0
-1;kI;uint8;0;130;121.0;121.0
-2;kR;float32;0.0;99.99;12.25;12.25
-3;kP;uint8;0;255;205.0;210.0
+0;kD;uint8;0.0;130.0;0;0
+1;kI;uint8;0;130;91;121
+2;kR;float32;0.0;99.99;10.0;12.25
+3;kP;uint8;0;255;40;254
 <\Parameters>
 <Signals>
 <\Signals>
 <Instrument Pages>
-Projects\InstrumentPages\thirdPage.ui;546;471
+Projects\InstrumentPages\thirdPage.ui;544;808
 <\Instrument Pages>
