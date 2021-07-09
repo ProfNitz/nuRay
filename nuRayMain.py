@@ -435,7 +435,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.InstrPageList[:]=[x for x in self.InstrPageList if x.isVisible()]
         self.PlotterList[:]=[x for x in self.PlotterList if x.isVisible()]
         
-        if self.ParamSettingsDialog != None:
+        if self.ParamSettingsDialog != None and len(self.InstrPageList)>0:
             buttonReply = QMessageBox.question(self,
                                                'Close nuRay',
                                                "Do you want to save project first?",
@@ -446,6 +446,7 @@ class MyApp(QMainWindow, nuRMainWindow):
                 self.closeAllChildren()
                 ev.accept()
             else:
+                self.closeAllChildren()
                 ev.accept()
         else:
             self.closeAllChildren()
