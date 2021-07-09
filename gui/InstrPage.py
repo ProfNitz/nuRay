@@ -40,6 +40,7 @@ class cInstrPage(QDialog):
         self.setFixedSize(self.size())        
         
         self.instrList=[]
+        self.ConnChange = False
                 
         #create palettes for labels (black and red)
         self.paletteRed = QPalette()
@@ -121,8 +122,30 @@ class cInstrPage(QDialog):
             super().keyPressEvent(event)
     
     def closeEvent(self,ev):
-        self.save()
-        ev.accept()
+            with io.open(self.connFileName(),'r',encoding='utf8') as f:
+                conn = f.read()
+            for l in conn.splitlines():
+                x = l.split(':')
+            #find the widget
+                p=next((p for p in self.instrList if p.instrWidget.objectName()==x[0]),None)
+            #if found, set ParamName
+                if p:
+                    if str(p.Param) != x[1]:
+                        self.ConnChange = True
+            if self.ConnChange == True:
+        #self.save()
+                        buttonReply = QMessageBox.question(self,
+                                                       'Close InstrPage',
+                                                       "Do you want to save Connections before you quit?",
+                                                       QMessageBox.Yes | QMessageBox.No,
+                                                       QMessageBox.Yes)
+                        if buttonReply == QMessageBox.Yes:
+                            self.save()
+                            ev.accept()
+                        else:
+                            ev.accept()
+            else:
+                ev.accept()
        
 #override QListWidget to react on ESC        
 class ParamSelectListWidget(QListWidget):
@@ -184,6 +207,11 @@ class nuRayInstr(QObject):
         self.Param=str(self.Param)
         self.label.setPalette(self.Page.paletteRed)
         self.label.setText(self.Param)
+        
+    def ParamNameChanged(self):
+        #if type(self.Param) != str:
+            #self.Param.removeInstr(self)
+        self.label.setText(self.Param.name)
         
     # Conetxt Menu Handler, connect Instr to a Parameter
     def InstrConnectParam(self):
@@ -266,51 +294,6 @@ class nuRayInstr(QObject):
                 self.instrWidget.valueChanged.connect(self.sendVal)
             else:
                 self.instrWidget.valueChanged.connect(self.sendVal)
-            '''if self.writeNtoM == False:
-            print("LESEN")
-            if not self.Param.dataType == 'float32':
-                self.Param.val = int(self.Param.val)
-                
-            self.livesend.write(0,0,self.Param.paramnr,self.Param.val,self.Param.dataType)
-            
-            if self.Param.dataType == 'uint8':
-                self.x = self.livesend.read(1)
-            if self.Param.dataType == 'int16':
-                self.x = self.livesend.read(2)
-            if self.Param.dataType == 'float32':
-                self.x = self.livesend.read(4)
-                
-            if self.Param.dataType == 'float32':
-                [self.y] = struct.unpack('<f', self.x)
-            else:
-                self.y = int.from_bytes(self.x, "big")
-                
-            print(self.x)
-            print(self.y)
-            self.instrWidget.setValue(self.y)
-            self.Param.val = self.y
-            self.Param.valset0 = self.Param.val
-            
-            self.livesend.write(0,1,self.Param.paramnr,self.Param.val,self.Param.dataType)
-            
-            if self.Param.dataType == 'uint8':
-                self.x = self.livesend.read(1)
-            if self.Param.dataType == 'int16':
-                self.x = self.livesend.read(2)
-            if self.Param.dataType == 'float32':
-                self.x = self.livesend.read(4)
-                
-            if self.Param.dataType == 'float32':
-                [self.y] = struct.unpack('<f', self.x)
-            else:
-                self.y = int.from_bytes(self.x, "big")
-                
-            print(self.x)
-            print(self.y)
-            self.instrWidget.setValue(self.y)
-            self.Param.val = self.y
-            self.Param.valset1 = self.Param.val
-            self.instrWidget.valueChanged.connect(self.setParamVal)'''
 
              
         

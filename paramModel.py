@@ -227,6 +227,8 @@ class cMRTableModel(QAbstractTableModel):
                     self.bool = False
                 else:
                     self.items[idx.row()].__dict__[self.itemClass.properties[idx.column()]]=val
+                    for i in self.items[idx.row()]._instrList:
+                        i.ParamNameChanged()
                     self.bool = True
         return self.bool
 
@@ -248,7 +250,7 @@ class cMRTableModel(QAbstractTableModel):
         return res
     
     def load(self,txt):
-        #self.beginResetModel()#inform view that everthing is about to change
+        self.beginResetModel()#inform view that everthing is about to change
         #self.items = []
         myr = re.compile(r'<'+self.saveTag+r'>\n(.+)<\\'+self.saveTag+r'>',re.DOTALL)#the dot also matches newlines
         res=myr.search(txt)
@@ -264,7 +266,7 @@ class cMRTableModel(QAbstractTableModel):
                 else:
                     self.newItem(l.split(';')[1])#name must always be first in itemClass.properties
                     self.items[-1].fillProps(l)                                              
-        #self.endResetModel()
+        self.endResetModel()
         
         
     def loadPfromFile(self,txt):
@@ -307,10 +309,10 @@ class cMRTableModel(QAbstractTableModel):
                     if 0 in [i.paramset for i in self.items]:
                         self.items[[i.name for i in self.items].index(name)].fillPropsPS0(l)
                     if 1 in [i.paramset for i in self.items]:
-                        self.items[[i.name for i in self.items].index(name)].fillPropsPS1(l)
-                                         
+                        self.items[[i.name for i in self.items].index(name)].fillPropsPS1(l)                                       
         #self.endResetModel()
-    
+
+        
      #def loadp(self,txt):
          #self.beginResetModel
       #   myr = re.compile(r'<'+self.saveTag+r'>\n(.+)<\\'+self.saveTag+r'>',re.DOTALL)
@@ -381,3 +383,27 @@ class cSignalTableModel(cMRTableModel):
             else:
                 self.items[idx.row()].__dict__[self.itemClass.properties[idx.column()]]=val
         return True
+    
+    def closeEvent(self,ev,txt):
+        with io.open(self.connFileName(),'r',encoding='utf8') as f:
+            conn = f.read()
+        for l in conn.splitlines():
+            x = l.split(':')
+            #find the widget
+            i=next((i for i in self.instrList if i.instrWidget.objectName()==x[0]),None)
+            #if found, set ParamName
+            if i:
+                if str(i.Param) == x[1]:
+                    ev.accept()
+                else:
+        #self.save()
+                    buttonReply = QMessageBox.question(self,
+                                                       'Close InstrPage',
+                                                       "Do you want to save Connections before you quit?",
+                                                       QMessageBox.Yes | QMessageBox.No,
+                                                       QMessageBox.Yes)
+                    if buttonReply == QMessageBox.Yes:
+                        ev.ignore()
+                        self.save()
+                    else:
+                        ev.accept()

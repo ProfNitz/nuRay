@@ -10,7 +10,7 @@ import inspect #for debugging
 from PyQt5.QtCore import QRect
 from PyQt5.QtGui import QCursor, QColor
 from PyQt5.QtWidgets import (QListWidget, QHBoxLayout, QColorDialog,
-QAction, QTableView, QDialog, QItemDelegate,QMenu)
+QAction, QTableView, QDialog, QItemDelegate,QMenu, QMessageBox)
 
 #my own modules
 from globalThings import nuRDataTypes
@@ -72,6 +72,7 @@ class nuRAbstractTableView(QTableView):
         self.model().listParamsInstr(row)
     def sendParams(self):
         self.model().send()
+
     
 class cSignalTableView(nuRAbstractTableView):
     def contextMenuEvent(self, event):
@@ -130,7 +131,6 @@ class cParamTableView(nuRAbstractTableView):
             self.menu.addAction(sendAct)
         
         self.menu.popup(QCursor.pos())
-
 
 
 class ParamSettingsWindow(QDialog):

@@ -151,6 +151,8 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.AllMyParams = cParamTableModel(None) #table model so it can be processed by QTableView
         self.AllMySignals = cSignalTableModel(None)
         self.Serial = nuRSerial()
+        
+        #self.AllMyParams.dataChanged.emit(index_1,index_2,[Qt.DisplayRole])
                
              
     def Connect(self):   
@@ -433,17 +435,18 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.InstrPageList[:]=[x for x in self.InstrPageList if x.isVisible()]
         self.PlotterList[:]=[x for x in self.PlotterList if x.isVisible()]
         
-        if len(self.InstrPageList)>0:
+        if self.ParamSettingsDialog != None:
             buttonReply = QMessageBox.question(self,
                                                'Close nuRay',
-                                               "Do you really want to quit?",
+                                               "Do you want to save project first?",
                                                QMessageBox.Yes | QMessageBox.No,
                                                QMessageBox.Yes)
             if buttonReply == QMessageBox.Yes:
+                self.SaveProject()
                 self.closeAllChildren()
                 ev.accept()
             else:
-                ev.ignore()
+                ev.accept()
         else:
             self.closeAllChildren()
             ev.accept()
