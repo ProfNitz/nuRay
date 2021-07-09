@@ -56,6 +56,9 @@ void setup() {
   init_pwm();
   EEPROMidx = 0;
 
+  EEPROM.get(EEPROMidx,active);
+  EEPROMidx += 1;
+
   for(int i=0;i<PARAM_COUNTF;i++)
   {
     EEPROM.get(EEPROMidx,paramset[0].paramf[i]);
@@ -226,6 +229,8 @@ void loop() {
     }
   }
   EEPROMidx = 0;
+  EEPROM.put(EEPROMidx,active);
+  EEPROMidx += 1;
   for(int i=0;i<PARAM_COUNTF;i++)
   {
     EEPROM.put(EEPROMidx,paramset[0].paramf[i]);

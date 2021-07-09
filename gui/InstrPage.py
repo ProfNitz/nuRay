@@ -284,7 +284,9 @@ class nuRayInstr(QObject):
                 print(self.Param.val)
                 self.livesend.write(1,self.Param.paramset,self.Param.paramnr,self.Param.val,self.Param.dataType)  
             except AttributeError:
-                print("Please connect to port to send data!")
+                print("<offline>")
+            except:
+                self.Page.parent.radioButtonDisconnect.click()
                 
     def WriteData(self):
         try:
@@ -296,7 +298,7 @@ class nuRayInstr(QObject):
             else:
                 self.instrWidget.valueChanged.connect(self.sendVal)
         except:
-            self.parent.radioButtonDisconnect.click()
+            self.Page.parent.radioButtonDisconnect.click()
 
              
         

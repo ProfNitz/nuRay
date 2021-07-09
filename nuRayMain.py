@@ -151,6 +151,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.AllMyParams = cParamTableModel(None) #table model so it can be processed by QTableView
         self.AllMySignals = cSignalTableModel(None)
         self.Serial = nuRSerial()
+
         
         
         #self.AllMyParams.dataChanged.emit(index_1,index_2,[Qt.DisplayRole])
@@ -161,6 +162,9 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.Serial.connect()
             if self.Serial.is_open():
                 self.ActiveSet.setDisabled(False)
+                #for i in self.InstrPageList:
+                   # for x in i.instrList:
+                     #   x.instrWidget.setEnabled(True)
                 self.statusLED.ledcolor = Qt.green
                 self.statusLED.repaint()
                 self.connected=True
@@ -183,6 +187,9 @@ class MyApp(QMainWindow, nuRMainWindow):
         pass
         
     def Disconnect(self):
+        #for i in self.InstrPageList:
+            #for x in i.instrList:
+               # x.instrWidget.setEnabled(False)
         self.ActiveSet.setDisabled(True)
         self.statusLED.ledcolor = Qt.red
         self.statusLED.repaint()
@@ -473,6 +480,8 @@ class MyApp(QMainWindow, nuRMainWindow):
         for i in self.PlotterList:
             if i.isVisible():
                 i.close()
+        if self.Serial.is_open():
+            self.Serial.close()
     
     def closeEverything(self):
         self.close()
