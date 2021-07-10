@@ -21,7 +21,7 @@ import struct
 from gui.InstrPage import cInstrPage
 from gui.ParamView import ParamSettingsWindow, SignalSettingsWindow
 from gui.PlotWin import cPlotterWindow
-from paramModel import cParamTableModel, cSignalTableModel
+from paramModel import cParamTableModel, cSignalTableModel, ParamSelectWindow
 from CodeGen.codegen import nuRCodeGenerator
 from Comm.nuRSerialConn import nuRSerial
 import globalThings as G
@@ -97,8 +97,10 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.actionOpen.triggered.connect(self.OpenProject)
         self.actionGenerate_Code.triggered.connect(self.CodeGen)
         
+        self.actionParameters_2.triggered.connect(self.ParamSettings)
         self.actionSave_Parameters.triggered.connect(self.SaveParams)
-        self.actionLoad_Parameters.triggered.connect(self.LoadParams)
+        self.actionLoad_Parameters.triggered.connect(self.ParamSelectWindow)
+        #self.actionGenerate_Parameters.triggered.connect(self.GenerateParams)
         
         self.actionClose_Project.triggered.connect(self.closeEverything)
         
@@ -397,6 +399,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.projectFile = file
             with io.open(file,'r',encoding='utf8') as f:
                 projSet=f.read()
+            print(self.AllMyParams.rowCount(self))
             self.AllMyParams.load(projSet)
             self.ParamSettings()
             self.AllMySignals.load(projSet)
@@ -404,7 +407,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             #self.loadSyncedSet(projSet)
             self.setTitle()            
         
-    def LoadParams(self):
+    def ParamSelectWindow(self):
         file,_ = QFileDialog.getOpenFileNames(self,
                                               "Load Parameters",
                                               "",
@@ -415,7 +418,17 @@ class MyApp(QMainWindow, nuRMainWindow):
             with io.open(self.paramFile,'r',encoding='utf8') as f:
                 paramSet = f.read()
             #self.radioButtonDisconnect.click()
-            self.AllMyParams.loadP(paramSet)
+            self.paramnamelist = self.AllMyParams.loadList(paramSet)
+            self.ParamNameListWindow = ParamSelectWindow(self,self.paramnamelist)
+            self.ParamNameListWindow.show()
+            for i in range(0,len(self.ParamNameListWindow.checkboxlist)):
+                if self.ParamNameListWindow.checkboxlist[i].text() in [i.name for i in self.AllMyParams.items]:
+                    self.ParamNameListWindow.checkboxlist[i].setChecked(True)
+
+    def LoadParams(self):
+            with io.open(self.paramFile,'r',encoding='utf8') as f:
+                paramSet = f.read()
+            self.AllMyParams.loadP(paramSet,self.ParamNameListWindow.checkedparams)
             self.SyncInstr()
             
     def OpenPlotter(self):
@@ -480,8 +493,11 @@ class MyApp(QMainWindow, nuRMainWindow):
         for i in self.PlotterList:
             if i.isVisible():
                 i.close()
-        if self.Serial.is_open():
-            self.Serial.close()
+        try:
+            if self.Serial.is_open():
+                self.Serial.close()
+        except:
+            pass
     
     def closeEverything(self):
         self.close()

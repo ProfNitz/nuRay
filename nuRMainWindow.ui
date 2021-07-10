@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>399</width>
-    <height>378</height>
+    <height>315</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -154,12 +154,19 @@
     <addaction name="actionSave_As"/>
     <addaction name="actionOpen"/>
     <addaction name="separator"/>
-    <addaction name="actionSave_Parameters"/>
-    <addaction name="actionLoad_Parameters"/>
-    <addaction name="separator"/>
     <addaction name="actionClose_Project"/>
    </widget>
+   <widget class="QMenu" name="menuParameters">
+    <property name="title">
+     <string>Parameters</string>
+    </property>
+    <addaction name="actionParameters_2"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave_Parameters"/>
+    <addaction name="actionLoad_Parameters"/>
+   </widget>
    <addaction name="menuProject"/>
+   <addaction name="menuParameters"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionSignals">
@@ -221,6 +228,21 @@
     <string>Generate Code</string>
    </property>
   </action>
+  <action name="deleted1">
+   <property name="text">
+    <string>Save Parameters</string>
+   </property>
+  </action>
+  <action name="deleted2">
+   <property name="text">
+    <string>Load Parameters</string>
+   </property>
+  </action>
+  <action name="actionClose_Project">
+   <property name="text">
+    <string>Close Project</string>
+   </property>
+  </action>
   <action name="actionSave_Parameters">
    <property name="text">
     <string>Save Parameters</string>
@@ -231,9 +253,14 @@
     <string>Load Parameters</string>
    </property>
   </action>
-  <action name="actionClose_Project">
+  <action name="actionGenerate_Parameters">
    <property name="text">
-    <string>Close Project</string>
+    <string>Generate Parameters</string>
+   </property>
+  </action>
+  <action name="actionParameters_2">
+   <property name="text">
+    <string>Parameters</string>
    </property>
   </action>
  </widget>
