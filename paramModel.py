@@ -8,7 +8,7 @@ Created on Wed Jun 12 13:24:32 2019
 from PyQt5.QtCore import Qt, QObject
 from PyQt5.QtCore import QAbstractTableModel, QModelIndex
 from PyQt5.QtGui import QColor, QFont, QIcon, QPixmap
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QCheckBox, QPushButton, QFrame
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QCheckBox, QPushButton, QFrame, QLabel
 import re
 #from Comm.nuRSerialConn import nuRSerial
 
@@ -260,14 +260,17 @@ class cMRTableModel(QAbstractTableModel):
     
     def loadList (self,txt):
         self.paramnamelist = []
+        self.valuelist = []
         myr = re.compile(r'<'+self.saveTag+r'>\n(.+)<\\'+self.saveTag+r'>',re.DOTALL)#the dot also matches newlines
         res=myr.search(txt)
         if res:
             paramSettings = res.group(1)
             for l in paramSettings.splitlines():
                 name = l.split(';')[1]
+                value = l.split(';')[-1]
                 self.paramnamelist.append(name)
-        return self.paramnamelist
+                self.valuelist.append(value)
+        return self.paramnamelist, self.valuelist
         
     
     def load(self,txt):
@@ -380,11 +383,14 @@ class cSignalTableModel(cMRTableModel):
         return True
     
 class ParamSelectWindow(QDialog):  
-    def __init__(self,parent,paramnamelist):
+    def __init__(self,parent,paramnamelist,valuelist):
         super().__init__(parent)
+        self.layoutlist = []
         self.checkedparams = []
         self.checkboxlist = []
+        self.checkboxvalues = []
         self.paramnamelist = paramnamelist
+        self.valuelist = valuelist
         self.sublayout = QHBoxLayout()
         self.layout = QVBoxLayout()
         self.seperator = QFrame()
@@ -392,13 +398,24 @@ class ParamSelectWindow(QDialog):
         self.loadbutton = QPushButton("Load")
         self.selectall = QCheckBox("Select All",self)
         for i in self.paramnamelist:
-            self.checkboxlist.append(QCheckBox(str(i),self))       
+            self.layoutlist.append(QHBoxLayout())
+            self.checkboxlist.append(QCheckBox(str(i),self)) 
+        for i in self.valuelist:
+            self.checkboxvalues.append(QLabel(str(i)))
         self.setLayout(self.layout)
         self.layout.addWidget(self.selectall)
         self.layout.addWidget(self.seperator)
+        
+        for i in self.layoutlist:
+            self.layout.addLayout(i)
+        
+        for x in range(0,len(self.layoutlist)):  
+            self.layoutlist[x].addWidget(self.checkboxlist[x])
+            self.layoutlist[x].addWidget(self.checkboxvalues[x])
+            
 
-        for i in self.checkboxlist:
-            self.layout.addWidget(i)
+       # for i in self.checkboxlist:
+        #    self.layout.addWidget(i)
         self.layout.addLayout(self.sublayout)
         self.sublayout.addWidget(self.loadbutton)
         self.selectall.toggled.connect(self.checkall)
@@ -413,6 +430,7 @@ class ParamSelectWindow(QDialog):
             if self.checkboxlist[i].isChecked():
                 self.checkedparams.append(self.checkboxlist[i].text()) 
         self.parent().LoadParams()
+        self.close()
             
 
         

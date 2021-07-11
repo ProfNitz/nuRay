@@ -418,8 +418,9 @@ class MyApp(QMainWindow, nuRMainWindow):
             with io.open(self.paramFile,'r',encoding='utf8') as f:
                 paramSet = f.read()
             #self.radioButtonDisconnect.click()
-            self.paramnamelist = self.AllMyParams.loadList(paramSet)
-            self.ParamNameListWindow = ParamSelectWindow(self,self.paramnamelist)
+            self.paramnamelist = self.AllMyParams.loadList(paramSet)[0]
+            self.valuelist = self.AllMyParams.loadList(paramSet)[1]
+            self.ParamNameListWindow = ParamSelectWindow(self,self.paramnamelist,self.valuelist)
             self.ParamNameListWindow.show()
             for i in range(0,len(self.ParamNameListWindow.checkboxlist)):
                 if self.ParamNameListWindow.checkboxlist[i].text() in [i.name for i in self.AllMyParams.items]:
