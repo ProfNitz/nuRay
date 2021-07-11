@@ -399,7 +399,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.projectFile = file
             with io.open(file,'r',encoding='utf8') as f:
                 projSet=f.read()
-            print(self.AllMyParams.rowCount(self))
+                
             self.AllMyParams.load(projSet)
             self.ParamSettings()
             self.AllMySignals.load(projSet)
@@ -468,6 +468,7 @@ class MyApp(QMainWindow, nuRMainWindow):
                                                "Do you want to save project first?",
                                                QMessageBox.Yes | QMessageBox.No,
                                                QMessageBox.Yes)
+            
             if buttonReply == QMessageBox.Yes:
                 self.SaveProject()
                 self.closeAllChildren()

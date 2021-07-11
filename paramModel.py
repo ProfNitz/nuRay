@@ -134,6 +134,7 @@ class cMRTableModel(QAbstractTableModel):
         super().__init__(parent)
         self.items=[]
         self.numI=0
+        self.paramnrlist = []
     def itemNames(self):
         return [x.name for x in self.items] #wow, my first list comprehension
     def flags(self,idx):
@@ -158,11 +159,19 @@ class cMRTableModel(QAbstractTableModel):
             else:
                 Name += '2'
                 
+        self.currentparamnr = 0
+        if self.numI == 0:
+            pass
+        else:
+            while self.currentparamnr in [p.paramnr for p in self.items]:
+                self.currentparamnr += 1
+        
         self.beginInsertRows(QModelIndex(),self.numI,self.numI)#parent is a default (empty) QModelIndex? Copied from an example
         newItem = self.itemClass(Name)
-        newItem.paramnr = self.numI
         self.items.append(newItem)
+        newItem.paramnr = self.currentparamnr
         self.numI+=1
+        
         self.endInsertRows()
     def sort(self):
         self.beginResetModel()#inform view that everthing is about to change
@@ -264,6 +273,8 @@ class cMRTableModel(QAbstractTableModel):
     def load(self,txt):
         self.beginResetModel()#inform view that everthing is about to change
         #self.items = []
+        while self.numI > 0:
+            self.removeItem(self.numI-1)
         myr = re.compile(r'<'+self.saveTag+r'>\n(.+)<\\'+self.saveTag+r'>',re.DOTALL)#the dot also matches newlines
         res=myr.search(txt)
         if res:
