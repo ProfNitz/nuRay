@@ -199,6 +199,8 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.Serial.close()
         print("disconnected")   
         self.connected = False
+        if self.Serial.is_open():
+            print('noch offen')
  
     def SyncSet(self):
         if self.SyncedSet.isChecked():
@@ -251,10 +253,14 @@ class MyApp(QMainWindow, nuRMainWindow):
     def ReadActiveSet(self):     
         self.Serial.write(0,1,0,0,'ctrl')
         self.readActiveB = self.Serial.read(1)
-        self.readActive = int.from_bytes(self.readActiveB,"big")
-        print("Auf Arduino ist grad SET " + str(self.readActive) + " aktiv.")
-        if self.readActive == 1 and not self.ActiveSet.isChecked() or self.readActive == 0 and self.ActiveSet.isChecked():
-            self.ActiveSet.click()
+        print(self.readActiveB)
+        if self.readActiveB == b'':
+            self.radioButtonDisconnect.click()
+        else:
+            self.readActive = int.from_bytes(self.readActiveB,"big")
+            print("Auf Arduino ist grad SET " + str(self.readActive) + " aktiv.")
+            if self.readActive == 1 and not self.ActiveSet.isChecked() or self.readActive == 0 and self.ActiveSet.isChecked():
+                self.ActiveSet.click()
         
     def ReadDataFromMuCon(self):          
         for x in self.AllMyParams.items:

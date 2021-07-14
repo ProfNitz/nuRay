@@ -20,8 +20,44 @@ class nuRSerial(object):
         self.s.port = self.port
         self.s.baudrate = 115200
         self.s.timeout = 2
+        #self.s.xonxoff = False
+        #self.s.rtscts = None
+        #self.s.dtr = None
+        #self.s.setRTS(True)
+        #self.s.dsrdtr = None
+        #self.s.rtscts = None
+        #self.s.dtr = None
+        #self.s.rts = None
+        #self.s.setDTR(False)
+        #self.s.timeout = 2
         #self.s.timeout = 1
-        self.s.setDTR(False)
+        #self.s.setDTR(False)
+        #print(self.s._dtr_state)
+        #self.s.rtscts = False
+        #self.s.dsrdtr = None
+        #print(self.s._dsrdtr)
+        #self.s.dtr = False
+        #self.s.rts = False
+        #print(self.s.dtr)
+        #print(self.s.rts)
+        #self.s.rtscts = True
+        #self.s.dsrdtr = None
+        #self.s.setDTR(1)
+        #self.s.setRTS(1)
+        
+        #self.s.rtscts = False
+        #self.s.dsrdtr = None
+        self.s.setDTR(0)
+        #self.s.setRTS(0)
+        #self.s._dsrdtr = False
+        #self.s._rtscts = False
+        
+        #print(self.s.dtr)
+        #print(self.s._dtr_state)
+        #print(self.s._dsrdtr)
+        #print(self.s.rts)
+        #print(self.s._rts_state)
+        #print(self.s._rtscts)
         try:
             self.s.open()
         except:
