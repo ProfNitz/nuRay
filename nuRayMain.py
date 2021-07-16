@@ -161,8 +161,32 @@ class MyApp(QMainWindow, nuRMainWindow):
              
     def Connect(self):   
         if not self.connected:
+            
             self.Serial.connect()
             if self.Serial.is_open():
+                if self.ParamSettingsDialog != None and len(self.InstrPageList)>0:
+                    buttonReply = QMessageBox.question(self,
+                                               'Data is going to be overwritten',
+                                               "Do you want to save project first?",
+                                               QMessageBox.Yes | QMessageBox.No,
+                                               QMessageBox.Yes)
+            
+                    if buttonReply == QMessageBox.Yes:
+                        self.SaveProject()      
+                    else:
+                        pass                            
+                if self.ParamSettingsDialog != None and len(self.InstrPageList) == 0:
+                    buttonReply = QMessageBox.question(self,
+                                               'Close nuRay',
+                                               "Do you want to save parameters first?",
+                                               QMessageBox.Yes | QMessageBox.No,
+                                               QMessageBox.Yes)
+                    if buttonReply == QMessageBox.Yes:
+                        self.SaveParamsAs()
+                    else:
+                        pass
+                else:
+                    pass
                 self.ActiveSet.setDisabled(False)
                 #for i in self.InstrPageList:
                    # for x in i.instrList:
@@ -478,6 +502,20 @@ class MyApp(QMainWindow, nuRMainWindow):
             
             if buttonReply == QMessageBox.Yes:
                 self.SaveProject()
+                self.closeAllChildren()
+                ev.accept()
+            else:
+                self.closeAllChildren()
+                ev.accept()
+        if self.ParamSettingsDialog != None and len(self.InstrPageList) == 0:
+            buttonReply = QMessageBox.question(self,
+                                               'Close nuRay',
+                                               "Do you want to save parameters first?",
+                                               QMessageBox.Yes | QMessageBox.No,
+                                               QMessageBox.Yes)
+            
+            if buttonReply == QMessageBox.Yes:
+                self.SaveParamsAs()
                 self.closeAllChildren()
                 ev.accept()
             else:

@@ -239,6 +239,9 @@ class cMRTableModel(QAbstractTableModel):
                     for i in self.items[idx.row()]._instrList:
                         i.ParamNameChanged()
                     self.bool = True
+            if idx.column() == 2:
+                self.items[idx.row()].__dict__[self.itemClass.properties[idx.column()]]=val
+                self.bool = True               
         return self.bool
 
     def save(self):

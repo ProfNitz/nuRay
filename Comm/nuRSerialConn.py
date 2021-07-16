@@ -47,7 +47,7 @@ class nuRSerial(object):
         
         #self.s.rtscts = False
         #self.s.dsrdtr = None
-        self.s.setDTR(0)
+        #self.s.setDTR(0)
         #self.s.setRTS(0)
         #self.s._dsrdtr = False
         #self.s._rtscts = False
