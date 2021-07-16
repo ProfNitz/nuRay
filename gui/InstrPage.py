@@ -251,7 +251,8 @@ class nuRayInstr(QObject):
         if self.Param.paramset == 1:
             self.instrWidget.setValue(self.Param.valset1)
         self.instrWidget.valueChanged.connect(self.setParamVal) 
-        self.Page.parent.ParamSettingsDialog.activateWindow()
+        if self.Page.parent.ParamSettingsDialog != None:
+            self.Page.parent.ParamSettingsDialog.activateWindow()
         self.Page.activateWindow()
         
     def centerLabel(self):

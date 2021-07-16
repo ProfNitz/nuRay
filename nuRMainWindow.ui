@@ -150,11 +150,12 @@
     <addaction name="actionOpen_Instruments"/>
     <addaction name="actionOpen_Plotter"/>
     <addaction name="separator"/>
+    <addaction name="actionNew_Project"/>
     <addaction name="actionSave"/>
     <addaction name="actionSave_As"/>
     <addaction name="actionOpen"/>
     <addaction name="separator"/>
-    <addaction name="actionClose_Project"/>
+    <addaction name="actionClose"/>
    </widget>
    <widget class="QMenu" name="menuParameters">
     <property name="title">
@@ -238,9 +239,9 @@
     <string>Load Parameters</string>
    </property>
   </action>
-  <action name="actionClose_Project">
+  <action name="actionClose">
    <property name="text">
-    <string>Close Project</string>
+    <string>Close</string>
    </property>
   </action>
   <action name="actionSave_Parameters">
@@ -261,6 +262,11 @@
   <action name="actionParameters_2">
    <property name="text">
     <string>Parameters</string>
+   </property>
+  </action>
+  <action name="actionNew_Project">
+   <property name="text">
+    <string>New Project</string>
    </property>
   </action>
  </widget>

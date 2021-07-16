@@ -92,6 +92,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.actionSignals.triggered.connect(self.SignalSettings)
         self.actionOpen_Plotter.triggered.connect(self.OpenPlotter)
         
+        self.actionNew_Project.triggered.connect(self.NewProject)
         self.actionSave.triggered.connect(self.SaveProject)
         self.actionSave_As.triggered.connect(self.SaveProjectAs)
         self.actionOpen.triggered.connect(self.OpenProject)
@@ -102,7 +103,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.actionLoad_Parameters.triggered.connect(self.ParamSelectWindow)
         #self.actionGenerate_Parameters.triggered.connect(self.GenerateParams)
         
-        self.actionClose_Project.triggered.connect(self.closeEverything)
+        self.actionClose.triggered.connect(self.closeEverything)
         
         self.actionConnection_Settings.triggered.connect(self.ConnSettings)
         self.ConnSetDlg = None
@@ -160,45 +161,25 @@ class MyApp(QMainWindow, nuRMainWindow):
                
              
     def Connect(self):   
-        if not self.connected:
-            
+        if not self.connected:          
             self.Serial.connect()
             if self.Serial.is_open():
-                if self.ParamSettingsDialog != None and len(self.InstrPageList)>0:
-                    buttonReply = QMessageBox.question(self,
-                                               'Data is going to be overwritten',
-                                               "Do you want to save project first?",
-                                               QMessageBox.Yes | QMessageBox.No,
-                                               QMessageBox.Yes)
-            
-                    if buttonReply == QMessageBox.Yes:
-                        self.SaveProject()      
-                    else:
-                        pass                            
-                if self.ParamSettingsDialog != None and len(self.InstrPageList) == 0:
-                    buttonReply = QMessageBox.question(self,
-                                               'Close nuRay',
-                                               "Do you want to save parameters first?",
-                                               QMessageBox.Yes | QMessageBox.No,
-                                               QMessageBox.Yes)
-                    if buttonReply == QMessageBox.Yes:
-                        self.SaveParamsAs()
-                    else:
-                        pass
-                else:
-                    pass
-                self.ActiveSet.setDisabled(False)
+                self.connected=True
+                #self.ConnectSaveMessages()
+                if self.SaveMessages("CONNECT"):
+                #if self.Serial.is_open():
+                    #self.connected=True
+                    self.ActiveSet.setDisabled(False)
                 #for i in self.InstrPageList:
                    # for x in i.instrList:
                      #   x.instrWidget.setEnabled(True)
-                self.statusLED.ledcolor = Qt.green
-                self.statusLED.repaint()
-                self.connected=True
-                self.Serial.write(1,1,29,255,'uint8')         
-                self.ReadActiveSet() 
-                self.ReadDataFromMuCon() 
-                self.SyncInstr()
-                self.WriteDataToMuCon()                
+                    self.statusLED.ledcolor = Qt.green
+                    self.statusLED.repaint()
+                    self.Serial.write(1,1,29,255,'uint8')         
+                    self.ReadActiveSet() 
+                    self.ReadDataFromMuCon() 
+                    self.SyncInstr()
+                    self.WriteDataToMuCon()                
             else:
                 PortInfo = QMessageBox.information(self,
                                                      'No valid port chosen.',
@@ -225,6 +206,47 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.connected = False
         if self.Serial.is_open():
             print('noch offen')
+            
+    def SaveMessages(self,saveEvent):
+        self.saveEvent = saveEvent
+        if self.ParamSettingsDialog != None and len(self.InstrPageList)>0:
+            buttonReply = QMessageBox.question(self,
+                                               'Data is going to be overwritten',
+                                               "Do you want to save project first?",
+                                               QMessageBox.Yes | QMessageBox.No |
+                                               QMessageBox.Cancel)
+            if buttonReply == QMessageBox.Yes:
+                self.SaveProject() 
+                return True
+            if buttonReply == QMessageBox.No:
+                pass
+                return True
+            else:
+                #self.Disconnect()
+                if self.saveEvent == "CONNECT":
+                    self.radioButtonDisconnect.click()
+                return False
+                        
+        if self.ParamSettingsDialog != None and len(self.InstrPageList) == 0:
+            buttonReply = QMessageBox.question(self,
+                                               'Data is going to be overwritten',
+                                               "Do you want to save parameters first?",
+                                               QMessageBox.Yes | QMessageBox.No |
+                                               QMessageBox.Cancel)
+            if buttonReply == QMessageBox.Yes:
+                self.SaveParamsAs()
+                return True
+            if buttonReply == QMessageBox.No:
+                pass
+                return True
+            else:
+                #self.Disconnect()
+                if self.saveEvent == "CONNECT":
+                    self.radioButtonDisconnect.click()
+                return False
+        else:
+            pass
+            return True
  
     def SyncSet(self):
         if self.SyncedSet.isChecked():
@@ -420,6 +442,17 @@ class MyApp(QMainWindow, nuRMainWindow):
                                                              QMessageBox.Ok)
                         self.OpenInstr()
                             
+    def NewProject(self):
+        if self.SaveMessages("NEWPROJECT"):     
+            self.projectFile = 'untitled Project'
+            self.closeAllChildren()
+            self.ParamSettingsDialog = None
+            self.AllMyParams = cParamTableModel(None)
+            self.OpenInstr()
+        else:
+            pass
+        
+    
     def OpenProject(self):
         file,_ = QFileDialog.getOpenFileName(self,
                                              "Open Project",
@@ -497,33 +530,39 @@ class MyApp(QMainWindow, nuRMainWindow):
             buttonReply = QMessageBox.question(self,
                                                'Close nuRay',
                                                "Do you want to save project first?",
-                                               QMessageBox.Yes | QMessageBox.No,
-                                               QMessageBox.Yes)
+                                               QMessageBox.Yes | QMessageBox.No |
+                                               QMessageBox.Cancel)
             
             if buttonReply == QMessageBox.Yes:
                 self.SaveProject()
                 self.closeAllChildren()
                 ev.accept()
-            else:
+            if buttonReply == QMessageBox.No:
                 self.closeAllChildren()
                 ev.accept()
+            else:
+                ev.ignore()
+                
         if self.ParamSettingsDialog != None and len(self.InstrPageList) == 0:
             buttonReply = QMessageBox.question(self,
                                                'Close nuRay',
                                                "Do you want to save parameters first?",
-                                               QMessageBox.Yes | QMessageBox.No,
-                                               QMessageBox.Yes)
+                                               QMessageBox.Yes | QMessageBox.No |
+                                               QMessageBox.Cancel)
             
             if buttonReply == QMessageBox.Yes:
                 self.SaveParamsAs()
                 self.closeAllChildren()
                 ev.accept()
-            else:
+            if buttonReply == QMessageBox.No:
                 self.closeAllChildren()
                 ev.accept()
+            else:
+                ev.ignore()
         else:
-            self.closeAllChildren()
-            ev.accept()
+            if self.ParamSettingsDialog == None:
+                self.closeAllChildren()
+                ev.accept()
             
     def closeAllChildren(self):
         #close windows
