@@ -241,11 +241,6 @@ class nuRayInstr(QObject):
         self.Param.max = self.instrWidget.maximum()
         self.instrWidget.setMinimum(self.Param.min)
         self.instrWidget.setMaximum(self.Param.max)
-        if isinstance(self.instrWidget,QAbstractSlider) and self.Param.dataType == 'float32':
-            self.Param.dataType = 'uint8'
-        if isinstance(self.instrWidget,QDoubleSpinBox) and not self.Param.dataType == 'float32':
-            self.Param.dataType = 'float32'     
-        #self.Param.val = self.instrWidget.value()
         if self.Param.paramset == 0:
             self.instrWidget.setValue(self.Param.valset0)
         if self.Param.paramset == 1:
