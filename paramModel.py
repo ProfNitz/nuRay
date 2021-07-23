@@ -138,10 +138,9 @@ class cMRTableModel(QAbstractTableModel):
     def itemNames(self):
         return [x.name for x in self.items] #wow, my first list comprehension
     def flags(self,idx):
-        if idx.column() in range(0,5,1):
+        if idx.column() in range(0,3,1):
             return Qt.ItemIsSelectable|Qt.ItemIsEditable|Qt.ItemIsEnabled
-        #if idx.column()==0
-        if idx.column() == 5 or idx.column() == 6:
+        if idx.column() in range(3,7,1):
             return Qt.ItemIsEnabled
     def removeItem(self,row):
         self.beginRemoveRows(QModelIndex(),row,row)

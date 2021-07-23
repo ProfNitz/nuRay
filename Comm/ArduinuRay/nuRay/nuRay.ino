@@ -54,43 +54,12 @@ void setup() {
   idx = 0;
   DDRD = _BV(LED1) + _BV(LED2) + _BV(LED3);
   init_pwm();
-  EEPROMidx = 0;
-
-  EEPROM.get(EEPROMidx,active);
-  EEPROMidx += 1;
-
-  for(int i=0;i<PARAM_COUNTF;i++)
-  {
-    EEPROM.get(EEPROMidx,paramset[0].paramf[i]);
-    EEPROMidx += sizeof(float);
-  }
-  for(int i=0;i<PARAM_COUNTF;i++)
-  {
-    EEPROM.get(EEPROMidx,paramset[1].paramf[i]);
-    EEPROMidx += sizeof(float);
-  }
-  
-  for(int i=0;i<PARAM_COUNT16;i++)
-  {
-    EEPROM.get(EEPROMidx,paramset[0].param16[i]);
-    EEPROMidx += sizeof(int16_t);
-  }
-    for(int i=0;i<PARAM_COUNT16;i++)
-  {
-    EEPROM.get(EEPROMidx,paramset[1].param16[i]);
-    EEPROMidx += sizeof(int16_t);
-  }
-  for(int i=0;i<PARAM_COUNT8;i++)
-  {
-    EEPROM.get(EEPROMidx,paramset[0].param8[i]);
-    EEPROMidx += sizeof(uint8_t);
-  }
-  for(int i=0;i<PARAM_COUNT8;i++)
-  {
-    EEPROM.get(EEPROMidx,paramset[1].param8[i]);
-    EEPROMidx += sizeof(uint8_t);
-  }
-  EEPROMidx = 0;
+  paramset[1].param8[1] = 121;
+  paramset[0].param8[1] = 5;
+  paramset[1].paramf[2] = 12.25;
+  paramset[0].paramf[2] = 5;  
+  paramset[1].param8[3] = 255;
+  paramset[0].param8[3] = 5;
 }
 
 /*void sendSet() {
@@ -228,44 +197,7 @@ void loop() {
       }
     }
   }
-  EEPROMidx = 0;
-  EEPROM.put(EEPROMidx,active);
-  EEPROMidx += 1;
-  for(int i=0;i<PARAM_COUNTF;i++)
-  {
-    EEPROM.put(EEPROMidx,paramset[0].paramf[i]);
-    EEPROMidx += sizeof(float);
-  }
-  for(int i=0;i<PARAM_COUNTF;i++)
-  {
-    EEPROM.put(EEPROMidx,paramset[1].paramf[i]);
-    EEPROMidx += sizeof(float);
-  }
-  
-  for(int i=0;i<PARAM_COUNT16;i++)
-  {
-    EEPROM.put(EEPROMidx,paramset[0].param16[i]);
-    EEPROMidx += sizeof(int16_t);
-  }
-    for(int i=0;i<PARAM_COUNT16;i++)
-  {
-    EEPROM.put(EEPROMidx,paramset[1].param16[i]);
-    EEPROMidx += sizeof(int16_t);
-  }
-  for(int i=0;i<PARAM_COUNT8;i++)
-  {
-    EEPROM.put(EEPROMidx,paramset[0].param8[i]);
-    EEPROMidx += sizeof(uint8_t);
-  }
-  for(int i=0;i<PARAM_COUNT8;i++)
-  {
-    EEPROM.put(EEPROMidx,paramset[1].param8[i]);
-    EEPROMidx += sizeof(uint8_t);
-  }
-
-
-
-
+   
   if(paramset[active].param8[1] == 121){
     PORTD |= _BV(LED1);
   }

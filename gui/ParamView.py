@@ -70,8 +70,6 @@ class nuRAbstractTableView(QTableView):
         self.model().sort()
     def listParamsInstr(self,row):
         self.model().listParamsInstr(row)
-    def sendParams(self):
-        self.model().send()
 
     
 class cSignalTableView(nuRAbstractTableView):
@@ -126,10 +124,6 @@ class cParamTableView(nuRAbstractTableView):
             sortAct.triggered.connect(self.sortParams)
             self.menu.addAction(sortAct)
             
-            sendAct = QAction('Send Params',self)
-            sendAct.triggered.connect(self.sendParams)
-            self.menu.addAction(sendAct)
-        
         self.menu.popup(QCursor.pos())
 
 
