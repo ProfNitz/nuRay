@@ -164,6 +164,7 @@
     <addaction name="actionParameters_2"/>
     <addaction name="separator"/>
     <addaction name="actionSave_Parameters"/>
+    <addaction name="actionSave_Parameters_As"/>
     <addaction name="actionLoad_Parameters"/>
    </widget>
    <addaction name="menuProject"/>
@@ -267,6 +268,11 @@
   <action name="actionNew_Project">
    <property name="text">
     <string>New Project</string>
+   </property>
+  </action>
+  <action name="actionSave_Parameters_As">
+   <property name="text">
+    <string>Save Parameters As</string>
    </property>
   </action>
  </widget>

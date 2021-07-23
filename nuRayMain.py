@@ -100,6 +100,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         
         self.actionParameters_2.triggered.connect(self.ParamSettings)
         self.actionSave_Parameters.triggered.connect(self.SaveParams)
+        self.actionSave_Parameters_As.triggered.connect(self.SaveParamsAs)
         self.actionLoad_Parameters.triggered.connect(self.ParamSelectWindow)
         #self.actionGenerate_Parameters.triggered.connect(self.GenerateParams)
         
@@ -149,6 +150,7 @@ class MyApp(QMainWindow, nuRMainWindow):
 
         self.projectFile = 'untitled Project'
         self.paramFile = 'untitled Params'
+        self.savebothsets = False
         self.setTitle()
         
         self.AllMyParams = cParamTableModel(None) #table model so it can be processed by QTableView
@@ -209,6 +211,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             
     def SaveMessages(self,saveEvent):
         self.saveEvent = saveEvent
+        self.InstrPageList[:]=[x for x in self.InstrPageList if x.isVisible()]
         if self.ParamSettingsDialog != None and len(self.InstrPageList)>0:
             buttonReply = QMessageBox.question(self,
                                                'Data is going to be overwritten',
@@ -378,31 +381,64 @@ class MyApp(QMainWindow, nuRMainWindow):
         if self.projectFile=='untitled Project':
             self.SaveProjectAs()
         else:
+            #currentWorkingDir = os.getcwd()
+            #print(currentWorkingDir)
+            #newpath = currentWorkingDir + '\Projects' + '\\' +  str(self.projectFile)
+            #print(newpath)
+            #if not os.path.exists(newpath):
+            #    os.makedirs(newpath)
+            #self.savebothsets = True
+            self.SaveParams()
             with io.open(self.projectFile,'w',encoding='utf8') as f:
                 f.write(self.AllMyParams.save())
                 f.write(self.AllMySignals.save())
                 f.write(self.saveInstrPages())
-                #f.write(self.saveSyncedSet())
+                f.write(self.ParamFilePaths())
+                # PFAD VON PARAMETERFILES
+                
+
                 
     def SaveParamsAs(self):
         file,_ = QFileDialog.getSaveFileName(self,
                                              "Save Params As",
-                                             "("+str(self.syncset)+')',
+                                             "("+'Set'+str(self.syncset)+')',
                                              "nuRay Params (*.nrpa);;All Files(*)")
         if file:
             print(file)
             self.paramFile = file
             #self.setTitle()
-            self.SaveParams()
+            self.SaveSingleSet()
             
     def SaveParams(self):
-        if self.paramFile == 'untitled Params':
-            self.SaveParamsAs()
+        if self.projectFile == 'untitled Project':
+                self.SaveParamsAs()
+            #if not self.projectFile == 'untitled Project':
         else:
+            self.paramFile = self.projectFile[:-5] + ' ('+'Set'+str(0)+')' + '.nrpa'
             with io.open(self.paramFile,'w',encoding = 'utf8') as f:
-                f.write(self.AllMyParams.saveP())
-            
+                f.write(self.AllMyParams.savePS0())
+            self.paramFile = self.projectFile[:-5] + ' ('+'Set'+str(1)+')' + '.nrpa'
+            with io.open(self.paramFile,'w',encoding = 'utf8') as f:
+                f.write(self.AllMyParams.savePS1())
                 
+    def SaveSingleSet(self):
+        with io.open(self.paramFile,'w',encoding = 'utf8') as f:
+            if self.syncset == 0:
+                f.write(self.AllMyParams.savePS0())
+            if self.syncset == 1:
+                f.write(self.AllMyParams.savePS1())
+                
+                    
+    def ParamFilePaths(self):
+        res = '<pValues>\n'
+        res += self.projectFile[:-5] + ' ('+'Set'+str(0)+')' + '.nrpa'
+        res += '\n'
+        res += self.projectFile[:-5] + ' ('+'Set'+str(1)+')' + '.nrpa'
+        res += '\n'
+        res += '<\pValues>\n'
+        return res
+        
+            
     def saveInstrPages(self):
         res='<Instrument Pages>\n'
         #clean up list first
@@ -467,8 +503,26 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.ParamSettings()
             self.AllMySignals.load(projSet)
             self.loadInstrPages(projSet)
-            #self.loadSyncedSet(projSet)
-            self.setTitle()            
+            self.InsertpValues(projSet)
+            self.SyncInstr()
+            self.setTitle()   
+            #self.savebothsets = True
+    
+    def InsertpValues(self,txt):
+        myr = re.compile(r'<pValues>\n(.+)<\\pValues>',re.DOTALL)#the dot also matches newlines
+        res=myr.search(txt)
+        if res:
+            paramValues = res.group(1)
+            paramValues = paramValues.splitlines()
+            print(paramValues)
+            with io.open(paramValues[0],'r',encoding='utf-8') as p:
+                paramSet = p.read()
+                self.AllMyParams.loadPS0(paramSet)
+            with io.open(paramValues[1],'r',encoding='utf-8') as p:
+                paramSet = p.read()
+                self.AllMyParams.loadPS1(paramSet)
+                    
+                                  
         
     def ParamSelectWindow(self):
         file,_ = QFileDialog.getOpenFileNames(self,
@@ -551,18 +605,20 @@ class MyApp(QMainWindow, nuRMainWindow):
                                                QMessageBox.Cancel)
             
             if buttonReply == QMessageBox.Yes:
-                self.SaveParamsAs()
+                #self.savebothsets = True
+                self.SaveParams()
                 self.closeAllChildren()
                 ev.accept()
+                #print("yes baby done")
             if buttonReply == QMessageBox.No:
                 self.closeAllChildren()
                 ev.accept()
             else:
                 ev.ignore()
-        else:
-            if self.ParamSettingsDialog == None:
-                self.closeAllChildren()
-                ev.accept()
+                
+        if self.ParamSettingsDialog == None:
+            self.closeAllChildren()
+            ev.accept()
             
     def closeAllChildren(self):
         #close windows
@@ -571,18 +627,20 @@ class MyApp(QMainWindow, nuRMainWindow):
                 i.close()
         if self.ParamSettingsDialog!=None:
             self.ParamSettingsDialog.close()
+            self.ParamSettingsDialog = None
         if self.SignalSettingsDialog!=None:
             self.SignalSettingsDialog.close()
+            self.SignalSettingsDialog = None
         if self.ConnSetDlg!=None:
             self.ConnSetDlg.close()
+            self.ConnSetDlg = None
         for i in self.PlotterList:
             if i.isVisible():
                 i.close()
-        try:
-            if self.Serial.is_open():
-                self.Serial.close()
-        except:
-            pass
+        #if self.Serial == nuRSerial():
+            #if self.Serial.is_open():
+                    #self.Serial.close()
+
     
     def closeEverything(self):
         self.close()

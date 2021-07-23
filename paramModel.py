@@ -31,28 +31,21 @@ class mRayAbstractItem(QObject):
     def save(self):
         res = ''
         for p in self.properties:#export all relevant members
-            res+=(str(self.__dict__[p])+';')
+            if not (p == 'valset0' or p == 'valset1'):
+                res+=(str(self.__dict__[p])+';')
         res=res[:-1]+'\n'#replace trailing ; by \n
         return res
     
     def savePS0(self):
         res = ''
-        for p in self.properties:
-            #print("hey bin in PS0")
-            print(p)
-            if not p == 'valset1':
-                res+=(str(self.__dict__[p])+';')
-        res=res[:-1]+'\n'
+        res+=(str(self.__dict__['name'])+';')
+        res+=(str(self.__dict__['valset0'])+'\n')
         return res
     
     def savePS1(self):
         res = ''
-        for p in self.properties:
-            #print("hey bin in PS1")
-            print(p)
-            if not p == 'valset0':
-                res+=(str(self.__dict__[p])+';')
-        res=res[:-1]+'\n'      
+        res+=(str(self.__dict__['name'])+';')
+        res+=(str(self.__dict__['valset1'])+'\n')
         return res
         
     def fillProps(self,txt):
@@ -61,6 +54,7 @@ class mRayAbstractItem(QObject):
         print(ps)
         for p in range(2,len(ps)):
             self.__dict__[self.properties[p]]=self.pTypes[p](ps[p])
+        self.__dict__[self.properties[0]]=self.pTypes[0](ps[0])
 
         
     def fillPropsPS0(self,txt):
@@ -73,6 +67,12 @@ class mRayAbstractItem(QObject):
         for p in range(2,len(ps)-1):
             self.__dict__[self.properties[p]]=self.pTypes[p](ps[p]) 
             self.__dict__[self.properties[-1]]=self.pTypes[-1](ps[-1])
+            
+    def fillValuesS0(self,value):
+        self.__dict__[self.properties[5]] = self.pTypes[5](value)
+    
+    def fillValuesS1(self,value):
+        self.__dict__[self.properties[6]] = self.pTypes[6](value)
             
     def __str__(self):
         return self.name
@@ -250,25 +250,62 @@ class cMRTableModel(QAbstractTableModel):
         res += '<\\'+self.saveTag+'>\n'
         return res
     
-    def saveP(self):
-        res = '<'+self.saveTag+'>\n'
+    def savePS0(self):
+        res = '<pValues>\n'
         for p in self.items:
-            if p.paramset == 0:
-                res+=p.savePS0()
-            if p.paramset == 1:
-                res+=p.savePS1()                
-        res += '<\\'+self.saveTag+'>\n'
+            res+=p.savePS0() 
+        res += '<\pValues>\n'
         return res
     
+    def savePS1(self):
+        res = '<pValues>\n'
+        for p in self.items:
+            res+=p.savePS1() 
+        res += '<\pValues>\n'
+        return res
+    
+    def loadPS0(self,txt):
+        self.pValues = []
+        myr = re.compile(r'<pValues>\n(.+)<\\pValues>',re.DOTALL)#the dot also matches newlines
+        res=myr.search(txt)
+        if res:
+            j = 0
+            paramValues = res.group(1)
+            print(paramValues)
+            for l in paramValues.splitlines():
+                value = l.split(';')[-1]
+                self.pValues.append(value)
+            print(self.pValues)
+            for i in self.items:
+                i.fillValuesS0(self.pValues[j]) 
+                j += 1
+            
+    def loadPS1(self,txt):
+        self.pValues = []
+        myr = re.compile(r'<pValues>\n(.+)<\\pValues>',re.DOTALL)#the dot also matches newlines
+        res=myr.search(txt)
+        if res:
+            j = 0
+            paramValues = res.group(1)
+            print(paramValues)
+            for l in paramValues.splitlines():
+                value = l.split(';')[-1]
+                self.pValues.append(value)
+            print(self.pValues)
+            for i in self.items:
+                i.fillValuesS1(self.pValues[j])
+                j += 1
+
+       
     def loadList (self,txt):
         self.paramnamelist = []
         self.valuelist = []
-        myr = re.compile(r'<'+self.saveTag+r'>\n(.+)<\\'+self.saveTag+r'>',re.DOTALL)#the dot also matches newlines
+        myr = re.compile(r'<pValues>\n(.+)<\\pValues>',re.DOTALL)#the dot also matches newlines
         res=myr.search(txt)
         if res:
-            paramSettings = res.group(1)
-            for l in paramSettings.splitlines():
-                name = l.split(';')[1]
+            paramValues = res.group(1)
+            for l in paramValues.splitlines():
+                name = l.split(';')[0]
                 value = l.split(';')[-1]
                 self.paramnamelist.append(name)
                 self.valuelist.append(value)
@@ -300,27 +337,28 @@ class cMRTableModel(QAbstractTableModel):
     def loadP(self,txt,checkedparams):
         #self.beginResetModel()#inform view that everthing is about to change
         #self.items = []
-        myr = re.compile(r'<'+self.saveTag+r'>\n(.+)<\\'+self.saveTag+r'>',re.DOTALL)#the dot also matches newlines
+        myr = re.compile(r'<pValues>\n(.+)<\\pValues>',re.DOTALL)#the dot also matches newlines
         res=myr.search(txt)
         if res:
             paramSettings = res.group(1)
             for l in paramSettings.splitlines():
-                name = l.split(';')[1]
+                name = l.split(';')[0]
+                pvalue = l.split(';')[1]
                 print(name)
                 if name in checkedparams:
                 #print([i.name for i in self.items])
                     if name in [i.name for i in self.items]:#avoid duplicates
                     #self.newItem(l.split(';')[1])#name must always be first in itemClass.properties
                         if 0 in [i.paramset for i in self.items]:
-                            self.items[[i.name for i in self.items].index(name)].fillPropsPS0(l)
+                            self.items[[i.name for i in self.items].index(name)].fillValuesS0(pvalue)
                         if 1 in [i.paramset for i in self.items]:
-                            self.items[[i.name for i in self.items].index(name)].fillPropsPS1(l)
+                            self.items[[i.name for i in self.items].index(name)].fillValuesS1(pvalue)
                     else:
-                        self.newItem(l.split(';')[1])#name must always be first in itemClass.properties
+                        self.newItem(name)#name must always be first in itemClass.properties
                         if 0 in [i.paramset for i in self.items]:
-                            self.items[-1].fillPropsPS0(l)
+                            self.items[-1].fillValuesS0(pvalue)
                         if 1 in [i.paramset for i in self.items]:
-                            self.items[-1].fillPropsPS1(l)
+                            self.items[-1].fillValuesS1(pvalue)
         #self.endResetModel()
                                                           
 
