@@ -8,7 +8,7 @@ Created on Wed Jun 12 13:24:32 2019
 from PyQt5.QtCore import Qt, QObject
 from PyQt5.QtCore import QAbstractTableModel, QModelIndex
 from PyQt5.QtGui import QColor, QFont, QIcon, QPixmap
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QCheckBox, QPushButton, QFrame, QLabel
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QCheckBox, QPushButton, QFrame, QLabel, QMessageBox
 import re
 #from Comm.nuRSerialConn import nuRSerial
 
@@ -56,23 +56,19 @@ class mRayAbstractItem(QObject):
             self.__dict__[self.properties[p]]=self.pTypes[p](ps[p])
         self.__dict__[self.properties[0]]=self.pTypes[0](ps[0])
 
-        
-    def fillPropsPS0(self,txt):
-        ps = txt.split(';')
-        for p in range(2,len(ps)):
-            self.__dict__[self.properties[p]]=self.pTypes[p](ps[p])
-            
-    def fillPropsPS1(self,txt):
-        ps = txt.split(';')
-        for p in range(2,len(ps)-1):
-            self.__dict__[self.properties[p]]=self.pTypes[p](ps[p]) 
-            self.__dict__[self.properties[-1]]=self.pTypes[-1](ps[-1])
             
     def fillValuesS0(self,value):
-        self.__dict__[self.properties[5]] = self.pTypes[5](value)
+        #if float(value) <= self.__dict__[self.properties[4]] and float(value) >= self.__dict__[self.properties[3]]:
+            if self.__dict__[self.properties[2]] == 'float32':
+                self.__dict__[self.properties[5]] = float(value)
+            else:
+                self.__dict__[self.properties[5]] = int(float(value))
     
     def fillValuesS1(self,value):
-        self.__dict__[self.properties[6]] = self.pTypes[6](value)
+        if self.__dict__[self.properties[2]] == 'float32':
+            self.__dict__[self.properties[6]] = float(value)
+        else:
+            self.__dict__[self.properties[6]] = int(float(value))
             
     def __str__(self):
         return self.name
@@ -138,9 +134,9 @@ class cMRTableModel(QAbstractTableModel):
     def itemNames(self):
         return [x.name for x in self.items] #wow, my first list comprehension
     def flags(self,idx):
-        if idx.column() in range(0,3,1):
+        if idx.column() in range(0,5,1):
             return Qt.ItemIsSelectable|Qt.ItemIsEditable|Qt.ItemIsEnabled
-        if idx.column() in range(3,7,1):
+        if idx.column() in range(5,7,1):
             return Qt.ItemIsEnabled
     def removeItem(self,row):
         self.beginRemoveRows(QModelIndex(),row,row)
@@ -239,8 +235,44 @@ class cMRTableModel(QAbstractTableModel):
                         i.ParamNameChanged()
                     self.bool = True
             if idx.column() == 2:
+                for i in self.items[idx.row()]._instrList:
+                    i.disconnectFromParam()
                 self.items[idx.row()].__dict__[self.itemClass.properties[idx.column()]]=val
-                self.bool = True               
+                if val == 'float32':
+                    for j in range(3,7,1):
+                        self.items[idx.row()].__dict__[self.itemClass.properties[j]] = float(self.items[idx.row()].__dict__[self.itemClass.properties[j]])
+                else:
+                    for j in range(3,7,1):
+                        self.items[idx.row()].__dict__[self.itemClass.properties[j]] = int(float(self.items[idx.row()].__dict__[self.itemClass.properties[j]]))
+                self.bool = True
+            if idx.column() == 3:
+                self.pvals0 = self.items[idx.row()].__dict__[self.itemClass.properties[5]]
+                self.pvals1 = self.items[idx.row()].__dict__[self.itemClass.properties[6]]                
+                self.maxval = self.items[idx.row()].__dict__[self.itemClass.properties[4]]
+                if val >= self.maxval:
+                    self.bool = False
+                if self.pvals0 < val or self.pvals1 < val:
+                    self.bool = False
+                else:
+                    if self.items[idx.row()].__dict__[self.itemClass.properties[2]] == 'float32':
+                        self.items[idx.row()].__dict__[self.itemClass.properties[idx.column()]]=float(val)
+                    else:
+                        self.items[idx.row()].__dict__[self.itemClass.properties[idx.column()]]=int(float(val))
+                    self.bool = True
+            if idx.column() == 4:
+                self.pvals0 = self.items[idx.row()].__dict__[self.itemClass.properties[5]]
+                self.pvals1 = self.items[idx.row()].__dict__[self.itemClass.properties[6]] 
+                self.minval = self.items[idx.row()].__dict__[self.itemClass.properties[3]]
+                if val <= self.minval:
+                    self.bool = False
+                if self.pvals0 > val or self.pvals1 > val:
+                    self.bool = False                    
+                else:
+                    if self.items[idx.row()].__dict__[self.itemClass.properties[2]] == 'float32':
+                        self.items[idx.row()].__dict__[self.itemClass.properties[idx.column()]]=float(val)
+                    else:
+                        self.items[idx.row()].__dict__[self.itemClass.properties[idx.column()]]=int(float(val))
+                    self.bool = True
         return self.bool
 
     def save(self):

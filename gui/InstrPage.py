@@ -172,6 +172,7 @@ class nuRayInstr(QObject):
 
         self.Param=self.notConnected
         self.disconnectFromParam()
+        self.singleStepList = []
         
         self.livesend = None
         self.writeNtoM = False
@@ -237,14 +238,21 @@ class nuRayInstr(QObject):
         self.Param.addInstr(self)
         self.label.setText(self.Param.name)
         self.label.setPalette(self.Page.paletteBlack)
-        self.Param.min = self.instrWidget.minimum()
-        self.Param.max = self.instrWidget.maximum()
+        self.instrWidget.blockSignals(True)
         self.instrWidget.setMinimum(self.Param.min)
         self.instrWidget.setMaximum(self.Param.max)
+        self.instrWidget.blockSignals(False)
         if self.Param.paramset == 0:
             self.instrWidget.setValue(self.Param.valset0)
+            print("hier")
         if self.Param.paramset == 1:
             self.instrWidget.setValue(self.Param.valset1)
+        if isinstance(self.instrWidget,QDoubleSpinBox):
+            self.singleStepList.append(self.instrWidget.singleStep())
+            if not self.Param.dataType == 'float32':        
+                self.instrWidget.setSingleStep(1)
+            else:
+                self.instrWidget.setSingleStep(self.singleStepList[0])
         self.instrWidget.valueChanged.connect(self.setParamVal) 
         if self.Page.parent.ParamSettingsDialog != None:
             self.Page.parent.ParamSettingsDialog.activateWindow()
@@ -258,7 +266,7 @@ class nuRayInstr(QObject):
         x = round(cx-label.width()*0.5)
         self.label.setGeometry(QRect(x-20,y,label.width()+40,label.height()))
 
-        
+    
     def paramSelected(self):
         param = self.Page.parent.AllMyParams.items[self.ParamConnList.currentRow()]
         self.ParamConnList.close()
