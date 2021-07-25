@@ -8,7 +8,7 @@ Created on Wed Jun 12 13:24:32 2019
 from PyQt5.QtCore import Qt, QObject
 from PyQt5.QtCore import QAbstractTableModel, QModelIndex
 from PyQt5.QtGui import QColor, QFont, QIcon, QPixmap
-from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QCheckBox, QPushButton, QFrame, QLabel, QMessageBox
+from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QCheckBox, QPushButton, QFrame, QLabel, QMessageBox, QDoubleSpinBox, QGridLayout
 import re
 from math import log10, floor
 #from Comm.nuRSerialConn import nuRSerial
@@ -29,6 +29,7 @@ class mRColor(QColor):
 #NiNa: x = mRColor("(50,50,50)")
 #NiNa: print(x)
 class mRayAbstractItem(QObject):
+    
     def roundToTwo(self,x):
         return round(x, -int(floor(log10(abs(x))))+1)
         
@@ -51,7 +52,31 @@ class mRayAbstractItem(QObject):
         res+=(str(self.__dict__['name'])+';')
         res+=(str(self.__dict__['valset1'])+'\n')
         return res
-        
+     
+    def fillMin(self,val):
+        if self.__dict__[self.properties[2]] == 'float32':
+            self.__dict__[self.properties[3]] = float(val)
+        else:
+            self.__dict__[self.properties[3]] = int(float(val))
+            
+    def fillMax(self,val):
+        if self.__dict__[self.properties[2]] == 'float32':
+            self.__dict__[self.properties[4]] = float(val)
+        else:
+            self.__dict__[self.properties[4]] = int(float(val))
+    
+    def setValS0(self,val):
+        if self.__dict__[self.properties[2]] == 'float32':
+            self.__dict__[self.properties[5]] = float(val)
+        else:
+            self.__dict__[self.properties[5]] = int(float(val))
+            
+    def setValS1(self,val):
+        if self.__dict__[self.properties[2]] == 'float32':
+            self.__dict__[self.properties[6]] = float(val)
+        else:
+            self.__dict__[self.properties[6]] = int(float(val))
+            
     def fillProps(self,txt):
         #don't set name, since ParamModel is responsible for avoiding duplicates
         ps = txt.split(';')
@@ -62,14 +87,18 @@ class mRayAbstractItem(QObject):
 
             
     def fillValuesS0(self,value,pGen):
-        #if float(value) <= self.__dict__[self.properties[4]] and float(value) >= self.__dict__[self.properties[3]]:
+        if float(value) < self.__dict__[self.properties[3]] and pGen == False:
+            return -1,self.__dict__[self.properties[3]]
+        if float(value) > self.__dict__[self.properties[4]] and pGen == False:
+            return 1,self.__dict__[self.properties[4]]
+        else:
             if self.__dict__[self.properties[2]] == 'float32':
                 self.__dict__[self.properties[5]] = float(value)
                 if pGen == True:
-                    if (float(value)) > 0:
+                    if float(value) > 0:
                         self.__dict__[self.properties[4]] = float(self.roundToTwo((2*float(value))))
                         self.__dict__[self.properties[3]] = float(0)
-                    if (float(value)) < 0:
+                    if float(value) < 0:
                         self.__dict__[self.properties[3]] = float(self.roundToTwo((2*float(value))))
                         self.__dict__[self.properties[4]] = float(0)
             else:
@@ -77,17 +106,22 @@ class mRayAbstractItem(QObject):
 
     
     def fillValuesS1(self,value,pGen):
-        if self.__dict__[self.properties[2]] == 'float32':
-            self.__dict__[self.properties[6]] = float(value)
-            if pGen == True:
-                if float(value) > 0:
-                    self.__dict__[self.properties[4]] = float(self.roundToTwo((2*float(value))))
-                    self.__dict__[self.properties[3]] = float(0)
-                if float(value) < 0:
-                    self.__dict__[self.properties[3]] = float(self.roundToTwo((2*float(value))))
-                    self.__dict__[self.properties[4]] = float(0)
+        if float(value) < self.__dict__[self.properties[3]] and pGen == False:
+            return -1,self.__dict__[self.properties[3]]
+        if float(value) > self.__dict__[self.properties[4]] and pGen == False:
+            return 1,self.__dict__[self.properties[4]]
         else:
-            self.__dict__[self.properties[6]] = int(float(value))
+            if self.__dict__[self.properties[2]] == 'float32':
+                self.__dict__[self.properties[6]] = float(value)
+                if pGen == True:
+                    if float(value) > 0:
+                        self.__dict__[self.properties[4]] = float(self.roundToTwo((2*float(value))))
+                        self.__dict__[self.properties[3]] = float(0)
+                    if float(value) < 0:
+                        self.__dict__[self.properties[3]] = float(self.roundToTwo((2*float(value))))
+                        self.__dict__[self.properties[4]] = float(0)
+            else:
+                self.__dict__[self.properties[6]] = int(float(value))
         
     def __str__(self):
         return self.name
@@ -150,6 +184,10 @@ class cMRTableModel(QAbstractTableModel):
         self.items=[]
         self.numI=0
         self.paramnrlist = []
+        self.minviolationvalues = []
+        self.maxviolationvalues = []
+        self.minviolationnames = []
+        self.maxviolationnames = []
     def itemNames(self):
         return [x.name for x in self.items] #wow, my first list comprehension
     def flags(self,idx):
@@ -328,7 +366,7 @@ class cMRTableModel(QAbstractTableModel):
                 self.pValues.append(value)
             print(self.pValues)
             for i in self.items:
-                i.fillValuesS0(self.pValues[j]) 
+                i.fillValuesS0(self.pValues[j],False) 
                 j += 1
             
     def loadPS1(self,txt):
@@ -344,7 +382,7 @@ class cMRTableModel(QAbstractTableModel):
                 self.pValues.append(value)
             print(self.pValues)
             for i in self.items:
-                i.fillValuesS1(self.pValues[j])
+                i.fillValuesS1(self.pValues[j],False)
                 j += 1
 
        
@@ -384,10 +422,40 @@ class cMRTableModel(QAbstractTableModel):
                 self.items[-1].fillProps(l)                                              
         self.endResetModel()
         
-        
+    def fillMin(self,pset,pname,pmin,pval):
+        if pname in [i.name for i in self.items]:
+            self.items[[i.name for i in self.items].index(pname)].fillMin(pmin)
+            if pset == 0:
+                self.items[[i.name for i in self.items].index(pname)].setValS0(pval)
+            if pset == 1:
+                self.items[[i.name for i in self.items].index(pname)].setValS1(pval)
+            
+            
+    def fillMax(self,pset,pname,pmax,pval):
+        if pname in [i.name for i in self.items]:
+            self.items[[i.name for i in self.items].index(pname)].fillMax(pmax)
+            if pset == 0:
+                self.items[[i.name for i in self.items].index(pname)].setValS0(pval)
+            if pset == 1:
+                self.items[[i.name for i in self.items].index(pname)].setValS1(pval)
+            
+    def setValtoBorder(self,pset,pname,cborder):
+        if pname in [i.name for i in self.items]:
+            if pset == 0:
+                self.items[[i.name for i in self.items].index(pname)].setValS0(cborder)
+            if pset == 1:
+                self.items[[i.name for i in self.items].index(pname)].setValS1(cborder)
+            
+    
     def loadP(self,txt,checkedparams):
         #self.beginResetModel()#inform view that everthing is about to change
         #self.items = []
+        self.minviolationnames = []
+        self.minviolationvalues = []
+        self.maxviolationnames = []
+        self.maxviolationvalues = []
+        self.currentmin = []
+        self.currentmax = []        
         myr = re.compile(r'<pValues>\n(.+)<\\pValues>',re.DOTALL)#the dot also matches newlines
         res=myr.search(txt)
         if res:
@@ -401,10 +469,19 @@ class cMRTableModel(QAbstractTableModel):
                     if name in [i.name for i in self.items]:#avoid duplicates
                         pGen = False
                     #self.newItem(l.split(';')[1])#name must always be first in itemClass.properties
-                        if 0 in [i.paramset for i in self.items]:
-                            self.items[[i.name for i in self.items].index(name)].fillValuesS0(pvalue,pGen)
-                        if 1 in [i.paramset for i in self.items]:
-                            self.items[[i.name for i in self.items].index(name)].fillValuesS1(pvalue,pGen)
+                        if self.items[[i.name for i in self.items].index(name)].fillValuesS0(pvalue,pGen)[0] == -1:
+                            self.minviolationnames.append(name)
+                            self.minviolationvalues.append(pvalue)
+                            self.currentmin.append(self.items[[i.name for i in self.items].index(name)].fillValuesS0(pvalue,pGen)[1])
+                        if self.items[[i.name for i in self.items].index(name)].fillValuesS0(pvalue,pGen)[0] == 1:
+                            self.maxviolationnames.append(name)
+                            self.maxviolationvalues.append(pvalue)
+                            self.currentmax.append(self.items[[i.name for i in self.items].index(name)].fillValuesS0(pvalue,pGen)[1])
+                        else:
+                            if 0 in [i.paramset for i in self.items]:
+                                self.items[[i.name for i in self.items].index(name)].fillValuesS0(pvalue,pGen)
+                            if 1 in [i.paramset for i in self.items]:
+                                self.items[[i.name for i in self.items].index(name)].fillValuesS1(pvalue,pGen)
                     else:
                         pGen = True
                         self.newItem(name)#name must always be first in itemClass.properties
@@ -412,6 +489,7 @@ class cMRTableModel(QAbstractTableModel):
                             self.items[-1].fillValuesS0(pvalue,pGen)
                         if 1 in [i.paramset for i in self.items]:
                             self.items[-1].fillValuesS1(pvalue,pGen)
+        return self.minviolationnames,self.minviolationvalues,self.maxviolationnames,self.maxviolationvalues,self.currentmin,self.currentmax 
                         
         #self.endResetModel()
                                                           
@@ -525,6 +603,135 @@ class ParamSelectWindow(QDialog):
                 self.checkedparams.append(self.checkboxlist[i].text()) 
         self.parent().LoadParams()
         self.close()
-            
-
         
+class BorderViolationsWindow(QDialog):
+    def __init__ (self,parent,maxviolationvalues,maxviolationnames,minviolationvalues,minviolationnames,currentmax,currentmin):
+        super().__init__(parent)
+        self.minviolationnames = minviolationnames
+        self.allviolationnames = minviolationnames + maxviolationnames
+        self.allviolationvalues = minviolationvalues + maxviolationvalues
+        self.currentborders = currentmin + currentmax
+        
+        self.layout = QGridLayout()
+        self.setLayout(self.layout)
+        
+        self.setminmaxlayouts = []        
+        self.setminmaxspinboxes = []
+        
+        self.setnewcheckboxes = []
+        
+        self.valtocheckboxes = []
+
+        self.dontloadvaluecheckboxes = []
+        
+        self.applyPushButton = QPushButton("Apply")
+        
+        for i in range(0,len(self.allviolationnames)):
+            self.setminmaxlayouts.append(QVBoxLayout())
+            self.setminmaxspinboxes.append(QDoubleSpinBox())
+            self.dontloadvaluecheckboxes.append(QCheckBox("Don't Load Value"))
+            self.layout.addWidget(QLabel(str(self.allviolationvalues[i])),i,1)
+            self.layout.addLayout(self.setminmaxlayouts[i],i,2)
+            self.layout.addWidget(self.dontloadvaluecheckboxes[i],i,4) 
+            self.setminmaxspinboxes[i].setDisabled(True)
+            
+            
+        for i in range(0,len(self.minviolationnames)):
+            self.setnewcheckboxes.append(QCheckBox("Set new Min and Load"))
+            self.valtocheckboxes.append(QCheckBox("Set Value to Min and Load"))
+            self.layout.addWidget(QLabel(str(self.allviolationnames[i])+' (Min: '+str(self.currentborders[i])+')'),i,0)
+            self.setminmaxlayouts[i].addWidget(self.setnewcheckboxes[i])
+            self.setminmaxlayouts[i].addWidget(self.setminmaxspinboxes[i])
+            self.setminmaxspinboxes[i].setMaximum(float(self.allviolationvalues[i]))
+            if float(self.allviolationvalues[i]) < 0:
+                self.setminmaxspinboxes[i].setMinimum((10)*(float(self.allviolationvalues[i])))
+            else:
+                self.setminmaxspinboxes[i].setMinimum((-10)*(float(self.allviolationvalues[i])))
+            self.setminmaxspinboxes[i].setValue(float(self.allviolationvalues[i]))
+            self.layout.addWidget(self.valtocheckboxes[i],i,3)
+            
+        for i in range(len(self.minviolationnames),len(self.allviolationnames)):
+            self.setnewcheckboxes.append(QCheckBox("Set new Max and Laod"))
+            self.valtocheckboxes.append(QCheckBox("Set Value to Max and Laod"))
+            self.layout.addWidget(QLabel(str(self.allviolationnames[i])+' (Max: '+str(self.currentborders[i])+')'),i,0)
+            self.setminmaxlayouts[i].addWidget(self.setnewcheckboxes[i])
+            self.setminmaxlayouts[i].addWidget(self.setminmaxspinboxes[i])
+            self.setminmaxspinboxes[i].setMinimum(float(self.allviolationvalues[i]))
+            self.setminmaxspinboxes[i].setMaximum(10*(float(self.allviolationvalues[i])))
+            self.setminmaxspinboxes[i].setValue(float(self.allviolationvalues[i]))
+            self.layout.addWidget(self.valtocheckboxes[i],i,3)
+
+        self.layout.addWidget(self.applyPushButton)
+        self.applyPushButton.clicked.connect(self.takeAction)
+            
+             
+        for i in range(0,len(self.allviolationnames)):
+            self.setnewcheckboxes[i].stateChanged.connect(self.disableOthers1)
+            self.valtocheckboxes[i].stateChanged.connect(self.disableOthers2)
+            self.dontloadvaluecheckboxes[i].stateChanged.connect(self.disableOthers3)
+            
+                
+    def disableOthers1(self):
+        for i in range(0,len(self.allviolationnames)):
+            if self.setnewcheckboxes[i].isChecked():
+                self.setminmaxspinboxes[i].setDisabled(False)
+                self.valtocheckboxes[i].setChecked(False)
+                self.dontloadvaluecheckboxes[i].setChecked(False)
+                
+    def disableOthers2(self):
+        for i in range(0,len(self.allviolationnames)):
+            if self.valtocheckboxes[i].isChecked():
+                self.setminmaxspinboxes[i].setDisabled(True)
+                self.setnewcheckboxes[i].setChecked(False)
+                self.dontloadvaluecheckboxes[i].setChecked(False)
+    
+    def disableOthers3(self):
+        for i in range(0,len(self.allviolationnames)):
+            if self.dontloadvaluecheckboxes[i].isChecked():
+                self.setminmaxspinboxes[i].setDisabled(True)
+                self.valtocheckboxes[i].setChecked(False)
+                self.setnewcheckboxes[i].setChecked(False)
+                
+    def takeAction(self):    
+        x = True
+        for i in range(0,len(self.minviolationnames)):
+            if self.setnewcheckboxes[i].isChecked():
+                if self.parent().syncset == 0:
+                    self.parent().AllMyParams.fillMin(0,self.allviolationnames[i],self.setminmaxspinboxes[i].value(),self.allviolationvalues[i])
+                if self.parent().syncset == 1:
+                    self.parent().AllMyParams.fillMin(1,self.allviolationnames[i],self.setminmaxspinboxes[i].value(),self.allviolationvalues[i])
+                self.parent().SyncInstr()
+        for i in range(len(self.minviolationnames),len(self.allviolationnames)):
+            if self.setnewcheckboxes[i].isChecked():
+                if self.parent().syncset == 0:
+                    self.parent().AllMyParams.fillMax(0,self.allviolationnames[i],self.setminmaxspinboxes[i].value(),self.allviolationvalues[i])
+                if self.parent().syncset == 1:
+                    self.parent().AllMyParams.fillMax(1,self.allviolationnames[i],self.setminmaxspinboxes[i].value(),self.allviolationvalues[i])
+                self.parent().SyncInstr()
+        for i in range(0,len(self.allviolationnames)):
+            if self.valtocheckboxes[i].isChecked():
+                if self.parent().syncset == 0:
+                    self.parent().AllMyParams.setValtoBorder(0,self.allviolationnames[i],self.currentborders[i])
+                if self.parent().syncset == 1:
+                    self.parent().AllMyParams.setValtoBorder(1,self.allviolationnames[i],self.currentborders[i])
+                self.parent().SyncInstr()            
+            if self.dontloadvaluecheckboxes[i].isChecked():
+                pass
+            if not self.setnewcheckboxes[i].isChecked() and not self.valtocheckboxes[i].isChecked() and not self.dontloadvaluecheckboxes[i].isChecked():
+                ErrorInfo = QMessageBox.information(self,
+                                                    'No option chosen.',
+                                                    'Please choose an option for every parameter first!',
+                                                    QMessageBox.Ok)
+                x = False
+                break
+        if x == True:
+            self.close()
+                
+            
+                
+            
+        
+            
+        
+
+            

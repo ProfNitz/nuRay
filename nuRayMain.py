@@ -21,7 +21,7 @@ import struct
 from gui.InstrPage import cInstrPage
 from gui.ParamView import ParamSettingsWindow, SignalSettingsWindow
 from gui.PlotWin import cPlotterWindow
-from paramModel import cParamTableModel, cSignalTableModel, ParamSelectWindow
+from paramModel import cParamTableModel, cSignalTableModel, ParamSelectWindow, BorderViolationsWindow
 from CodeGen.codegen import nuRCodeGenerator
 from Comm.nuRSerialConn import nuRSerial
 import globalThings as G
@@ -85,8 +85,8 @@ class MyApp(QMainWindow, nuRMainWindow):
         QMainWindow.__init__(self)
         nuRMainWindow.__init__(self)
         self.setupUi(self)
-        
         #NoNi: register all actions (Menu and Connect/Disconnect)
+        
         self.actionOpen_Instruments.triggered.connect(self.OpenInstr)
         self.actionParameters.triggered.connect(self.ParamSettings)
         self.actionSignals.triggered.connect(self.SignalSettings)
@@ -161,7 +161,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         
         #self.AllMyParams.dataChanged.emit(index_1,index_2,[Qt.DisplayRole])
                
-             
+                
     def Connect(self):   
         if not self.connected:          
             self.Serial.connect()
@@ -281,6 +281,8 @@ class MyApp(QMainWindow, nuRMainWindow):
         for i in self.InstrPageList:
             for x in i.instrList:
                 if type(x.Param) != str:
+                    x.instrWidget.setMinimum(x.Param.min)
+                    x.instrWidget.setMaximum(x.Param.max)
                     if self.syncset == 0:
                         if not x.Param.dataType == 'float32':
                             x.Param.valset0 = int(x.Param.valset0)
@@ -543,10 +545,26 @@ class MyApp(QMainWindow, nuRMainWindow):
                 if self.ParamNameListWindow.checkboxlist[i].text() in [i.name for i in self.AllMyParams.items]:
                     self.ParamNameListWindow.checkboxlist[i].setChecked(True)
 
+
     def LoadParams(self):
+
             with io.open(self.paramFile,'r',encoding='utf8') as f:
                 paramSet = f.read()
-            self.AllMyParams.loadP(paramSet,self.ParamNameListWindow.checkedparams)
+            x = self.AllMyParams.loadP(paramSet,self.ParamNameListWindow.checkedparams)
+            self.minviolationnames = x[0]
+            self.minviolationvalues = x[1]
+            self.maxviolationnames = x[2]
+            self.maxviolationvalues = x[3]
+            self.currentmin = x[4]
+            self.currentmax = x[5]
+            if len(self.minviolationnames) != 0 or len(self.maxviolationnames) != 0:   
+                self.BorderViolation = BorderViolationsWindow(self,self.maxviolationvalues,self.maxviolationnames,self.minviolationvalues,self.minviolationnames,self.currentmax,self.currentmin)
+                self.BorderViolation.setWindowTitle("Border Violations")
+                self.BorderViolation.show()
+                ErrorInfo = QMessageBox.information(self,
+                                                     'Border Violations',
+                                                     'Some Values are violating existing borders. Please choose how to handle those violations!',
+                                                     QMessageBox.Ok)
             self.SyncInstr()
             
     def OpenPlotter(self):
