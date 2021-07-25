@@ -10,6 +10,7 @@ from PyQt5.QtCore import QAbstractTableModel, QModelIndex
 from PyQt5.QtGui import QColor, QFont, QIcon, QPixmap
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QCheckBox, QPushButton, QFrame, QLabel, QMessageBox
 import re
+from math import log10, floor
 #from Comm.nuRSerialConn import nuRSerial
 
 class mRColor(QColor):
@@ -28,6 +29,9 @@ class mRColor(QColor):
 #NiNa: x = mRColor("(50,50,50)")
 #NiNa: print(x)
 class mRayAbstractItem(QObject):
+    def roundToTwo(self,x):
+        return round(x, -int(floor(log10(abs(x))))+1)
+        
     def save(self):
         res = ''
         for p in self.properties:#export all relevant members
@@ -57,19 +61,34 @@ class mRayAbstractItem(QObject):
         self.__dict__[self.properties[0]]=self.pTypes[0](ps[0])
 
             
-    def fillValuesS0(self,value):
+    def fillValuesS0(self,value,pGen):
         #if float(value) <= self.__dict__[self.properties[4]] and float(value) >= self.__dict__[self.properties[3]]:
             if self.__dict__[self.properties[2]] == 'float32':
                 self.__dict__[self.properties[5]] = float(value)
+                if pGen == True:
+                    if (float(value)) > 0:
+                        self.__dict__[self.properties[4]] = float(self.roundToTwo((2*float(value))))
+                        self.__dict__[self.properties[3]] = float(0)
+                    if (float(value)) < 0:
+                        self.__dict__[self.properties[3]] = float(self.roundToTwo((2*float(value))))
+                        self.__dict__[self.properties[4]] = float(0)
             else:
                 self.__dict__[self.properties[5]] = int(float(value))
+
     
-    def fillValuesS1(self,value):
+    def fillValuesS1(self,value,pGen):
         if self.__dict__[self.properties[2]] == 'float32':
             self.__dict__[self.properties[6]] = float(value)
+            if pGen == True:
+                if float(value) > 0:
+                    self.__dict__[self.properties[4]] = float(self.roundToTwo((2*float(value))))
+                    self.__dict__[self.properties[3]] = float(0)
+                if float(value) < 0:
+                    self.__dict__[self.properties[3]] = float(self.roundToTwo((2*float(value))))
+                    self.__dict__[self.properties[4]] = float(0)
         else:
             self.__dict__[self.properties[6]] = int(float(value))
-            
+        
     def __str__(self):
         return self.name
     
@@ -380,17 +399,20 @@ class cMRTableModel(QAbstractTableModel):
                 if name in checkedparams:
                 #print([i.name for i in self.items])
                     if name in [i.name for i in self.items]:#avoid duplicates
+                        pGen = False
                     #self.newItem(l.split(';')[1])#name must always be first in itemClass.properties
                         if 0 in [i.paramset for i in self.items]:
-                            self.items[[i.name for i in self.items].index(name)].fillValuesS0(pvalue)
+                            self.items[[i.name for i in self.items].index(name)].fillValuesS0(pvalue,pGen)
                         if 1 in [i.paramset for i in self.items]:
-                            self.items[[i.name for i in self.items].index(name)].fillValuesS1(pvalue)
+                            self.items[[i.name for i in self.items].index(name)].fillValuesS1(pvalue,pGen)
                     else:
+                        pGen = True
                         self.newItem(name)#name must always be first in itemClass.properties
                         if 0 in [i.paramset for i in self.items]:
-                            self.items[-1].fillValuesS0(pvalue)
+                            self.items[-1].fillValuesS0(pvalue,pGen)
                         if 1 in [i.paramset for i in self.items]:
-                            self.items[-1].fillValuesS1(pvalue)
+                            self.items[-1].fillValuesS1(pvalue,pGen)
+                        
         #self.endResetModel()
                                                           
 
