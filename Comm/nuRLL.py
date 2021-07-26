@@ -20,8 +20,8 @@ class nuRLL(object):
         chk=0;
         for b in buf:
             chk+=b
-        chk = chk&0xff #lsb
-        
+        #NiNa: least significant bit
+        chk = chk&0xff #lsb 
         # pack again, now with chk, len, and STOPFLAG (0xff) (therefor '3B'..3 times uint8)
         return struct.pack('=H'+nuRDataTypes[data_type]['packtype']+'3B',
                            cmd,val,chk,((nuRDataTypes[data_type]['code']<<4)+2+nuRDataTypes[data_type]['len']),0xff)

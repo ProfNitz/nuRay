@@ -10,12 +10,10 @@ import os
 import io
 import inspect #for debugging
 from PyQt5 import uic
-from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QDialog, QLabel, QAbstractButton, QPushButton
-from PyQt5.QtCore import QPoint,Qt,QTimer
+from PyQt5.QtWidgets import QMainWindow, QApplication, QFileDialog, QMessageBox, QDialog, QLabel
+from PyQt5.QtCore import QPoint,Qt
 import re
-import time
 import struct
-
 
 #my own modules 
 from gui.InstrPage import cInstrPage
@@ -28,47 +26,39 @@ import globalThings as G
 from gui.SwitchCustomWidget import CustomSwitch, statusLED
 
 
-#NoNi: load main window ui from QtDesigner file
+#NoNi: load main window and connection settings dialog ui from QtDesigner file
 nuRMainWindow, QtBaseClass = uic.loadUiType("nuRMainWindow.ui")
 nuRConnSetDialogUi, QtBaseClass = uic.loadUiType("nuRConnSettingsDialog.ui")
        
 #NoNi: get directory of this python file, here other modules will look for their stuff
 G.nuRDir,_ = os.path.split(__file__)
 
+#NiNa: class for connection settings dialog window
 class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
     def __init__(self,parent):
         QDialog.__init__(self)
         nuRConnSetDialogUi.__init__(self)
         self.parent = parent
         self.setupUi(self)
+        #NiNa: Full Name of available ports
         c_long = nuRSerial.listPorts()
-        #print(c_long)
-        # NoNi: + concatenates lists;
-        # so we get an empty item [' '] and everthing from c_long
         self.comboBox.addItems([' ']+c_long)
-        #c_short = [re.findall('^COM\d+',c)[0] for c in c_long]
         c_short = []
+        #NiNa: Short Name List of Windows-Ports
         c_short = [re.findall('^COM\d+',c)[0] for c in c_long if "COM" in c]
+        #NiNa: Short Name List of MacOs-Ports
         c_short = [re.findall('^/dev\S+',c)[0] for c in c_long if "/dev" in c]
-        #print(c_short)
-        #c_short = []
         if self.parent.Serial.port in c_short:
             idx = c_short.index(self.parent.Serial.port)
-            # NoNi: idx is index into c_short. comboBox, however, has an extra empty
-            # item at idx = 0
             self.comboBox.setCurrentIndex(idx+1)
-        #NoNi: connect method setPort to the event currentIndexChanged
         self.comboBox.currentIndexChanged.connect(self.setPort)
         self.show()
 
-    
+    #NiNa: set port of Serial to the currently selected port
     def setPort(self):
         c = self.comboBox.currentText()
-        #if c == " ":
-           # self.parent.radioButtonDisconnect.click()
         try:
             self.parent.Serial.port = re.findall('^COM\d+',c)[0] 
-            #self.parent.Serial.port = c_port
         except:
             try:
                 self.parent.Serial.port = re.findall('^/dev\S+',c)[0]
@@ -79,14 +69,14 @@ class nuRConnSettingsDialog(QDialog, nuRConnSetDialogUi):
         self.parent.LEDLabel.setText(str(self.parent.Serial.port))
         self.close()
 
- 
+#NiNa: MainWindow
 class MyApp(QMainWindow, nuRMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
         nuRMainWindow.__init__(self)
         self.setupUi(self)
-        #NoNi: register all actions (Menu and Connect/Disconnect)
         
+        #NiNa: all possible menu actions are connected to methods
         self.actionOpen_Instruments.triggered.connect(self.OpenInstr)
         self.actionParameters.triggered.connect(self.ParamSettings)
         self.actionSignals.triggered.connect(self.SignalSettings)
@@ -102,7 +92,6 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.actionSave_Parameters.triggered.connect(self.SaveParams)
         self.actionSave_Parameters_As.triggered.connect(self.SaveParamsAs)
         self.actionLoad_Parameters.triggered.connect(self.ParamSelectWindow)
-        #self.actionGenerate_Parameters.triggered.connect(self.GenerateParams)
         
         self.actionClose.triggered.connect(self.closeEverything)
         
@@ -115,73 +104,66 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.connected = False
         self.radioButtonDisconnect.setChecked(True)
         
+        
+        #NiNa: Loading Custom Switch Widgets to the MainWindow
         self.ActiveSet = CustomSwitch("SET0","SET1")
         self.SyncedSet = CustomSwitch("SET0","SET1")
-        self.nuRayIsMaster = False
-        self.muConIsMaster = True
+        #NiNa: Position of the SyncedSet Switch
         self.syncset = 0
-        self.ActiveSet.setDisabled(True)
-                            
+        self.ActiveSet.setDisabled(True)      
+                 
         self.ActiveSetSwitch.addWidget(self.ActiveSet)
         self.SyncedSetSwitch.addWidget(self.SyncedSet)
-        #self.syncDirection.addWidget(self.SyncDir)
         
         self.ActiveSet.clicked.connect(self.ActivateSet)
         self.SyncedSet.clicked.connect(self.SyncSet)
-        #self.SyncDir.clicked.connect(self.changeSyncDir)
         
         self.statusLED = statusLED(self)
         self.ConnectionStatus.addWidget(self.statusLED)
         
         self.LEDLabel = QLabel()
         self.ConnectionStatus.addWidget(self.LEDLabel)
-             
-        #self.ChangeSet.clicked.connect(self.SyncSet)              
-            
-        #NoNi: keep track of the open child windows
+        
+
         #NoNi: we can have several InstrPages and several Plotters...        
         self.InstrPageList=[]
         self.PlotterList=[]
         #NoNi: ...but only one Params and one Signals Page
         self.ParamSettingsDialog = None
         self.SignalSettingsDialog = None
-        self.ConnSetDlg = None
-                
+        self.ConnSetDlg = None          
 
         self.projectFile = 'untitled Project'
         self.paramFile = 'untitled Params'
         self.savebothsets = False
         self.setTitle()
         
-        self.AllMyParams = cParamTableModel(None) #table model so it can be processed by QTableView
+        #NoNi: table model so it can be processed by QTableView
+        self.AllMyParams = cParamTableModel(None) 
         self.AllMySignals = cSignalTableModel(None)
-        self.Serial = nuRSerial()
-
-        
-        
-        #self.AllMyParams.dataChanged.emit(index_1,index_2,[Qt.DisplayRole])
-               
-                
+        self.Serial = nuRSerial()    
+   
+            
+    #NiNa: method connected to radioButtonConnect            
     def Connect(self):   
         if not self.connected:          
             self.Serial.connect()
+            #NiNa: check if serial port is accessable
             if self.Serial.is_open():
                 self.connected=True
-                #self.ConnectSaveMessages()
+                #NiNa: asking user to save project first because data is going to be overwritten
+                #NiNa: self.SaveMessages() returns False only when I cancel
                 if self.SaveMessages("CONNECT"):
-                #if self.Serial.is_open():
-                    #self.connected=True
                     self.ActiveSet.setDisabled(False)
-                #for i in self.InstrPageList:
-                   # for x in i.instrList:
-                     #   x.instrWidget.setEnabled(True)
                     self.statusLED.ledcolor = Qt.green
                     self.statusLED.repaint()
+                    #NiNa: random package sent because else first startflag is not detected
                     self.Serial.write(1,1,29,255,'uint8')         
                     self.ReadActiveSet() 
                     self.ReadDataFromMuCon() 
                     self.SyncInstr()
-                    self.WriteDataToMuCon()                
+                    self.WriteDataToMuCon()       
+            #NiNa: empty or nonvalid port chosen
             else:
                 PortInfo = QMessageBox.information(self,
                                                      'No valid port chosen.',
@@ -194,24 +176,27 @@ class MyApp(QMainWindow, nuRMainWindow):
                     self.radioButtonDisconnect.click()
                     self.ConnSetDlg.show()             
         pass
-        
+ 
+    
+    #NiNa: method connected to radioButtonDisconnect           
     def Disconnect(self):
-        #for i in self.InstrPageList:
-            #for x in i.instrList:
-               # x.instrWidget.setEnabled(False)
         self.ActiveSet.setDisabled(True)
         self.statusLED.ledcolor = Qt.red
         self.statusLED.repaint()
+        #NiNa: close existing serial connection if connected
         if self.connected:
             self.Serial.close()
         print("disconnected")   
         self.connected = False
-        if self.Serial.is_open():
-            print('noch offen')
-            
+  
+    
+    #NiNa: method handling when saveMessages should pop up  
+    #NiNa: two saveEvents: "CONNECT" and "NEWPROJECT"     
     def SaveMessages(self,saveEvent):
         self.saveEvent = saveEvent
+        #NiNa: cleanup list first
         self.InstrPageList[:]=[x for x in self.InstrPageList if x.isVisible()]
+        #NiNa: first case
         if self.ParamSettingsDialog != None and len(self.InstrPageList)>0:
             buttonReply = QMessageBox.question(self,
                                                'Data is going to be overwritten',
@@ -224,12 +209,12 @@ class MyApp(QMainWindow, nuRMainWindow):
             if buttonReply == QMessageBox.No:
                 pass
                 return True
+            #NiNa: if I press connect,existing data is going to be overwritten --> disconnect, if cancel
             else:
-                #self.Disconnect()
                 if self.saveEvent == "CONNECT":
                     self.radioButtonDisconnect.click()
                 return False
-                        
+        #NiNa: second case                
         if self.ParamSettingsDialog != None and len(self.InstrPageList) == 0:
             buttonReply = QMessageBox.question(self,
                                                'Data is going to be overwritten',
@@ -242,8 +227,8 @@ class MyApp(QMainWindow, nuRMainWindow):
             if buttonReply == QMessageBox.No:
                 pass
                 return True
+            #NiNa: if I press connect,existing data is going to be overwritten --> disconnect, if cancel
             else:
-                #self.Disconnect()
                 if self.saveEvent == "CONNECT":
                     self.radioButtonDisconnect.click()
                 return False
@@ -251,6 +236,8 @@ class MyApp(QMainWindow, nuRMainWindow):
             pass
             return True
  
+   
+    #NiNa: the synced set decides which paramset should be changed when writing 
     def SyncSet(self):
         if self.SyncedSet.isChecked():
             print("SET1 is selected.")
@@ -264,7 +251,8 @@ class MyApp(QMainWindow, nuRMainWindow):
                 x.paramset = 0
         self.SyncInstr()
 
-                
+    
+    #NiNa: decide which set should be active on microcontroller: 0 or 1
     def ActivateSet(self):
         try:
             if self.ActiveSet.isChecked():
@@ -277,6 +265,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.radioButtonDisconnect.click()
 
 
+    #NiNa: the instruments are getting synced with connected params
     def SyncInstr(self):
         for i in self.InstrPageList:
             for x in i.instrList:
@@ -291,7 +280,9 @@ class MyApp(QMainWindow, nuRMainWindow):
                         if not x.Param.dataType == 'float32':
                             x.Param.valset1 = int(x.Param.valset1)
                         x.instrWidget.setValue(x.Param.valset1)
-
+    
+    
+    #NiNa: set nuRay as Master and write data by instruments to microcontroller
     def WriteDataToMuCon(self):
      try:
         for i in self.InstrPageList:
@@ -300,7 +291,9 @@ class MyApp(QMainWindow, nuRMainWindow):
                     x.WriteData()
      except:
          self.radioButtonDisconnect.click()
-       
+    
+    
+    #NiNa: receive information about the currently active set on microcontroller
     def ReadActiveSet(self):     
         self.Serial.write(0,1,0,0,'ctrl')
         self.readActiveB = self.Serial.read(1)
@@ -312,7 +305,9 @@ class MyApp(QMainWindow, nuRMainWindow):
             print("Auf Arduino ist grad SET " + str(self.readActive) + " aktiv.")
             if self.readActive == 1 and not self.ActiveSet.isChecked() or self.readActive == 0 and self.ActiveSet.isChecked():
                 self.ActiveSet.click()
-        
+    
+    
+    #NiNa: set microcontroller as master and read data from microcontroller only at initial connection
     def ReadDataFromMuCon(self):          
         for x in self.AllMyParams.items:
             k = 0
@@ -332,6 +327,7 @@ class MyApp(QMainWindow, nuRMainWindow):
                 if k == 1:
                     x.valset1 = z
                 k += 1
+     
         
     #NoNi: first rudimental reaction on Connection settings
     def ConnSettings(self):
@@ -340,8 +336,8 @@ class MyApp(QMainWindow, nuRMainWindow):
         else:
             self.ConnSetDlg.show()
 
-        
-        
+    
+    #TODO: Codegeneration of existing parameters and signals           
     def CodeGen(self):
         if self.projectFile=='untitled Project':
             buttonReply = QMessageBox.information(self,
@@ -353,21 +349,19 @@ class MyApp(QMainWindow, nuRMainWindow):
             nuRCodeGenerator.genCode(d,self.AllMyParams.items,self.AllMySignals.items)
 
                 
-
+    #NiNa: returns the name of the project
     def projectName(self):
         d,f=os.path.split(self.projectFile)
         n,e=os.path.splitext(f)
         return n
     
-    def paramName(self):
-        d,f=os.path.split(self.projectFile)
-        n,e=os.path.splitext(f)
-        return n
-        
+    
+    #NiNa: sets the title of the MainWindow to the projectName    
     def setTitle(self):
             self.setWindowTitle('nuRay - '+self.projectName())
             
-        
+    
+    #NiNa: chose saving location and projectname
     def SaveProjectAs(self):
         file,_ = QFileDialog.getSaveFileName(self,
                                              "Save Project As",
@@ -378,28 +372,21 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.projectFile = file
             self.setTitle()
             self.SaveProject()
-        
+    
+    
+    #NiNa: when name already set, save everything, else -> SaveProjectAs
     def SaveProject(self):
         if self.projectFile=='untitled Project':
             self.SaveProjectAs()
         else:
-            #currentWorkingDir = os.getcwd()
-            #print(currentWorkingDir)
-            #newpath = currentWorkingDir + '\Projects' + '\\' +  str(self.projectFile)
-            #print(newpath)
-            #if not os.path.exists(newpath):
-            #    os.makedirs(newpath)
-            #self.savebothsets = True
             self.SaveParams()
             with io.open(self.projectFile,'w',encoding='utf8') as f:
                 f.write(self.AllMyParams.save())
                 f.write(self.AllMySignals.save())
                 f.write(self.saveInstrPages())
                 f.write(self.ParamFilePaths())
-                # PFAD VON PARAMETERFILES
                 
-
-                
+    #NiNa: if (project is untitled and "Save Params") or "Save Params As": SaveParamAs()
     def SaveParamsAs(self):
         file,_ = QFileDialog.getSaveFileName(self,
                                              "Save Params As",
@@ -408,13 +395,14 @@ class MyApp(QMainWindow, nuRMainWindow):
         if file:
             print(file)
             self.paramFile = file
-            #self.setTitle()
             self.SaveSingleSet()
-            
+    
+    
+    #NiNa: generate two paramfiles if a project is created
+    #NiNa: by changing parameters within a project, existing paramfiles are overwritten
     def SaveParams(self):
         if self.projectFile == 'untitled Project':
                 self.SaveParamsAs()
-            #if not self.projectFile == 'untitled Project':
         else:
             self.paramFile = self.projectFile[:-5] + ' ('+'Set'+str(0)+')' + '.nrpa'
             with io.open(self.paramFile,'w',encoding = 'utf8') as f:
@@ -423,6 +411,8 @@ class MyApp(QMainWindow, nuRMainWindow):
             with io.open(self.paramFile,'w',encoding = 'utf8') as f:
                 f.write(self.AllMyParams.savePS1())
                 
+    
+    #NiNa: saving the parameters as a single set
     def SaveSingleSet(self):
         with io.open(self.paramFile,'w',encoding = 'utf8') as f:
             if self.syncset == 0:
@@ -430,7 +420,8 @@ class MyApp(QMainWindow, nuRMainWindow):
             if self.syncset == 1:
                 f.write(self.AllMyParams.savePS1())
                 
-                    
+                
+    #NiNa: saving the paths of the generated paramfiles into projectfile                
     def ParamFilePaths(self):
         res = '<pValues>\n'
         res += self.projectFile[:-5] + ' ('+'Set'+str(0)+')' + '.nrpa'
@@ -439,8 +430,9 @@ class MyApp(QMainWindow, nuRMainWindow):
         res += '\n'
         res += '<\pValues>\n'
         return res
+    
         
-            
+    #NiNa: saving the paths of the currently visible Instrument Pages into projectfile     
     def saveInstrPages(self):
         res='<Instrument Pages>\n'
         #clean up list first
@@ -453,10 +445,12 @@ class MyApp(QMainWindow, nuRMainWindow):
         res+='<\Instrument Pages>\n'
         print (res)
         return res
-            
+    
+
+    #NiNa: loading instrument pages from projectfile
+    #NiNa: trying to make it work for MacOs        
     def loadInstrPages(self,txt):
-        #process <Instrument Pages>-tag from project file and open them all
-        #cwd = os.getcwd()
+        #NiNa: process <Instrument Pages>-tag from project file and open them all
         myr = re.compile(r'<Instrument Pages>\n(.+)<\\Instrument Pages>',re.DOTALL)#the dot also matches newlines
         res=myr.search(txt)
         if res:
@@ -479,7 +473,10 @@ class MyApp(QMainWindow, nuRMainWindow):
                                                              '\n\nPlease help to find this file!',
                                                              QMessageBox.Ok)
                         self.OpenInstr()
-                            
+    
+    
+    #NiNa: saveMessage("NEWPROJECT") <-- radioButtonDisconnect isnt clicked because saveTag isn't "CONNECT"
+    #NiNa: close everything that is open, set projectname to untitled Project
     def NewProject(self):
         if self.SaveMessages("NEWPROJECT"):     
             self.projectFile = 'untitled Project'
@@ -491,6 +488,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             pass
         
     
+    #NiNa: Select projectfile, load Parameters, load Signals, Open Parameterlist, Open Instruments, Sync Instruments, setWindowTitle and projectname to filename
     def OpenProject(self):
         file,_ = QFileDialog.getOpenFileName(self,
                                              "Open Project",
@@ -508,8 +506,9 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.InsertpValues(projSet)
             self.SyncInstr()
             self.setTitle()   
-            #self.savebothsets = True
     
+    
+    #NiNa: both set param values are inserted reading the adress from projectfil
     def InsertpValues(self,txt):
         myr = re.compile(r'<pValues>\n(.+)<\\pValues>',re.DOTALL)#the dot also matches newlines
         res=myr.search(txt)
@@ -525,7 +524,7 @@ class MyApp(QMainWindow, nuRMainWindow):
                 self.AllMyParams.loadPS1(paramSet)
                     
                                   
-        
+    #NiNa: if a SingleSetParam is loaded a ParamSelectWindow is opened, selected params are loaded / generated    
     def ParamSelectWindow(self):
         file,_ = QFileDialog.getOpenFileNames(self,
                                               "Load Parameters",
@@ -545,9 +544,9 @@ class MyApp(QMainWindow, nuRMainWindow):
                 if self.ParamNameListWindow.checkboxlist[i].text() in [i.name for i in self.AllMyParams.items]:
                     self.ParamNameListWindow.checkboxlist[i].setChecked(True)
 
-
+    
+    #NiNa: the parameters that were checked on ParamSelectWindow are loaded/generated
     def LoadParams(self):
-
             with io.open(self.paramFile,'r',encoding='utf8') as f:
                 paramSet = f.read()
             x = self.AllMyParams.loadP(paramSet,self.ParamNameListWindow.checkedparams)
@@ -557,6 +556,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.maxviolationvalues = x[3]
             self.currentmin = x[4]
             self.currentmax = x[5]
+            #NiNa: if parameters violate borders a window is opened to handle the borderviolations
             if len(self.minviolationnames) != 0 or len(self.maxviolationnames) != 0:   
                 self.BorderViolation = BorderViolationsWindow(self,self.maxviolationvalues,self.maxviolationnames,self.minviolationvalues,self.minviolationnames,self.currentmax,self.currentmin)
                 self.BorderViolation.setWindowTitle("Border Violations")
@@ -566,14 +566,17 @@ class MyApp(QMainWindow, nuRMainWindow):
                                                      'Some Values are violating existing borders. Please choose how to handle those violations!',
                                                      QMessageBox.Ok)
             self.SyncInstr()
-            
+    
+    
+    #NiNa: open plotterwindows
     def OpenPlotter(self):
         newPlotter=cPlotterWindow(self)
         newPlotter.show()
-        #cleanup List before adding
         self.PlotterList[:]=[x for x in self.PlotterList if x.isVisible()]
         self.PlotterList.append(newPlotter)
         
+    
+    #NiNa: ParamSettingsDialog is opened with all existing parameters
     def ParamSettings(self):
         if self.ParamSettingsDialog==None or not self.ParamSettingsDialog.isVisible():
             self.ParamSettingsDialog = ParamSettingsWindow(self,self.AllMyParams)
@@ -584,6 +587,7 @@ class MyApp(QMainWindow, nuRMainWindow):
         self.AllMyParams.sendparam = self.Serial
 
 
+    #NiNa: SignalSettingsDialog is opened with all existing signals
     def SignalSettings(self):
         if self.SignalSettingsDialog==None or not self.SignalSettingsDialog.isVisible():
             self.SignalSettingsDialog = SignalSettingsWindow(self,self.AllMySignals)
@@ -592,19 +596,19 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.SignalSettingsDialog.activateWindow()
         self.SignalSettingsDialog.setWindowTitle("signals")
         
-    def closeEvent(self,ev):
         
-        #cleanup lists
+    #NiNa: No SaveMessages(). save messages handled by closeEvent because of ev.accept and ev.ignore
+    #NiNa: SaveMessages(): "NEWPROJECT", "CONNECT" and save messages at closeEvent (3 events for save messages)
+    def closeEvent(self,ev):     
+        #NiNa: cleanup lists first
         self.InstrPageList[:]=[x for x in self.InstrPageList if x.isVisible()]
-        self.PlotterList[:]=[x for x in self.PlotterList if x.isVisible()]
-        
+        self.PlotterList[:]=[x for x in self.PlotterList if x.isVisible()] 
         if self.ParamSettingsDialog != None and len(self.InstrPageList)>0:
             buttonReply = QMessageBox.question(self,
                                                'Close nuRay',
                                                "Do you want to save project first?",
                                                QMessageBox.Yes | QMessageBox.No |
                                                QMessageBox.Cancel)
-            
             if buttonReply == QMessageBox.Yes:
                 self.SaveProject()
                 self.closeAllChildren()
@@ -613,31 +617,28 @@ class MyApp(QMainWindow, nuRMainWindow):
                 self.closeAllChildren()
                 ev.accept()
             else:
-                ev.ignore()
-                
+                ev.ignore()             
         if self.ParamSettingsDialog != None and len(self.InstrPageList) == 0:
             buttonReply = QMessageBox.question(self,
                                                'Close nuRay',
                                                "Do you want to save parameters first?",
                                                QMessageBox.Yes | QMessageBox.No |
-                                               QMessageBox.Cancel)
-            
+                                               QMessageBox.Cancel)    
             if buttonReply == QMessageBox.Yes:
-                #self.savebothsets = True
                 self.SaveParams()
                 self.closeAllChildren()
                 ev.accept()
-                #print("yes baby done")
             if buttonReply == QMessageBox.No:
                 self.closeAllChildren()
                 ev.accept()
             else:
-                ev.ignore()
-                
+                ev.ignore()       
         if self.ParamSettingsDialog == None:
             self.closeAllChildren()
             ev.accept()
-            
+    
+    
+    #NiNa: every window, that is open is closed, ParamSettingsDialog is closed, serial Port
     def closeAllChildren(self):
         #close windows
         for i in self.InstrPageList:
@@ -655,14 +656,15 @@ class MyApp(QMainWindow, nuRMainWindow):
         for i in self.PlotterList:
             if i.isVisible():
                 i.close()
-        #if self.Serial == nuRSerial():
-            #if self.Serial.is_open():
-                    #self.Serial.close()
+        if self.connected:
+            self.radioButtonDisconnect.click()
 
-    
+    #NiNa: method for Close action in menu
     def closeEverything(self):
         self.close()
-                
+     
+    
+    #NiNa: instrumentPageWindow is generated with link in projectfile, InstrPageList is apepended by existing pages           
     def loadInstrPage(self,fn,pos=QPoint(0,0)):
         # fn..filename
         # pos..position on screen
@@ -670,7 +672,6 @@ class MyApp(QMainWindow, nuRMainWindow):
         # from call to OpenInstr, which opens a file open dialog to fetch the file name)
         # cleanup list (copy only the ones Visible)
         self.InstrPageList[:]=[x for x in self.InstrPageList if x.isVisible()]
-        
         #check if not open already (if so, activate, else load, list, show)
         ip = next((ip for ip in self.InstrPageList if ip.uiFile==fn),None)
         if ip:
@@ -683,14 +684,14 @@ class MyApp(QMainWindow, nuRMainWindow):
                     x.livesend = self.Serial
             self.radioButtonDisconnect.click()
             self.newInstrP.show()
-        
+    
+    
+    #NiNa: File Explorer is opened to select an instrument file if file not already selected/opened
     def OpenInstr(self):
         # cleanup list before adding
         # this is done in loadInstrPage again, but only if a file is actually opened
         # TODO: rethink how we can keep this list uptodate
         self.InstrPageList[:]=[x for x in self.InstrPageList if x.isVisible()]
-        
-        
         files,_ = QFileDialog.getOpenFileNames(self,
                                              "Select UI",
                                              "",
@@ -700,7 +701,8 @@ class MyApp(QMainWindow, nuRMainWindow):
             for f in files:
                 self.loadInstrPage(f)
 
-        
+
+#NiNa: starting the whole mainApp         
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MyApp()

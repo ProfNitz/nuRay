@@ -7,17 +7,17 @@ Created on Wed Jun 12 13:24:32 2019
 
 from PyQt5.QtCore import Qt, QObject
 from PyQt5.QtCore import QAbstractTableModel, QModelIndex
-from PyQt5.QtGui import QColor, QFont, QIcon, QPixmap
+from PyQt5.QtGui import QColor, QFont, QPixmap
 from PyQt5.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QCheckBox, QPushButton, QFrame, QLabel, QMessageBox, QDoubleSpinBox, QGridLayout
 import re
 from math import log10, floor
-#from Comm.nuRSerialConn import nuRSerial
+
 
 class mRColor(QColor):
     def __init__(self,data):
-        if isinstance(data,QColor):             #NiNa: data = QColor(50,50,50) 
+        if isinstance(data,QColor):             
             QColor.__init__(self,data)
-        elif isinstance(data,str):              #NiNa: data = "(50,50,50)"
+        elif isinstance(data,str):             
             data=data[1:-1]#strip ( )
             rgb=data.split(',')
             QColor.__init__(self,int(rgb[0]),int(rgb[1]),int(rgb[2]))
@@ -26,13 +26,14 @@ class mRColor(QColor):
         r,g,b,_=self.getRgb()
         return '('+str(r)+','+str(g)+','+str(b)+')'
 
-#NiNa: x = mRColor("(50,50,50)")
-#NiNa: print(x)
+
 class mRayAbstractItem(QObject):
-    
+  
+    #NiNa: round to two significant values
     def roundToTwo(self,x):
         return round(x, -int(floor(log10(abs(x))))+1)
-        
+    
+    #NiNa: only save everything except value    
     def save(self):
         res = ''
         for p in self.properties:#export all relevant members
@@ -41,42 +42,57 @@ class mRayAbstractItem(QObject):
         res=res[:-1]+'\n'#replace trailing ; by \n
         return res
     
+    #NiNa: save values from set 0
     def savePS0(self):
         res = ''
         res+=(str(self.__dict__['name'])+';')
         res+=(str(self.__dict__['valset0'])+'\n')
         return res
     
+    #NiNa: save values from set 1
     def savePS1(self):
         res = ''
         res+=(str(self.__dict__['name'])+';')
         res+=(str(self.__dict__['valset1'])+'\n')
         return res
-     
+    
+    #NiNa: borderviolation option: set new Min    
     def fillMin(self,val):
         if self.__dict__[self.properties[2]] == 'float32':
             self.__dict__[self.properties[3]] = float(val)
         else:
+            if self.__dict__[self.properties[2]] == 'uint8' and float(val) < 0:
+                self.__dict__[self.properties[2]] ='int16'
             self.__dict__[self.properties[3]] = int(float(val))
             
+    #NiNa: borderviolation option: set new Max        
     def fillMax(self,val):
         if self.__dict__[self.properties[2]] == 'float32':
             self.__dict__[self.properties[4]] = float(val)
         else:
+            if self.__dict__[self.properties[2]] == 'uint8' and float(val) < 0:
+                self.__dict__[self.properties[2]] = 'int16'
             self.__dict__[self.properties[4]] = int(float(val))
     
+    #NiNa: set value set 0 to val, borders already checked
     def setValS0(self,val):
         if self.__dict__[self.properties[2]] == 'float32':
             self.__dict__[self.properties[5]] = float(val)
         else:
+            if self.__dict__[self.properties[2]] == 'uint8' and float(val) < 0:
+                self.__dict__[self.properties[2]] = 'int16'
             self.__dict__[self.properties[5]] = int(float(val))
-            
+    
+    #NiNa: set value set 1 to val, borders already checked
     def setValS1(self,val):
         if self.__dict__[self.properties[2]] == 'float32':
             self.__dict__[self.properties[6]] = float(val)
         else:
+            if self.__dict__[self.properties[2]] == 'uint8' and float(val) < 0:
+                self.__dict__[self.properties[2]] = 'int16'
             self.__dict__[self.properties[6]] = int(float(val))
-            
+    
+    #NiNa: fill every property except values
     def fillProps(self,txt):
         #don't set name, since ParamModel is responsible for avoiding duplicates
         ps = txt.split(';')
@@ -85,7 +101,7 @@ class mRayAbstractItem(QObject):
             self.__dict__[self.properties[p]]=self.pTypes[p](ps[p])
         self.__dict__[self.properties[0]]=self.pTypes[0](ps[0])
 
-            
+    #NiNa: generate params if not in list, add values, check borders, set borders of generated params, load values set 0        
     def fillValuesS0(self,value,pGen):
         if float(value) < self.__dict__[self.properties[3]] and pGen == False:
             return -1,self.__dict__[self.properties[3]]
@@ -102,9 +118,11 @@ class mRayAbstractItem(QObject):
                         self.__dict__[self.properties[3]] = float(self.roundToTwo((2*float(value))))
                         self.__dict__[self.properties[4]] = float(0)
             else:
+                if self.__dict__[self.properties[2]] == 'uint8' and float(value) < 0:
+                    self.__dict__[self.properties[2]] = 'int16'
                 self.__dict__[self.properties[5]] = int(float(value))
 
-    
+    #NiNa: generate params if not in list, add values, check borders, set borders of generated params, load values set 1   
     def fillValuesS1(self,value,pGen):
         if float(value) < self.__dict__[self.properties[3]] and pGen == False:
             return -1,self.__dict__[self.properties[3]]
@@ -121,11 +139,15 @@ class mRayAbstractItem(QObject):
                         self.__dict__[self.properties[3]] = float(self.roundToTwo((2*float(value))))
                         self.__dict__[self.properties[4]] = float(0)
             else:
+                if self.__dict__[self.properties[2]] == 'uint8' and float(value) < 0:
+                    self.__dict__[self.properties[2]] = 'int16'
                 self.__dict__[self.properties[6]] = int(float(value))
         
     def __str__(self):
         return self.name
-    
+ 
+
+#NiNa: defining a single signal item    
 class mRaySignal(mRayAbstractItem):
     
     #these three memebers describe the interface to a Signal object
@@ -133,8 +155,7 @@ class mRaySignal(mRayAbstractItem):
     header=['Name','Data Type','Zero At','Scale','Color']#Human readable names of members of mRayParam
     properties=['name','dataType','zeroAt','scale','color']#relevant members of mRayParam (verbatim!)
     pTypes=[str,str,float,float,mRColor]
-    
-    
+      
     def __init__(self,name):
         super().__init__()
         self.name = name
@@ -143,12 +164,8 @@ class mRaySignal(mRayAbstractItem):
         self.scale = 1.0
         self.color = mRColor(QColor(50,50,50))
                
-#NiNa: x = mRaySignal("SIGNAL")
-#NiNa: x.save()
-#NiNa: x.fillProps("SIGNAL;int16;-20;20;(30,40,50)")
-#NiNa: x.save()
-#NiNa: print(x)  
 
+#NiNa: defining a single param item
 class mRayParam(mRayAbstractItem):
 
     #these three memebers describe the interface to a Signal object
@@ -156,6 +173,7 @@ class mRayParam(mRayAbstractItem):
     header=['Param Nr','Name','Data Type','Min','Max','Value_Set0','Value_Set1']#Human readable names of members of mRayParam
     properties=['paramnr','name','dataType','min','max','valset0','valset1']#relevant members of mRayParam (verbatim!)
     pTypes=[int,str,str,float,float,float,float]
+    
     def __init__(self,name):
         super().__init__()
         self.name=name
@@ -167,17 +185,19 @@ class mRayParam(mRayAbstractItem):
         self.val = self.min
         self.dataType='float32'
         self._instrList=[]
+    
+    #NiNa: menu actions for each param item
     def removeInstr(self,Instr):
         self._instrList[:] = [i for i in self._instrList if i!=Instr]
+        
     def addInstr(self,Instr):
         self._instrList.append(Instr)
+        
     def disconnect(self):
         for i in self._instrList:
             i.disconnectFromParam()
         
-        
-
-
+#NiNa: class for handling every item in table        
 class cMRTableModel(QAbstractTableModel):
     def __init__(self,parent):
         super().__init__(parent)
@@ -188,29 +208,38 @@ class cMRTableModel(QAbstractTableModel):
         self.maxviolationvalues = []
         self.minviolationnames = []
         self.maxviolationnames = []
+    
+    #NiNa: return the names of the items
     def itemNames(self):
         return [x.name for x in self.items] #wow, my first list comprehension
+    
+    #NiNa: set which columns should be editable
     def flags(self,idx):
         if idx.column() in range(0,5,1):
             return Qt.ItemIsSelectable|Qt.ItemIsEditable|Qt.ItemIsEnabled
         if idx.column() in range(5,7,1):
             return Qt.ItemIsEnabled
+    
+    #NiNa: removing item from table
     def removeItem(self,row):
         self.beginRemoveRows(QModelIndex(),row,row)
         self.items[row].disconnect()
         self.items.pop(row)
         self.numI-=1
         self.endRemoveRows()
+    
+    #NiNa: adding new item to table
     def newItem(self,Name):
         while Name in self.itemNames():
             #append 2 to name or increment number at the end
             myr = re.compile('(\d+)$')#get number from end of Name
             res=myr.search(Name)
+            #NiNa: avoiding name duplicates
             if res:
                 Name = Name[0:res.start()]+str(int(res.group())+1)
             else:
                 Name += '2'
-                
+        #NiNa: generate parameter numbers        
         self.currentparamnr = 0
         if self.numI == 0:
             pass
@@ -222,30 +251,25 @@ class cMRTableModel(QAbstractTableModel):
         newItem = self.itemClass(Name)
         self.items.append(newItem)
         newItem.paramnr = self.currentparamnr
-        self.numI+=1
-        
+        self.numI+=1    
         self.endInsertRows()
+    
+    #NiNa: sort table by name
+    #TODO: sort table by other
     def sort(self):
         self.beginResetModel()#inform view that everthing is about to change
         self.items.sort(key = lambda x: x.name)
         self.endResetModel()
     
-    def send(self):
-        for i in self.items:
-            if not i.dataType == 'float32':
-                i.val = int(i.val)
-            print(i.paramset)
-            print(i.paramnr)
-            print(i.val)
-            print(i.dataType)
-            self.sendparam.write(i.paramset,i.paramnr,i.val,i.dataType)
-            
+    #NiNa: returns number of columns of table        
     def columnCount(self,parent):
         return len(self.itemClass.properties)
-        
+    
+    #NiNa: returns number of rows of table
     def rowCount(self,parent):
         return self.numI
 
+    #NiNa: set appearance of head row of table
     def headerData(self,sec,orientation,role=Qt.DisplayRole):
         if orientation==Qt.Horizontal:
             #print(role)
@@ -259,6 +283,8 @@ class cMRTableModel(QAbstractTableModel):
                 return QAbstractTableModel.headerData(self,sec,orientation,role)
         else:
             return None
+
+    #NiNa: set appearance of data in table   
     def data(self,idx,role):
         if role in [Qt.DisplayRole,Qt.EditRole]:
             entry = self.items[idx.row()].__dict__[self.itemClass.properties[idx.column()]]
@@ -273,8 +299,12 @@ class cMRTableModel(QAbstractTableModel):
             return QFont('courier')
         else:
             return None
+    
+    #NiNa: define what happens if table cells are edited
     def setData(self,idx,val,role=Qt.EditRole):
         if role == Qt.EditRole:
+            
+            #NiNa: if paramnumbers are edited, take care of duplicates
             if idx.column() == 0:
                 self.paramnumbers = [p.paramnr for p in self.items]
                 if val in self.paramnumbers:
@@ -282,6 +312,8 @@ class cMRTableModel(QAbstractTableModel):
                 else: 
                     self.items[idx.row()].__dict__[self.itemClass.properties[idx.column()]]=val
                     self.bool = True
+            
+            #NiNa: if paramnames are edited, take care of duplicates
             if idx.column() == 1:
                 self.paramnames = [p.name for p in self.items]
                 if val in self.paramnames:
@@ -291,6 +323,8 @@ class cMRTableModel(QAbstractTableModel):
                     for i in self.items[idx.row()]._instrList:
                         i.ParamNameChanged()
                     self.bool = True
+                    
+            #NiNa: if datatypes are edited, change type of other members in same row
             if idx.column() == 2:
                 for i in self.items[idx.row()]._instrList:
                     i.disconnectFromParam()
@@ -302,12 +336,16 @@ class cMRTableModel(QAbstractTableModel):
                     for j in range(3,7,1):
                         self.items[idx.row()].__dict__[self.itemClass.properties[j]] = int(float(self.items[idx.row()].__dict__[self.itemClass.properties[j]]))
                 self.bool = True
+                
+            #NiNa: handle which Minima can be set
             if idx.column() == 3:
                 self.pvals0 = self.items[idx.row()].__dict__[self.itemClass.properties[5]]
                 self.pvals1 = self.items[idx.row()].__dict__[self.itemClass.properties[6]]                
                 self.maxval = self.items[idx.row()].__dict__[self.itemClass.properties[4]]
+                #NiNa: don't set Min if it is bigger than current Max
                 if val >= self.maxval:
                     self.bool = False
+                #NiNa: don't set Min if it is bigger than current values
                 if self.pvals0 < val or self.pvals1 < val:
                     self.bool = False
                 else:
@@ -316,12 +354,16 @@ class cMRTableModel(QAbstractTableModel):
                     else:
                         self.items[idx.row()].__dict__[self.itemClass.properties[idx.column()]]=int(float(val))
                     self.bool = True
+                    
+            #NiNa: handle which Maxima can be set
             if idx.column() == 4:
                 self.pvals0 = self.items[idx.row()].__dict__[self.itemClass.properties[5]]
                 self.pvals1 = self.items[idx.row()].__dict__[self.itemClass.properties[6]] 
                 self.minval = self.items[idx.row()].__dict__[self.itemClass.properties[3]]
+                #NiNa: don't set Max if it is smaller than current Min
                 if val <= self.minval:
                     self.bool = False
+                #NiNa: don't set Max if it is smaller than current values
                 if self.pvals0 > val or self.pvals1 > val:
                     self.bool = False                    
                 else:
@@ -330,8 +372,10 @@ class cMRTableModel(QAbstractTableModel):
                     else:
                         self.items[idx.row()].__dict__[self.itemClass.properties[idx.column()]]=int(float(val))
                     self.bool = True
+                    
         return self.bool
 
+    #NiNa: for each item: item.save(), saves everything except value
     def save(self):
         res = '<'+self.saveTag+'>\n'
         for p in self.items:
@@ -339,6 +383,7 @@ class cMRTableModel(QAbstractTableModel):
         res += '<\\'+self.saveTag+'>\n'
         return res
     
+    #NiNa: save parametervalues of set 0
     def savePS0(self):
         res = '<pValues>\n'
         for p in self.items:
@@ -346,6 +391,7 @@ class cMRTableModel(QAbstractTableModel):
         res += '<\pValues>\n'
         return res
     
+    #NiNa: save parametervalues of set 1
     def savePS1(self):
         res = '<pValues>\n'
         for p in self.items:
@@ -353,6 +399,7 @@ class cMRTableModel(QAbstractTableModel):
         res += '<\pValues>\n'
         return res
     
+    #NiNa: load parametervalues of set 0
     def loadPS0(self,txt):
         self.pValues = []
         myr = re.compile(r'<pValues>\n(.+)<\\pValues>',re.DOTALL)#the dot also matches newlines
@@ -368,7 +415,8 @@ class cMRTableModel(QAbstractTableModel):
             for i in self.items:
                 i.fillValuesS0(self.pValues[j],False) 
                 j += 1
-            
+    
+    #NiNa: load parametervalues of set 1
     def loadPS1(self,txt):
         self.pValues = []
         myr = re.compile(r'<pValues>\n(.+)<\\pValues>',re.DOTALL)#the dot also matches newlines
@@ -384,8 +432,8 @@ class cMRTableModel(QAbstractTableModel):
             for i in self.items:
                 i.fillValuesS1(self.pValues[j],False)
                 j += 1
-
-       
+ 
+    #NiNa: when parameters are loaded this method returns the names and values of checked parameter as lists
     def loadList (self,txt):
         self.paramnamelist = []
         self.valuelist = []
@@ -398,12 +446,11 @@ class cMRTableModel(QAbstractTableModel):
                 value = l.split(';')[-1]
                 self.paramnamelist.append(name)
                 self.valuelist.append(value)
-        return self.paramnamelist, self.valuelist
-        
+        return self.paramnamelist, self.valuelist     
     
+    #NiNa: loading and filling the members of parameters except value when project is opened
     def load(self,txt):
         self.beginResetModel()#inform view that everthing is about to change
-        #self.items = []
         while self.numI > 0:
             self.removeItem(self.numI-1)
         myr = re.compile(r'<'+self.saveTag+r'>\n(.+)<\\'+self.saveTag+r'>',re.DOTALL)#the dot also matches newlines
@@ -411,17 +458,11 @@ class cMRTableModel(QAbstractTableModel):
         if res:
             paramSettings = res.group(1)
             for l in paramSettings.splitlines():
-                #name = l.split(';')[1]
-                #print(name)
-                #print([i.name for i in self.items])
-                #if name in [i.name for i in self.items]:#avoid duplicates
-                    #self.newItem(l.split(';')[1])#name must always be first in itemClass.properties
-                #    self.items[[i.name for i in self.items].index(name)].fillProps(l)
-                #else:
                 self.newItem(l.split(';')[1])#name must always be first in itemClass.properties
                 self.items[-1].fillProps(l)                                              
         self.endResetModel()
-        
+     
+    #NiNa: borderviolation option: set new Minimum and load value
     def fillMin(self,pset,pname,pmin,pval):
         if pname in [i.name for i in self.items]:
             self.items[[i.name for i in self.items].index(pname)].fillMin(pmin)
@@ -429,8 +470,8 @@ class cMRTableModel(QAbstractTableModel):
                 self.items[[i.name for i in self.items].index(pname)].setValS0(pval)
             if pset == 1:
                 self.items[[i.name for i in self.items].index(pname)].setValS1(pval)
-            
-            
+    
+    #NiNa: borderviolation option: set new Maximum and load value
     def fillMax(self,pset,pname,pmax,pval):
         if pname in [i.name for i in self.items]:
             self.items[[i.name for i in self.items].index(pname)].fillMax(pmax)
@@ -438,7 +479,8 @@ class cMRTableModel(QAbstractTableModel):
                 self.items[[i.name for i in self.items].index(pname)].setValS0(pval)
             if pset == 1:
                 self.items[[i.name for i in self.items].index(pname)].setValS1(pval)
-            
+     
+    #NiNa: borderviolation option: set value to existing Border
     def setValtoBorder(self,pset,pname,cborder):
         if pname in [i.name for i in self.items]:
             if pset == 0:
@@ -446,10 +488,9 @@ class cMRTableModel(QAbstractTableModel):
             if pset == 1:
                 self.items[[i.name for i in self.items].index(pname)].setValS1(cborder)
             
-    
+    #NiNa: load parameters that were checked, avoid name duplicates, handle loading and generating differently
     def loadP(self,txt,checkedparams):
         #self.beginResetModel()#inform view that everthing is about to change
-        #self.items = []
         self.minviolationnames = []
         self.minviolationvalues = []
         self.maxviolationnames = []
@@ -467,6 +508,7 @@ class cMRTableModel(QAbstractTableModel):
                 if name in checkedparams:
                 #print([i.name for i in self.items])
                     if name in [i.name for i in self.items]:#avoid duplicates
+                        #NiNa: parameters are not generated
                         pGen = False
                     #self.newItem(l.split(';')[1])#name must always be first in itemClass.properties
                         if self.items[[i.name for i in self.items].index(name)].fillValuesS0(pvalue,pGen)[0] == -1:
@@ -483,30 +525,32 @@ class cMRTableModel(QAbstractTableModel):
                             if 1 in [i.paramset for i in self.items]:
                                 self.items[[i.name for i in self.items].index(name)].fillValuesS1(pvalue,pGen)
                     else:
+                        #NiNa: parameters have to be generated
                         pGen = True
                         self.newItem(name)#name must always be first in itemClass.properties
                         if 0 in [i.paramset for i in self.items]:
                             self.items[-1].fillValuesS0(pvalue,pGen)
                         if 1 in [i.paramset for i in self.items]:
                             self.items[-1].fillValuesS1(pvalue,pGen)
-        return self.minviolationnames,self.minviolationvalues,self.maxviolationnames,self.maxviolationvalues,self.currentmin,self.currentmax 
-                        
+        return self.minviolationnames,self.minviolationvalues,self.maxviolationnames,self.maxviolationvalues,self.currentmin,self.currentmax                  
         #self.endResetModel()
                                                           
 
-
+#NiNa: add saveTag 'Parameters' to specify ParamTableModel
 class cParamTableModel(cMRTableModel):
     def __init__(self,parent):
         super().__init__(parent)
         self.itemClass = mRayParam#store name of param Class
         self.saveTag = 'Parameters'
 
-        
+    #NiNa: lists the instruments connected to a single param
     def listParamsInstr(self,row):
         param = self.items[row]
         for i in param._instrList:
             print(i.instrWidget.objectName())
     
+    
+#NiNa: add saveTag 'Signals' to specify SignalTableModel, Colorselection for signal possible
 class cSignalTableModel(cMRTableModel):
     defaultColors=[QColor(250,0,0),
                    QColor(0,220,0),
@@ -514,16 +558,19 @@ class cSignalTableModel(cMRTableModel):
                    QColor(220,0,220),
                    QColor(0,200,200),
                    QColor(250,180,0)]
+    
     def __init__(self,parent):
         super().__init__(parent)
         self.itemClass = mRaySignal#store name of param Class
         self.saveTag = 'Signals'
+        
     def newItem(self,Name):
         super().newItem(Name)
         #the newly created item needs a color
         idx = len(self.items)-1
         num = len(self.defaultColors)
         self.items[idx].color=mRColor(self.defaultColors[idx % num])
+        
     def data(self,idx,role):
         #print(role)
         if role in [Qt.DisplayRole,Qt.EditRole]:
@@ -546,6 +593,7 @@ class cSignalTableModel(cMRTableModel):
                 return None
         else:
             super().data(idx,role)
+            
     def setData(self,idx,val,role=Qt.EditRole):
         if role == Qt.EditRole:
             if isinstance(val,QColor):
@@ -554,6 +602,7 @@ class cSignalTableModel(cMRTableModel):
                 self.items[idx.row()].__dict__[self.itemClass.properties[idx.column()]]=val
         return True
     
+#NiNa: selection window to check which params are needed   
 class ParamSelectWindow(QDialog):  
     def __init__(self,parent,paramnamelist,valuelist):
         super().__init__(parent)
@@ -561,17 +610,22 @@ class ParamSelectWindow(QDialog):
         self.checkedparams = []
         self.checkboxlist = []
         self.checkboxvalues = []
+        
         self.paramnamelist = paramnamelist
         self.valuelist = valuelist
+        
         self.sublayout = QHBoxLayout()
         self.layout = QVBoxLayout()
         self.seperator = QFrame()
+        
         self.seperator.setFrameShape(QFrame.HLine)
         self.loadbutton = QPushButton("Load")
         self.selectall = QCheckBox("Select All",self)
+        
         for i in self.paramnamelist:
             self.layoutlist.append(QHBoxLayout())
-            self.checkboxlist.append(QCheckBox(str(i),self)) 
+            self.checkboxlist.append(QCheckBox(str(i),self))
+            
         for i in self.valuelist:
             self.checkboxvalues.append(QLabel(str(i)))
         self.setLayout(self.layout)
@@ -584,10 +638,7 @@ class ParamSelectWindow(QDialog):
         for x in range(0,len(self.layoutlist)):  
             self.layoutlist[x].addWidget(self.checkboxlist[x])
             self.layoutlist[x].addWidget(self.checkboxvalues[x])
-            
 
-       # for i in self.checkboxlist:
-        #    self.layout.addWidget(i)
         self.layout.addLayout(self.sublayout)
         self.sublayout.addWidget(self.loadbutton)
         self.selectall.toggled.connect(self.checkall)
@@ -604,6 +655,7 @@ class ParamSelectWindow(QDialog):
         self.parent().LoadParams()
         self.close()
         
+#NiNa: class to handle the parameters that violate borders when being checked and loaded       
 class BorderViolationsWindow(QDialog):
     def __init__ (self,parent,maxviolationvalues,maxviolationnames,minviolationvalues,minviolationnames,currentmax,currentmin):
         super().__init__(parent)
@@ -617,11 +669,8 @@ class BorderViolationsWindow(QDialog):
         
         self.setminmaxlayouts = []        
         self.setminmaxspinboxes = []
-        
         self.setnewcheckboxes = []
-        
         self.valtocheckboxes = []
-
         self.dontloadvaluecheckboxes = []
         
         self.applyPushButton = QPushButton("Apply")
@@ -633,8 +682,7 @@ class BorderViolationsWindow(QDialog):
             self.layout.addWidget(QLabel(str(self.allviolationvalues[i])),i,1)
             self.layout.addLayout(self.setminmaxlayouts[i],i,2)
             self.layout.addWidget(self.dontloadvaluecheckboxes[i],i,4) 
-            self.setminmaxspinboxes[i].setDisabled(True)
-            
+            self.setminmaxspinboxes[i].setDisabled(True)       
             
         for i in range(0,len(self.minviolationnames)):
             self.setnewcheckboxes.append(QCheckBox("Set new Min and Load"))
@@ -643,6 +691,7 @@ class BorderViolationsWindow(QDialog):
             self.setminmaxlayouts[i].addWidget(self.setnewcheckboxes[i])
             self.setminmaxlayouts[i].addWidget(self.setminmaxspinboxes[i])
             self.setminmaxspinboxes[i].setMaximum(float(self.allviolationvalues[i]))
+            #NiNa: set Min and Max of displayed doublespinboxes <- for setting new max/min
             if float(self.allviolationvalues[i]) < 0:
                 self.setminmaxspinboxes[i].setMinimum((10)*(float(self.allviolationvalues[i])))
             else:
@@ -663,14 +712,13 @@ class BorderViolationsWindow(QDialog):
 
         self.layout.addWidget(self.applyPushButton)
         self.applyPushButton.clicked.connect(self.takeAction)
-            
-             
+                       
         for i in range(0,len(self.allviolationnames)):
             self.setnewcheckboxes[i].stateChanged.connect(self.disableOthers1)
             self.valtocheckboxes[i].stateChanged.connect(self.disableOthers2)
-            self.dontloadvaluecheckboxes[i].stateChanged.connect(self.disableOthers3)
-            
-                
+            self.dontloadvaluecheckboxes[i].stateChanged.connect(self.disableOthers3)         
+     
+    #NiNa: making sure only one option is selected in each row
     def disableOthers1(self):
         for i in range(0,len(self.allviolationnames)):
             if self.setnewcheckboxes[i].isChecked():
@@ -691,9 +739,11 @@ class BorderViolationsWindow(QDialog):
                 self.setminmaxspinboxes[i].setDisabled(True)
                 self.valtocheckboxes[i].setChecked(False)
                 self.setnewcheckboxes[i].setChecked(False)
-                
+    
+    #NiNa: handling the violations according to selected options
     def takeAction(self):    
         x = True
+        #NiNa: set new Min and load value
         for i in range(0,len(self.minviolationnames)):
             if self.setnewcheckboxes[i].isChecked():
                 if self.parent().syncset == 0:
@@ -701,6 +751,7 @@ class BorderViolationsWindow(QDialog):
                 if self.parent().syncset == 1:
                     self.parent().AllMyParams.fillMin(1,self.allviolationnames[i],self.setminmaxspinboxes[i].value(),self.allviolationvalues[i])
                 self.parent().SyncInstr()
+        #NiNa: set new Max and load value
         for i in range(len(self.minviolationnames),len(self.allviolationnames)):
             if self.setnewcheckboxes[i].isChecked():
                 if self.parent().syncset == 0:
@@ -708,15 +759,18 @@ class BorderViolationsWindow(QDialog):
                 if self.parent().syncset == 1:
                     self.parent().AllMyParams.fillMax(1,self.allviolationnames[i],self.setminmaxspinboxes[i].value(),self.allviolationvalues[i])
                 self.parent().SyncInstr()
+        #NiNa: set value to existing border
         for i in range(0,len(self.allviolationnames)):
             if self.valtocheckboxes[i].isChecked():
                 if self.parent().syncset == 0:
                     self.parent().AllMyParams.setValtoBorder(0,self.allviolationnames[i],self.currentborders[i])
                 if self.parent().syncset == 1:
                     self.parent().AllMyParams.setValtoBorder(1,self.allviolationnames[i],self.currentborders[i])
-                self.parent().SyncInstr()            
+                self.parent().SyncInstr()  
+            #NiNa: do nothing
             if self.dontloadvaluecheckboxes[i].isChecked():
                 pass
+            #NiNa: make sure that one option is selected each row
             if not self.setnewcheckboxes[i].isChecked() and not self.valtocheckboxes[i].isChecked() and not self.dontloadvaluecheckboxes[i].isChecked():
                 ErrorInfo = QMessageBox.information(self,
                                                     'No option chosen.',
@@ -726,12 +780,3 @@ class BorderViolationsWindow(QDialog):
                 break
         if x == True:
             self.close()
-                
-            
-                
-            
-        
-            
-        
-
-            
