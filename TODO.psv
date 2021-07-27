@@ -18,20 +18,20 @@ ID|Problem|Options for Solution|Status|Commit|priority||||||||||||||||||||||||||
 17|handle visibility of datatypes in ParamView (and everywherre else)|list comprehension|closed|4ee408090b4b3bfcca496c1e49ff4bac2ddc7757|1||||||||||||||||||||||||||||||||||||||||||||||
 18|show hint when no InstrPage to selected project is found|QMessageBox before opening file explorer|closed|df2d47ca470884c3c38acbaf1820b0b03bec9fdc|1||||||||||||||||||||||||||||||||||||||||||||||
 19|preselect file when opening file explorer to select InstrPage||closed|422ad610fa1b45bea47ad7d96d5fe766a0e2d94d|1||||||||||||||||||||||||||||||||||||||||||||||
-20|create test to turn LED on and off with micorocontroller |create sketch in arduino and send data with python|closed|7562afd3edc39c40b6944bb4fc9f6f0caf93a448|1||||||||||||||||||||||||||||||||||||||||||||||
-21|creating UI for the LED test|use QtDesigner for UI |closed|5e811f608af5a85cce5c839852524b807bd98f86|1||||||||||||||||||||||||||||||||||||||||||||||
+20|create test to turn LED on and off with micorocontroller |create sketch in arduino and send data with python|closed|7562afd3edc39c40b6944bb4fc9f6f0caf93a448|3||||||||||||||||||||||||||||||||||||||||||||||
+21|creating UI for the LED test|use QtDesigner for UI |closed|5e811f608af5a85cce5c839852524b807bd98f86|3||||||||||||||||||||||||||||||||||||||||||||||
 22|expanding test UI with dial for PWM LED|QtDesigner and second LED|closed|9e21d74225f69c8485179061c217fe21b2ad623a|1||||||||||||||||||||||||||||||||||||||||||||||
 23|nuRay Comm Protocol on Arduino Nano|flashing the protocol (CodeBlocks) onto Arduiono nano|closed|27a466c641b916844d8eed37289f25e376824137|1||||||||||||||||||||||||||||||||||||||||||||||
 24|first test of sending data from python to arduino|serial write to port with arduino nano |closed|e9a02704a07fe9377a89d1a735e41ed25b2ab111|1||||||||||||||||||||||||||||||||||||||||||||||
 25|handle set. param number and value|add properties, make val and number not editable|closed|53f2cc7aa5a7410600c1ba45d6f1912250af774e|1||||||||||||||||||||||||||||||||||||||||||||||
-26|send params from parameter list for debugging|option Send params|closed|3fab60e93cb845bc9e5574021e1c810f1e61cee8|1||||||||||||||||||||||||||||||||||||||||||||||
+26|send params from parameter list for debugging|option Send params|closed|3fab60e93cb845bc9e5574021e1c810f1e61cee8|2||||||||||||||||||||||||||||||||||||||||||||||
 27|livesending every value through UI |if value changed serial write to arduino|closed|f9c88bb7fd68a8ea54b0070877f929413ab73944|1||||||||||||||||||||||||||||||||||||||||||||||
 28|active set is sent permanently from arduino to python|active set handling (0 or 1)|closed|eeef0f457fb1ff58a36868800f114da65ea9ffdc|1||||||||||||||||||||||||||||||||||||||||||||||
 29|if I press connect and NONE is selected Connection settings should open|connect to connectionsettings method|closed|b775cd396a9c02d55e63ae686848a754474cb06f|1||||||||||||||||||||||||||||||||||||||||||||||
 30|Choosing NONE anywhere should put radioButton Disconnect clicked|implement in connectionsettings class with parent attributes|closed|b775cd396a9c02d55e63ae686848a754474cb06f|1||||||||||||||||||||||||||||||||||||||||||||||
-31|characteristic strings should be used for detecting serial port names form Windows, MacOs, Linux,...|COM and /dev|closed|bf1d7e959d73a9e750eac8993625ebb0210858e7|1||||||||||||||||||||||||||||||||||||||||||||||
+31|characteristic strings should be used for detecting serial port names form Windows, MacOs, Linux,...|COM and /dev|closed|bf1d7e959d73a9e750eac8993625ebb0210858e7|4||||||||||||||||||||||||||||||||||||||||||||||
 32|Open Project... and Save Project... ||closed|288c31e6ffcc9771d554cc32d1c91f1129e0cff6|1||||||||||||||||||||||||||||||||||||||||||||||
-33|add option to close project||closed|288c31e6ffcc9771d554cc32d1c91f1129e0cff6|1||||||||||||||||||||||||||||||||||||||||||||||
+33|add option to close project||closed|288c31e6ffcc9771d554cc32d1c91f1129e0cff6|3||||||||||||||||||||||||||||||||||||||||||||||
 34|status LED if connected to something|two different widgets|closed|cb34ebadcf42e302f3afc1311aae44d6d7ecc14e|1||||||||||||||||||||||||||||||||||||||||||||||
 35|double spinbox value shouldn't change while typing||closed|54f895e50a45bc3d88aed46f484e8df2074bb909|1||||||||||||||||||||||||||||||||||||||||||||||
 36|send typed value in double spin box via Enter||closed|54f895e50a45bc3d88aed46f484e8df2074bb909|1||||||||||||||||||||||||||||||||||||||||||||||
@@ -39,19 +39,27 @@ ID|Problem|Options for Solution|Status|Commit|priority||||||||||||||||||||||||||
 38|create  switch to chose which set is the active one||closed|09f8eb1a66683e0df2bc18a9393fba2531155139|1||||||||||||||||||||||||||||||||||||||||||||||
 39|create switch to activate sending data||closed|09f8eb1a66683e0df2bc18a9393fba2531155139|1||||||||||||||||||||||||||||||||||||||||||||||
 40|show values of both sets in parameter list||closed|288c31e6ffcc9771d554cc32d1c91f1129e0cff6|1||||||||||||||||||||||||||||||||||||||||||||||
-41|handling active signals||open||1||||||||||||||||||||||||||||||||||||||||||||||
-42|sending signals from arduino to python||open||1||||||||||||||||||||||||||||||||||||||||||||||
-43|visualize receiving signals in plotter||open||1||||||||||||||||||||||||||||||||||||||||||||||
-44|MainWindow in foreground if clicked ||open||1||||||||||||||||||||||||||||||||||||||||||||||
+41|handling active signals||open||3||||||||||||||||||||||||||||||||||||||||||||||
+42|sending signals from arduino to python||open||3||||||||||||||||||||||||||||||||||||||||||||||
+43|visualize receiving signals in plotter||open||3||||||||||||||||||||||||||||||||||||||||||||||
+44|MainWindow in foreground if clicked ||open||3||||||||||||||||||||||||||||||||||||||||||||||
 45|ctrl second bit (setbit)  1 for changing active set else type of ctrl is set via paramnr||closed|9521c1e69f259982ac96b501cce0549f265c3781|1||||||||||||||||||||||||||||||||||||||||||||||
 46|making is_open() work||closed|ef76ca2e773d09b2c9148c4738ed685461efcb56|1||||||||||||||||||||||||||||||||||||||||||||||
 47|handling synchronization via SyncDirection button||closed|0b738879fd45d3b74743a703314a61d0b94060fb|1||||||||||||||||||||||||||||||||||||||||||||||
 48|Disconnect when connected  and project is opened||closed|15aa26117962e63c1ca7ce355d65d0121b5b49ce|1||||||||||||||||||||||||||||||||||||||||||||||
 49|Find bug fix for reading data more than 6 to 12 times properly||closed|bbbd612ba03d4465d701cc3cefd6dfef6a7b6452|1||||||||||||||||||||||||||||||||||||||||||||||
-50|setting values when disconnected should first be saved before connecting if reading is selected||open||1||||||||||||||||||||||||||||||||||||||||||||||
+50|setting values when disconnected should first be saved before connecting if reading is selected||closed|681e46f6d7aa39f29348835cc899342239c42aeb|1||||||||||||||||||||||||||||||||||||||||||||||
 51|each manipulated SET gets an own file||closed|8010c7f6b947ef7506378fe8a86df89b862365d9|1||||||||||||||||||||||||||||||||||||||||||||||
-52|draw finite state machines ||open||1||||||||||||||||||||||||||||||||||||||||||||||
+52|draw finite state machines ||closed||1||||||||||||||||||||||||||||||||||||||||||||||
 53|changing color of status LED|repaint event + refresh|closed|ef76ca2e773d09b2c9148c4738ed685461efcb56|1||||||||||||||||||||||||||||||||||||||||||||||
 54|converting datatype to int16 when float is connected to a QDial, converting int16 and uint8 to float QDoubleSpinBox||closed|7cfdeea1cd68143030181517bb28385ae4c63900|1||||||||||||||||||||||||||||||||||||||||||||||
-55|loading saved single set parameters avoiding duplicates ||closed|94c8fed8c09e480632e7137af74244d2d408d9fc|1||||||||||||||||||||||||||||||||||||||||||||||
+55|loading saved single set parameters avoiding duplicates ||closed|94c8fed8c09e480632e7137af74244d2d408d9fc|2||||||||||||||||||||||||||||||||||||||||||||||
 56|if parameterlist already created and project is opened load data to existing names if duplicates come up else new items||closed|94c8fed8c09e480632e7137af74244d2d408d9fc|1||||||||||||||||||||||||||||||||||||||||||||||
+57|read data on first connect, than nuRay is Master|no third button needed|closed|93fca1dbc61fef260c1bae0f7afa7cc947e801e8|1||||||||||||||||||||||||||||||||||||||||||||||
+58|if connections of instruments changed offer to save changed connections|track label|closed|681e46f6d7aa39f29348835cc899342239c42aeb|1||||||||||||||||||||||||||||||||||||||||||||||
+59|handle saving messages if mainwindow is closing|closeEvent QMessageBox|closed|681e46f6d7aa39f29348835cc899342239c42aeb|2||||||||||||||||||||||||||||||||||||||||||||||
+60|load parameters should show a list with existing parameters preselected else additionally selected  parameter  are generated|param select window|closed|eed9a3a2264edfa566ea075b2f11569f9806b985|1||||||||||||||||||||||||||||||||||||||||||||||
+61|if a new project is opened the parameter table is cleaned first||closed|5577ca5de4322e0f0fcacfba0444d44d4e1e1ba4|1||||||||||||||||||||||||||||||||||||||||||||||
+62|avoid param nr duplicates||closed|5577ca5de4322e0f0fcacfba0444d44d4e1e1ba4|1||||||||||||||||||||||||||||||||||||||||||||||
+63|if loading params handle border violations with three different options|border violation window|closed|4ea1b99d8198e95442a0dbd8fa1c0964b5719792|1||||||||||||||||||||||||||||||||||||||||||||||
+64|handle saving messages iif new project is opened|saviing messages|closed|9ec5bf342d52fd329f8bba40ef082bb3d54fff30|2||||||||||||||||||||||||||||||||||||||||||||||
