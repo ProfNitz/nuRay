@@ -47,7 +47,7 @@ def GenerateAndTest(parametercount,valrange):
     if __name__=='__main__':
         nuRSerial.listPorts()
         s = nuRSerial()
-        s.port='COM8'
+        s.port='COM6'
         s.connect()
         i = 0
         while i < parametercount:
@@ -55,7 +55,7 @@ def GenerateAndTest(parametercount,valrange):
             pidx = inputdata['pidx'][i]
             val = inputdata['val'][i]
             dt = inputdata['dt'][i]
-            s.write(setidx,pidx,val,dt)
+            s.write(1,setidx,pidx,val,dt)
             i += 1
         s.close()
 
@@ -89,15 +89,5 @@ def TestExistingFile():
         ex.close()  
 
 #TestData(300,300000)
-#GenerateAndTest(300,300000)
+GenerateAndTest(300,300000)
 #TestExistingFile()
-nuRSerial.listPorts()
-s = nuRSerial()
-s.port='COM11'
-s.connect()
-time.sleep(2)
-s.write(0,0,0,'uint8')
-s.write(1,24,121,'uint8')
-#s.write(0,24,123,'uint8')
-s.write(1,12,123.76,'float32')
-s.close()
