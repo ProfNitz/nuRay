@@ -198,7 +198,7 @@ void loop() {
     }
   }
    
-  if(paramset[active].param8[1] == 121){
+  if(paramset[active].param8[1] > 120){
     PORTD |= _BV(LED1);
   }
   else{

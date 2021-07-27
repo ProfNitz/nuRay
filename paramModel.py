@@ -103,20 +103,27 @@ class mRayAbstractItem(QObject):
 
     #NiNa: generate params if not in list, add values, check borders, set borders of generated params, load values set 0        
     def fillValuesS0(self,value,pGen):
-        if float(value) < self.__dict__[self.properties[3]] and pGen == False:
-            return -1,self.__dict__[self.properties[3]]
-        if float(value) > self.__dict__[self.properties[4]] and pGen == False:
-            return 1,self.__dict__[self.properties[4]]
-        else:
-            if self.__dict__[self.properties[2]] == 'float32':
-                self.__dict__[self.properties[5]] = float(value)
-                if pGen == True:
-                    if float(value) > 0:
-                        self.__dict__[self.properties[4]] = float(self.roundToTwo((2*float(value))))
-                        self.__dict__[self.properties[3]] = float(0)
-                    if float(value) < 0:
-                        self.__dict__[self.properties[3]] = float(self.roundToTwo((2*float(value))))
-                        self.__dict__[self.properties[4]] = float(0)
+        if pGen == False:
+            if float(value) < self.__dict__[self.properties[3]]:
+                return -1,self.__dict__[self.properties[3]]
+            if float(value) > self.__dict__[self.properties[4]]:
+                return 1,self.__dict__[self.properties[4]]
+            else:
+                if self.__dict__[self.properties[2]] == 'float32':
+                    self.__dict__[self.properties[5]] = float(value)
+                else:
+                    if self.__dict__[self.properties[2]] == 'uint8' and float(value) < 0:
+                        self.__dict__[self.properties[2]] = 'int16'
+                    self.__dict__[self.properties[5]] = int(float(value))
+                return 0, None
+                    
+        if pGen == True:
+            if float(value) > 0:
+                self.__dict__[self.properties[4]] = float(self.roundToTwo((2*float(value))))
+                self.__dict__[self.properties[3]] = float(0)
+            if float(value) < 0:
+                self.__dict__[self.properties[3]] = float(self.roundToTwo((2*float(value))))
+                self.__dict__[self.properties[4]] = float(0)
             else:
                 if self.__dict__[self.properties[2]] == 'uint8' and float(value) < 0:
                     self.__dict__[self.properties[2]] = 'int16'
@@ -124,20 +131,27 @@ class mRayAbstractItem(QObject):
 
     #NiNa: generate params if not in list, add values, check borders, set borders of generated params, load values set 1   
     def fillValuesS1(self,value,pGen):
-        if float(value) < self.__dict__[self.properties[3]] and pGen == False:
-            return -1,self.__dict__[self.properties[3]]
-        if float(value) > self.__dict__[self.properties[4]] and pGen == False:
-            return 1,self.__dict__[self.properties[4]]
-        else:
-            if self.__dict__[self.properties[2]] == 'float32':
-                self.__dict__[self.properties[6]] = float(value)
-                if pGen == True:
-                    if float(value) > 0:
-                        self.__dict__[self.properties[4]] = float(self.roundToTwo((2*float(value))))
-                        self.__dict__[self.properties[3]] = float(0)
-                    if float(value) < 0:
-                        self.__dict__[self.properties[3]] = float(self.roundToTwo((2*float(value))))
-                        self.__dict__[self.properties[4]] = float(0)
+        if pGen == False:
+            if float(value) < self.__dict__[self.properties[3]]:
+                return -1,self.__dict__[self.properties[3]]
+            if float(value) > self.__dict__[self.properties[4]]:
+                return 1,self.__dict__[self.properties[4]]
+            else:
+                if self.__dict__[self.properties[2]] == 'float32':
+                    self.__dict__[self.properties[6]] = float(value)
+                else:
+                    if self.__dict__[self.properties[2]] == 'uint8' and float(value) < 0:
+                        self.__dict__[self.properties[2]] = 'int16'
+                    self.__dict__[self.properties[6]] = int(float(value))
+                return 0, None
+                    
+        if pGen == True:
+            if float(value) > 0:
+                self.__dict__[self.properties[4]] = float(self.roundToTwo((2*float(value))))
+                self.__dict__[self.properties[3]] = float(0)
+            if float(value) < 0:
+                self.__dict__[self.properties[3]] = float(self.roundToTwo((2*float(value))))
+                self.__dict__[self.properties[4]] = float(0)
             else:
                 if self.__dict__[self.properties[2]] == 'uint8' and float(value) < 0:
                     self.__dict__[self.properties[2]] = 'int16'
@@ -506,11 +520,9 @@ class cMRTableModel(QAbstractTableModel):
                 pvalue = l.split(';')[1]
                 print(name)
                 if name in checkedparams:
-                #print([i.name for i in self.items])
                     if name in [i.name for i in self.items]:#avoid duplicates
                         #NiNa: parameters are not generated
                         pGen = False
-                    #self.newItem(l.split(';')[1])#name must always be first in itemClass.properties
                         if self.items[[i.name for i in self.items].index(name)].fillValuesS0(pvalue,pGen)[0] == -1:
                             self.minviolationnames.append(name)
                             self.minviolationvalues.append(pvalue)

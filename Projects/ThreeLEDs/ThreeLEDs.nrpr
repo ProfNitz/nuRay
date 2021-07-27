@@ -1,6 +1,6 @@
 <Parameters>
 0;A;float32;0.0;1.0
-1;LEDBLAU;uint8;0.0;130.0
+1;LEDBLAU;uint8;0.0;240
 2;LEDROT;float32;0.0;99.99
 3;LEDGRÜN;uint8;0.0;255.0
 <\Parameters>
