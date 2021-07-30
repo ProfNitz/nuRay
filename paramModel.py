@@ -678,6 +678,8 @@ class BorderViolationsWindow(QDialog):
         
         self.layout = QGridLayout()
         self.setLayout(self.layout)
+        self.layout.setVerticalSpacing(50)
+        self.layout.setHorizontalSpacing(30)
         
         self.setminmaxlayouts = []        
         self.setminmaxspinboxes = []
@@ -685,51 +687,92 @@ class BorderViolationsWindow(QDialog):
         self.valtocheckboxes = []
         self.dontloadvaluecheckboxes = []
         
+        self.allparamnames = [x.name for x in self.parent().AllMyParams.items]
+        self.violationdataTypes = []
+        print(self.allparamnames)
+        print(self.allviolationnames)
+
+        for i in self.allviolationnames:
+            if i in self.allparamnames:
+                idx = self.allparamnames.index(i)
+                self.violationdataTypes.append(self.parent().AllMyParams.items[idx].dataType)
+        print(self.allviolationvalues)       
+        print(self.violationdataTypes)
+        
         self.applyPushButton = QPushButton("Apply")
         
         for i in range(0,len(self.allviolationnames)):
+            print(i.name for i in self.parent().AllMyParams.items)
+        
+        for i in range(0,len(self.allviolationnames)):
+            #self.layout.setRowMinimumHeight(i, 200)
             self.setminmaxlayouts.append(QVBoxLayout())
             self.setminmaxspinboxes.append(QDoubleSpinBox())
             self.dontloadvaluecheckboxes.append(QCheckBox("Don't Load Value"))
             self.layout.addWidget(QLabel(str(self.allviolationvalues[i])),i,1)
             self.layout.addLayout(self.setminmaxlayouts[i],i,2)
-            self.layout.addWidget(self.dontloadvaluecheckboxes[i],i,4) 
+            self.layout.addWidget(self.dontloadvaluecheckboxes[i],i,4)
+            self.dontloadvaluecheckboxes[i].setChecked(True)
             self.setminmaxspinboxes[i].setDisabled(True)       
             
         for i in range(0,len(self.minviolationnames)):
             self.setnewcheckboxes.append(QCheckBox("Set new Min and Load"))
             self.valtocheckboxes.append(QCheckBox("Set Value to Min and Load"))
-            self.layout.addWidget(QLabel(str(self.allviolationnames[i])+' (Min: '+str(self.currentborders[i])+')'),i,0)
-            self.setminmaxlayouts[i].addWidget(self.setnewcheckboxes[i])
-            self.setminmaxlayouts[i].addWidget(self.setminmaxspinboxes[i])
-            self.setminmaxspinboxes[i].setMaximum(float(self.allviolationvalues[i]))
-            #NiNa: set Min and Max of displayed doublespinboxes <- for setting new max/min
-            if float(self.allviolationvalues[i]) < 0:
-                self.setminmaxspinboxes[i].setMinimum((10)*(float(self.allviolationvalues[i])))
-            else:
-                self.setminmaxspinboxes[i].setMinimum((-10)*(float(self.allviolationvalues[i])))
-            self.setminmaxspinboxes[i].setValue(float(self.allviolationvalues[i]))
+            self.layout.addWidget(QLabel(str(self.allviolationnames[i])+' (Min: '+str(self.currentborders[i])+')'),i,0)        
+            if self.checkDataType(i) == True:
+                self.setminmaxlayouts[i].addWidget(self.setnewcheckboxes[i])
+                self.setminmaxlayouts[i].addWidget(self.setminmaxspinboxes[i])
+                self.setminmaxspinboxes[i].setMaximum(float(self.allviolationvalues[i]))
+                #NiNa: set Min and Max of displayed doublespinboxes <- for setting new max/min
+                if float(self.allviolationvalues[i]) < 0:
+                    self.setminmaxspinboxes[i].setMinimum((10)*(float(self.allviolationvalues[i])))
+                else:
+                    self.setminmaxspinboxes[i].setMinimum((-10)*(float(self.allviolationvalues[i])))
+                self.setminmaxspinboxes[i].setValue(float(self.allviolationvalues[i]))
+            if self.checkDataType(i) == False:
+                self.setminmaxlayouts[i].addWidget(QLabel("Loading current value violates datatype."))               
             self.layout.addWidget(self.valtocheckboxes[i],i,3)
-            
+                     
         for i in range(len(self.minviolationnames),len(self.allviolationnames)):
             self.setnewcheckboxes.append(QCheckBox("Set new Max and Laod"))
             self.valtocheckboxes.append(QCheckBox("Set Value to Max and Laod"))
-            self.layout.addWidget(QLabel(str(self.allviolationnames[i])+' (Max: '+str(self.currentborders[i])+')'),i,0)
-            self.setminmaxlayouts[i].addWidget(self.setnewcheckboxes[i])
-            self.setminmaxlayouts[i].addWidget(self.setminmaxspinboxes[i])
-            self.setminmaxspinboxes[i].setMinimum(float(self.allviolationvalues[i]))
-            self.setminmaxspinboxes[i].setMaximum(10*(float(self.allviolationvalues[i])))
-            self.setminmaxspinboxes[i].setValue(float(self.allviolationvalues[i]))
+            self.layout.addWidget(QLabel(str(self.allviolationnames[i])+' (Max: '+str(self.currentborders[i])+')'),i,0)            
+            if self.checkDataType(i) == True:
+                self.setminmaxlayouts[i].addWidget(self.setnewcheckboxes[i])
+                self.setminmaxlayouts[i].addWidget(self.setminmaxspinboxes[i])
+                self.setminmaxspinboxes[i].setMinimum(float(self.allviolationvalues[i]))
+                self.setminmaxspinboxes[i].setMaximum(10*(float(self.allviolationvalues[i])))
+                self.setminmaxspinboxes[i].setValue(float(self.allviolationvalues[i]))                
+            if self.checkDataType(i) == False:    
+                self.setminmaxlayouts[i].addWidget(QLabel("Loading current value violates datatype."))                 
             self.layout.addWidget(self.valtocheckboxes[i],i,3)
-
+                  
         self.layout.addWidget(self.applyPushButton)
         self.applyPushButton.clicked.connect(self.takeAction)
                        
         for i in range(0,len(self.allviolationnames)):
             self.setnewcheckboxes[i].stateChanged.connect(self.disableOthers1)
             self.valtocheckboxes[i].stateChanged.connect(self.disableOthers2)
-            self.dontloadvaluecheckboxes[i].stateChanged.connect(self.disableOthers3)         
-     
+            self.dontloadvaluecheckboxes[i].stateChanged.connect(self.disableOthers3)       
+            
+    
+    def checkDataType(self,i):
+        if self.violationdataTypes[i] == 'uint8' and (float(self.allviolationvalues[i]) < 0 or float(self.allviolationvalues[i]) > 255):
+            print('A')
+            return False
+        if self.violationdataTypes[i] == 'int16' and (float(self.allviolationvalues[i]) < -32768 or float(self.allviolationvalues[i]) > 32768):
+            print('B')
+            return False
+        else:
+            if self.violationdataTypes[i] != 'float32':
+                try:
+                    int(self.allviolationvalues[i])
+                    return True
+                except:
+                    return False
+            else:
+                return True
+    
     #NiNa: making sure only one option is selected in each row
     def disableOthers1(self):
         for i in range(0,len(self.allviolationnames)):

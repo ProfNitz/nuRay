@@ -483,7 +483,6 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.closeAllChildren()
             self.ParamSettingsDialog = None
             self.AllMyParams = cParamTableModel(None)
-            self.OpenInstr()
         else:
             pass
         
