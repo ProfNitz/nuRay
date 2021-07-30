@@ -653,13 +653,34 @@ class ParamSelectWindow(QDialog):
 
         self.layout.addLayout(self.sublayout)
         self.sublayout.addWidget(self.loadbutton)
-        self.selectall.toggled.connect(self.checkall)
+        self.selectall.clicked.connect(self.actionall)
         self.loadbutton.clicked.connect(self.checkedparamlist)
-
-    def checkall(self):
+        
         for x in self.checkboxlist:
-            x.setChecked(True)
-            
+            x.toggled.connect(self.unselectselectall)
+
+    def actionall(self):
+        for x in self.checkboxlist:
+            x.blockSignals(True)
+        if self.selectall.isChecked():
+            for x in self.checkboxlist:
+                x.setChecked(True)
+        else:
+            for x in self.checkboxlist:
+                x.setChecked(False)
+        for x in self.checkboxlist:
+            x.blockSignals(False)
+    
+    def unselectselectall(self):
+        templist = []
+        for x in self.checkboxlist:
+            if x.isChecked():
+                templist.append(x)
+        if len(templist) != len(self.checkboxlist):
+            self.selectall.setChecked(False)       
+        else:
+            self.selectall.setChecked(True)
+        
     def checkedparamlist(self):
         for i in range(0,len(self.checkboxlist)):
             if self.checkboxlist[i].isChecked():
@@ -689,20 +710,13 @@ class BorderViolationsWindow(QDialog):
         
         self.allparamnames = [x.name for x in self.parent().AllMyParams.items]
         self.violationdataTypes = []
-        print(self.allparamnames)
-        print(self.allviolationnames)
 
         for i in self.allviolationnames:
             if i in self.allparamnames:
                 idx = self.allparamnames.index(i)
                 self.violationdataTypes.append(self.parent().AllMyParams.items[idx].dataType)
-        print(self.allviolationvalues)       
-        print(self.violationdataTypes)
         
         self.applyPushButton = QPushButton("Apply")
-        
-        for i in range(0,len(self.allviolationnames)):
-            print(i.name for i in self.parent().AllMyParams.items)
         
         for i in range(0,len(self.allviolationnames)):
             #self.layout.setRowMinimumHeight(i, 200)
@@ -755,13 +769,11 @@ class BorderViolationsWindow(QDialog):
             self.valtocheckboxes[i].stateChanged.connect(self.disableOthers2)
             self.dontloadvaluecheckboxes[i].stateChanged.connect(self.disableOthers3)       
             
-    
+    #NiNa: checking datatype violations
     def checkDataType(self,i):
         if self.violationdataTypes[i] == 'uint8' and (float(self.allviolationvalues[i]) < 0 or float(self.allviolationvalues[i]) > 255):
-            print('A')
             return False
         if self.violationdataTypes[i] == 'int16' and (float(self.allviolationvalues[i]) < -32768 or float(self.allviolationvalues[i]) > 32768):
-            print('B')
             return False
         else:
             if self.violationdataTypes[i] != 'float32':
