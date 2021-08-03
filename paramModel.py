@@ -657,7 +657,7 @@ class ParamSelectWindow(QDialog):
         self.loadbutton.clicked.connect(self.checkedparamlist)
         
         for x in self.checkboxlist:
-            x.toggled.connect(self.unselectselectall)
+            x.toggled.connect(self.stateOfcheckall)
 
     def actionall(self):
         for x in self.checkboxlist:
@@ -671,7 +671,7 @@ class ParamSelectWindow(QDialog):
         for x in self.checkboxlist:
             x.blockSignals(False)
     
-    def unselectselectall(self):
+    def stateOfcheckall(self):
         templist = []
         for x in self.checkboxlist:
             if x.isChecked():
