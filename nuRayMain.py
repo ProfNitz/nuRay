@@ -538,6 +538,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             self.paramnamelist = self.AllMyParams.loadList(paramSet)[0]
             self.valuelist = self.AllMyParams.loadList(paramSet)[1]
             self.ParamNameListWindow = ParamSelectWindow(self,self.paramnamelist,self.valuelist)
+            self.ParamNameListWindow.setWindowTitle("Param Select Window")
             self.ParamNameListWindow.show()
             for i in range(0,len(self.ParamNameListWindow.checkboxlist)):
                 if self.ParamNameListWindow.checkboxlist[i].text() in [i.name for i in self.AllMyParams.items]:
@@ -558,7 +559,7 @@ class MyApp(QMainWindow, nuRMainWindow):
             #NiNa: if parameters violate borders a window is opened to handle the borderviolations
             if len(self.minviolationnames) != 0 or len(self.maxviolationnames) != 0:   
                 self.BorderViolation = BorderViolationsWindow(self,self.maxviolationvalues,self.maxviolationnames,self.minviolationvalues,self.minviolationnames,self.currentmax,self.currentmin)
-                self.BorderViolation.setWindowTitle("Border Violations")
+                self.BorderViolation.setWindowTitle("Border Violation Window")
                 self.BorderViolation.show()
                 ErrorInfo = QMessageBox.information(self,
                                                      'Border Violations',

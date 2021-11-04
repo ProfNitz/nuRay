@@ -9,15 +9,5 @@ from Comm.nuRSerialConn import nuRSerial
 serial = nuRSerial()
 serial.port = 'COM6'
 serial.connect()
-i = 0
-k = 0
-while i < 400:
-    serial.write(1,1,1,i,'float32')
-    x = serial.read(1)
-    y = int.from_bytes(x, "big")
-    print(y)
-    if not y == 6:
-        print(k)
-    i += 0.25
-    k += 7
+serial.write(1,1,23,2135,'float32')
 serial.close()

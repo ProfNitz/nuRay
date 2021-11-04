@@ -1,0 +1,17 @@
+<Parameters>
+0;Parameter 1;uint8;0.0;255.0
+1;Parameter 2;float32;0.0;23.25
+2;Parameter 3;float32;-18.25;12.75
+3;Parameter 4;int16;-2300.0;2300.0
+<\Parameters>
+<Signals>
+Signal 1;float32;0.0;1.0;(250,0,0)
+Signal 2;float32;0.0;1.0;(0,220,0)
+<\Signals>
+<Instrument Pages>
+Projects\InstrumentPages\InstrumentPage.ui;624;408
+<\Instrument Pages>
+<pValues>
+C:/Users/Nithu/Documents/GitHub/nuRay/Projects/TestProject/TestProject (Set0).nrpa
+C:/Users/Nithu/Documents/GitHub/nuRay/Projects/TestProject/TestProject (Set1).nrpa
+<\pValues>
